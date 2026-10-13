@@ -1,0 +1,17 @@
+# Copy to terraform.tfvars (gitignored) and fill in your values:
+#   cp terraform.tfvars.example terraform.tfvars
+
+# One region for everything: bucket, Bedrock model access, inference profiles.
+# e.g. "us-east-1", "eu-west-1", "ap-southeast-2"
+aws_region = "<your-region>"
+
+# Set ONLY if you use a named admin profile in ~/.aws/credentials.
+# Leave unset to use env vars / the default profile.
+# aws_profile = "default"
+
+# Globally unique across all AWS accounts. Add a suffix you own.
+# e.g. "agent-analytics-dev-isaac"
+bucket_name = "agent-analytics-dev-<your-suffix>"
+
+# Optional — defaults to "agent-analytics-dev".
+# iam_user_name = "agent-analytics-dev"
