@@ -1,0 +1,108 @@
+# The local lakehouse stack (Phase 1) — replaces `odctl up trino storage catalog valkey`.
+#
+# Wiring: trino -> lakekeeper (Iceberg REST catalog) -> postgres (metadata),
+# and data files land in real AWS S3 via STS-vended credentials from the
+# vending role managed in terraform/iam.tf. SeaweedFS is gone — S3 replaced it.
+# Valkey is unwired until Phase 5 (Mem0 memory).
+#
+# Image notes:
+#   - lakekeeper ships a ROLLING tag only (latest-main) — their own reference
+#     compose uses it with pull_policy: always. That is their release channel,
+#     not a dev build.
+#   - trino 476 is the version Lakekeeper's own integration examples pin.
+name: agent-analytical-platform
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5432 -d postgres"]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - lakekeeper-pg:/var/lib/postgresql/data
+    mem_limit: 1g
+    networks: [lakehouse]
+
+  # One-shot schema migrations — Lakekeeper's own reference compose separates
+  # this from the server; the server refuses an unmigrated database.
+  lakekeeper-migrate:
+    image: quay.io/lakekeeper/catalog:latest-main
+    pull_policy: always
+    container_name: lakekeeper-migrate
+    restart: "no"
+    command: ["migrate"]
+    environment: &lakekeeper-env
+      LAKEKEEPER__PG_ENCRYPTION_KEY: dev-only-nonsecure-encryption-key
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://postgres:postgres@postgres:5432/postgres
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://postgres:postgres@postgres:5432/postgres
+      LAKEKEEPER__AUTHZ_BACKEND: allowall
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [lakehouse]
+
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:latest-main
+    pull_policy: always
+    container_name: lakekeeper
+    command: ["serve"]
+    environment: *lakekeeper-env
+    healthcheck:
+      test: ["CMD", "/home/nonroot/lakekeeper", "healthcheck"]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      lakekeeper-migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8181:8181" # UI: http://localhost:8181/ui/
+    mem_limit: 512m
+    networks: [lakehouse]
+
+  trino:
+    image: trinodb/trino:476
+    container_name: trino
+    healthcheck:
+      test: ["CMD", "curl", "-I", "http://localhost:8080/v1/status"]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      lakekeeper:
+        condition: service_healthy
+    ports:
+      - "8080:8080" # UI: http://localhost:8080
+    volumes:
+      - ./trino/etc/catalog:/etc/trino/catalog:ro
+    # No AWS credentials in this service on purpose — S3 access arrives as
+    # STS-vended credentials from Lakekeeper
+    # (iceberg.rest-catalog.vended-credentials-enabled in the catalog file).
+    mem_limit: 2g
+    networks: [lakehouse]
+
+  # Unwired until Phase 5 (Mem0 agent memory). Included now so this file does
+  # not need rework then.
+  valkey:
+    image: valkey/valkey-bundle:9.1.3-alpine
+    container_name: valkey
+    ports:
+      - "6379:6379"
+    mem_limit: 512m
+    networks: [lakehouse]
+
+networks:
+  lakehouse:
+
+volumes:
+  lakekeeper-pg:

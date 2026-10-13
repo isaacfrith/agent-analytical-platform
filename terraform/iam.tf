@@ -29,13 +29,19 @@ resource "aws_iam_user_policy" "this" {
     {
       "Sid": "S3BucketAccess",
       "Effect": "Allow",
-      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation", "s3:ListBucketMultipartUploads"],
       "Resource": "${aws_s3_bucket.this.arn}"
     },
     {
       "Sid": "S3ObjectAccess",
       "Effect": "Allow",
-      "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload",
+        "s3:ListMultipartUploadParts"
+      ],
       "Resource": "${aws_s3_bucket.this.arn}/*"
     },
     {
@@ -52,8 +58,75 @@ resource "aws_iam_user_policy" "this" {
         "arn:aws:bedrock:*::foundation-model/*",
         "arn:aws:bedrock:${var.aws_region}:${data.aws_caller_identity.current.account_id}:inference-profile/*"
       ]
+    },
+    {
+      "Sid": "AssumeVendingRole",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "${aws_iam_role.lakekeeper_vending.arn}"
     }
   ]
 }
 POLICY
+}
+
+# --- Credential vending role (Phase 1) ---------------------------------------
+#
+# Lakekeeper holds the app user's access keys (as the warehouse's
+# storage-credential) and calls sts:AssumeRole against this role whenever an
+# engine (Trino, PyIceberg) requests vended credentials. The role's OWN policy
+# below is what the vended short-term sessions carry — the user's own S3
+# permissions are irrelevant to vended sessions.
+resource "aws_iam_role" "lakekeeper_vending" {
+  name = "agent-analytics-lakekeeper-vending"
+
+  # Trust: only the app user may assume this role.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = { AWS = aws_iam_user.this.arn }
+        Action    = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = local.common_tags
+}
+
+# What vended sessions may do: full Iceberg data-file lifecycle on the bucket,
+# including the multipart trio engines need to write large Parquet files
+# (omitting it is the classic "writes fail at the final part" surprise).
+resource "aws_iam_role_policy" "lakekeeper_vending_s3" {
+  name = "lakehouse-s3"
+  role = aws_iam_role.lakekeeper_vending.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "BucketLevel"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+          "s3:ListBucketMultipartUploads"
+        ]
+        Resource = aws_s3_bucket.this.arn
+      },
+      {
+        Sid    = "ObjectLevel"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:AbortMultipartUpload",
+          "s3:ListMultipartUploadParts"
+        ]
+        Resource = "${aws_s3_bucket.this.arn}/*"
+      }
+    ]
+  })
 }

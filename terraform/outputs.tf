@@ -21,3 +21,8 @@ output "aws_region" {
   description = "Region everything lives in (echo of the input, for convenience)."
   value       = var.aws_region
 }
+
+output "lakekeeper_vending_role_arn" {
+  description = "The STS role Lakekeeper assumes to vend short-term S3 credentials to engines. Goes into .env as LAKEKEEPER_STS_ROLE_ARN."
+  value       = aws_iam_role.lakekeeper_vending.arn
+}
