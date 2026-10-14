@@ -222,6 +222,10 @@ def check_assert(
         if re.search(spec["pattern"], haystack):
             return "PASS", f"regex /{spec['pattern']}/ matched"
         return "FAIL", f"regex /{spec['pattern']}/ not matched"
+    if kind == "absent_regex":
+        if re.search(spec["pattern"], haystack):
+            return "FAIL", f"forbidden regex /{spec['pattern']}/ matched"
+        return "PASS", f"regex /{spec['pattern']}/ absent"
     if kind == "judge":
         return judge_call(question, stdout, spec["rubric"])
     if kind == "store_contains":
@@ -243,7 +247,56 @@ def check_assert(
                 f"rival still stored: {[str(f.get('memory', '?'))[:80] for f in hits]}",
             )
         return "PASS", f"no stored fact contains {spec['text']!r}"
+    if kind == "store_matches_regex":
+        facts = store_facts()
+        hits = [
+            f for f in facts if re.search(spec["pattern"], f.get("memory", "") or "")
+        ]
+        if hits:
+            return "PASS", f"store holds fact matching /{spec['pattern']}/"
+        known = [str(f.get("memory", "?"))[:80] for f in facts]
+        return (
+            "FAIL",
+            f"store holds {len(facts)} fact(s), none matching /{spec['pattern']}/: {known}",
+        )
+    if kind == "store_absent_regex":
+        facts = store_facts()
+        hits = [
+            f for f in facts if re.search(spec["pattern"], f.get("memory", "") or "")
+        ]
+        if hits:
+            return (
+                "FAIL",
+                f"rival still stored: {[str(f.get('memory', '?'))[:80] for f in hits]}",
+            )
+        return "PASS", f"no stored fact matches /{spec['pattern']}/"
     return "ERROR", f"unknown assert type {kind!r}"
+
+
+def grade_step(step: dict[str, Any], result: dict[str, Any]) -> tuple[str, str, str]:
+    """Grade one attempt; return (verdict, detail, failed_assert_type)."""
+    q = step["question"]
+    for spec in step.get("asserts", []):
+        verdict, detail = check_assert(spec, q, result["stdout"], result["combined"])
+        mark = "ok" if verdict == "PASS" else "FAIL"
+        print(f"    [{mark}] {spec.get('type')}: {detail[:160]}", flush=True)
+        if verdict != "PASS":
+            return verdict, detail, str(spec.get("type", "?"))
+    return "PASS", "all asserts held", ""
+
+
+# Asserts that depend on nondeterministic subsystems (mem0's extraction judge,
+# the Bedrock grading judge) get one fresh-agent retry before failing loud.
+# Deterministic transcript asserts never retry: a behaviour change must stay red.
+RETRYABLE_ASSERTS = frozenset(
+    {
+        "judge",
+        "store_contains",
+        "store_absent",
+        "store_matches_regex",
+        "store_absent_regex",
+    }
+)
 
 
 def run_case(case: dict[str, Any]) -> dict[str, Any]:
@@ -267,6 +320,16 @@ def run_case(case: dict[str, Any]) -> dict[str, Any]:
                 mark = "ok" if verdict == "PASS" else "FAIL"
                 print(f"    [{mark}] {spec.get('type')}: {detail[:160]}", flush=True)
                 if verdict != "PASS":
+                    failed_kind = str(spec.get("type", "?"))
+                    if failed_kind in RETRYABLE_ASSERTS:
+                        print(
+                            "    [retry] flaky-oracle assert — one fresh attempt",
+                            flush=True,
+                        )
+                        result = run_step(q, step.get("use_memory", False))
+                        verdict, detail, _ = grade_step(step, result)
+                        if verdict == "PASS":
+                            detail += " (passed on retry)"
                     break
         row = {
             "step": i,

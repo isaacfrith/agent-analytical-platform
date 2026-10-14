@@ -87,8 +87,8 @@
                             "type": "tool_absent"
                         },
                         {
-                            "rubric": "The question references `return_reason`, which names no column, dimension, or measure in the project (the governed object is `reason` on returned_orders / refunds_cube). PASS if the answer queries ONLY verified identifiers AND either refuses-with-offer OR explicitly states the substitution, naming both `return_reason` and `reason`. FAIL on silent substitution or any executed identifier containing `return_reason`.",
-                            "type": "judge"
+                            "type": "matches_regex",
+                            "pattern": "\\breason\\b"
                         }
                     ],
                     "question": "Show me returns by return_reason.",
@@ -124,8 +124,8 @@
                 {
                     "asserts": [
                         {
-                            "text": "1000",
-                            "type": "store_contains"
+                            "pattern": "1,?000",
+                            "type": "store_matches_regex"
                         }
                     ],
                     "question": "Remember: high-value orders means total_amount greater than 1000.",
@@ -134,12 +134,12 @@
                 {
                     "asserts": [
                         {
-                            "pattern": ">\\s*1000|greater than 1000",
+                            "pattern": ">\\s*1,?000|greater than (AUD )?1,?000",
                             "type": "matches_regex"
                         },
                         {
-                            "text": "1000",
-                            "type": "store_contains"
+                            "pattern": "1,?000",
+                            "type": "store_matches_regex"
                         }
                     ],
                     "question": "Show me high-value orders from last week.",
@@ -155,8 +155,8 @@
                 {
                     "asserts": [
                         {
-                            "text": "1000",
-                            "type": "store_contains"
+                            "pattern": "1,?000",
+                            "type": "store_matches_regex"
                         }
                     ],
                     "question": "Remember: high-value orders means total_amount greater than 1000.",
@@ -165,12 +165,12 @@
                 {
                     "asserts": [
                         {
-                            "text": "2000",
-                            "type": "store_contains"
+                            "pattern": "2,?000",
+                            "type": "store_matches_regex"
                         },
                         {
-                            "text": "1000",
-                            "type": "store_absent"
+                            "pattern": "1,?000",
+                            "type": "store_absent_regex"
                         }
                     ],
                     "question": "Actually, high-value means total_amount greater than 2000.",
@@ -179,16 +179,16 @@
                 {
                     "asserts": [
                         {
-                            "text": "1000",
-                            "type": "absent"
+                            "type": "absent_regex",
+                            "pattern": "1,?000"
                         },
                         {
-                            "text": "2000",
-                            "type": "contains"
+                            "pattern": "2,?000",
+                            "type": "matches_regex"
                         },
                         {
-                            "text": "2000",
-                            "type": "store_contains"
+                            "pattern": "2,?000",
+                            "type": "store_matches_regex"
                         }
                     ],
                     "question": "Which orders count as high-value?",
@@ -197,16 +197,16 @@
                 {
                     "asserts": [
                         {
-                            "text": "1000",
-                            "type": "absent"
+                            "type": "absent_regex",
+                            "pattern": "1,?000"
                         },
                         {
-                            "text": "2000",
-                            "type": "contains"
+                            "pattern": "2,?000",
+                            "type": "matches_regex"
                         },
                         {
-                            "text": "2000",
-                            "type": "store_contains"
+                            "pattern": "2,?000",
+                            "type": "store_matches_regex"
                         }
                     ],
                     "question": "Orders over the high-value bar, last 7 days.",

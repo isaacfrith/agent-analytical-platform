@@ -4,7 +4,7 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline mdl memory wren-query ask ask-mem memory-check evals
+        up down logs ps bootstrap data pipeline mdl memory wren-query refresh mdl-test ask ask-mem memory-check evals
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -47,6 +47,14 @@ memory:
 	cd wren && uv run wren memory index
 wren-query:
 	cd wren && uv run wren --sql "$(q)"
+
+## refresh — one-step learning loop: append a rule, rebuild MDL, reindex memory
+refresh:
+	uv run python scripts/refresh_semantics.py --rule "$(rule)" --title "$(title)"
+
+## mdl-test — agent-free MDL smoke test (validate, build, seeds, joins, cubes)
+mdl-test:
+	uv run python scripts/test_semantics.py
 
 ## ask — Phase 4: ask the analytics agent (fresh agent per question)
 ask:
