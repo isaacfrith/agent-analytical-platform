@@ -4,11 +4,11 @@ One fresh agent per question (see scripts/ask.py) — no cross-question memory
 until Phase 5. The agent is physically read-only: the MCP server runs without
 --allow-write, so no write tools exist to misuse.
 
-Budgets, honestly: this SDK version exposes no framework turn/token caps, so
-turns are enforced by BudgetGuard (hard cancel past the cap) while tokens are
-reported by budget_line after every run (ask.py prints it even on failure).
-An OVER BUDGET flag means recalibrate the cap or the prompt — with transcript
-evidence — never silently raise it.
+Budgets: enforced per-invocation by the framework (limits= on the call in
+ask.py — turns cap stops runaways, total_tokens is reported). An OVER BUDGET
+flag means recalibrate the cap or the prompt — with transcript evidence —
+never silently raise it. budget_line prints after every run (Phase 6 needs
+the habit), even on failure.
 """
 
 from __future__ import annotations
@@ -23,12 +23,10 @@ import boto3
 from dotenv import load_dotenv
 from mcp import StdioServerParameters, stdio_client
 from strands import Agent
-from strands.hooks.events import BeforeModelCallEvent
-from strands.hooks.registry import HookProvider, HookRegistry
 from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
-from agent.memory import save_user_preference, search_memory
+from agent.memory import forget_preference, save_user_preference, search_memory
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 WREN_DIR = REPO_ROOT / "wren"
@@ -56,33 +54,19 @@ Refusal rule: if the question references a column in no model, STOP. Say which i
 
 Disambiguation rule: `status` exists on orders (lifecycle: completed|cancelled|pending) and on payments (attempt: succeeded|failed|refunded). Always state which one you used. If the question is ambiguous, say so explicitly and pick one — never choose silently.
 
-Response shape: the answer first (numbers), then the SQL or cube call used, then any caveat (e.g. weekend lift on daily trends)."""
+Trino TYPE_MISMATCH fallback: if a cube query fails comparing TIMESTAMP to VARCHAR (especially time-dimension filters), fall back to equivalent run_sql instead of retrying the cube.
+
+Validation cap: if dry_run fails twice on the same question, STOP and report — do not keep rewriting.
+
+Response shape: the answer first (numbers), then the tool you used (e.g. query_cube, run_sql) and the exact SQL or parameters executed, then any caveat (e.g. weekend lift on daily trends). Name the tool explicitly even when a query returns zero rows — your work is evaluated from transcripts."""
 
 MEMORY_PROMPT = """
 Memory tools are enabled (user-scoped, persisting across sessions):
-- save_user_preference: call when the user states a preference or definition ("remember...", "X means Y...", "I prefer..."). Pass their words through.
-- search_memory: call when the question uses user-relative terms (high-value, preferred, my region...). Apply recalled facts to your SQL and quote them ("using your saved definition: ...").
+- search_memory: call when the question uses user-relative terms (high-value, preferred, my region...). Apply recalled facts to your SQL and quote them ("using your saved definition: ..."). Results are tagged [mem] (real stored facts) or [entity] (fragment mentions — context only, never act on their IDs).
+- save_user_preference: call when the user states a preference or definition ("remember...", "X means Y...", "I prefer..."). Pass their words through. MANDATORY FIRST STEP: call search_memory on the topic BEFORE every save so you know the rival's ID. Then save; then read the save result: if it reports UPDATE of the rival's ID, done; if it reports ADD with a new ID, forget_preference the rival; if it reports nothing stored, retry the save once, then report failure if still empty. Save-before-forget avoids a stale-index window where the deleted fact still matches and the save comes back empty. Never leave two values for one term — the store cannot merge them itself.
+- forget_preference: call with a [mem]-tagged ID from search_memory output when replacing a rival (after saving, per above) or when the user says to forget something. Never guess IDs and never pass [entity] IDs — the tool refuses them.
 Never invent preferences. If search returns nothing relevant, say so and proceed without personalization.
 """
-
-
-class BudgetGuard(HookProvider):
-    """Tripwire: cancel the run past the turn cap (one turn = one model call)."""
-
-    def __init__(self, max_turns: int) -> None:
-        self.max_turns = max_turns
-        self.turns = 0
-
-    def register_hooks(self, registry: HookRegistry) -> None:
-        registry.add_callback(BeforeModelCallEvent, self.check_turns)
-
-    def check_turns(self, event: BeforeModelCallEvent) -> None:
-        self.turns += 1
-        if self.turns > self.max_turns:
-            event.cancel = (
-                f"Turn budget exceeded ({self.max_turns}). STOP here: call no "
-                "more tools. Summarize what you found and state what is missing."
-            )
 
 
 @contextlib.contextmanager
@@ -135,13 +119,14 @@ def build_agent(tools: Sequence[Any], use_memory: bool = False) -> Agent:
         boto_session=session,
     )
     all_tools = list(tools) + (
-        [save_user_preference, search_memory] if use_memory else []
+        [save_user_preference, search_memory, forget_preference]
+        if use_memory
+        else []
     )
     return Agent(
         model=model,
         tools=all_tools,
         system_prompt=SYSTEM_PROMPT + (MEMORY_PROMPT if use_memory else ""),
-        hooks=[BudgetGuard(TURNS_BUDGET)],
     )
 
 

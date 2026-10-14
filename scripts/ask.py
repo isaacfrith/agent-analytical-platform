@@ -2,7 +2,8 @@
 
 Usage: uv run python scripts/ask.py [--use-memory] "your question"
 Fresh agent per invocation — no cross-question memory until Phase 5
-(--use-memory enables the Mem0-backed preference tools).
+(--use-memory enables the Mem0-backed preference tools). Budgets are
+enforced per-invocation by the framework (turns + total tokens).
 """
 
 from __future__ import annotations
@@ -12,7 +13,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from agent.orchestrator import answer_text, budget_line, build_agent, wren_mcp_tools
+from agent.orchestrator import (
+    TOTAL_TOKENS_BUDGET,
+    TURNS_BUDGET,
+    answer_text,
+    budget_line,
+    build_agent,
+    wren_mcp_tools,
+)
 
 
 def main(argv: list[str]) -> int:
@@ -26,7 +34,10 @@ def main(argv: list[str]) -> int:
         agent = build_agent(list(tools), use_memory=use_memory)
         result = None
         try:
-            result = agent(question)
+            result = agent(
+                question,
+                limits={"turns": TURNS_BUDGET, "total_tokens": TOTAL_TOKENS_BUDGET},
+            )
         finally:
             # Spend report prints even on failure; any traceback propagates.
             print(budget_line(result), file=sys.stderr)

@@ -1,7 +1,21 @@
 """Phase 5 memory: Mem0 store over Valkey (user-scoped, cross-session).
 
 Mem0 does extraction (Bedrock LLM), embedding (local FastEmbed), and scoped
-vector search (Valkey). The agent reaches it through two @tool functions only.
+vector search (Valkey). The agent reaches it through three @tool functions.
+
+Lifecycle ownership (the dedupe lesson): mem0's generic update judge cannot
+be trusted with redefinitions, so the agent owns the invariant — one current
+value per named definition — via search → save → conditional forget. The
+prompt encodes the rule; these tools make each step observable and verified.
+
+Two store realities this module defends against (both observed live):
+- Entity bleed: mem0 writes entity mentions under mem0:{collection}_entities,
+  and the main index prefix overlaps them, so entities surface in search/list
+  results. Every result here is tagged [mem] (real fact, actionable ID) or
+  [entity] (fragment mention — context only). forget_preference REFUSES
+  non-memory IDs instead of vacuously "verifying" a no-op delete.
+- Judge nondeterminism: identical inputs occasionally return empty results.
+  Tools report emptiness honestly (never as success) so the agent can retry.
 
 Config contracts (verified against installed mem0ai 2.2.1 + provider docs):
 - vector_store valkey needs exactly: valkey_url, collection_name,
@@ -12,19 +26,6 @@ Config contracts (verified against installed mem0ai 2.2.1 + provider docs):
 - The au.* Bedrock ID auto-resolves its family; no provider_override needed.
 - mem0's Bedrock path uses the standard boto chain: load_dotenv() first so
   AWS_PROFILE/AWS_REGION are in environ before the store is built.
-
-Honesty rule (learned the hard way): tools report what the store DID.
-mem0's add() decision (ADD/UPDATE/...) and the Valkey write are separate
-steps, so save_user_preference verifies the key exists before claiming
-success — an ADD for a lost write is reported as a failure, never a save.
-Both tools also log arguments and outcomes to stderr ([mem] lines) so a
-transcript always shows what crossed the tool boundary.
-
-Known store quirk: mem0 also writes entity mentions (e.g. "value orders")
-under mem0:{collection}_entities, and the main index prefix overlaps them,
-so entities can surface in search/list results alongside real memories.
-Harmless at this scale (they score lower than full facts); revisit if a
-transcript shows the agent confused by one.
 """
 
 from __future__ import annotations
@@ -89,6 +90,26 @@ def _as_list(response: object) -> list:
     return []
 
 
+def _store_key(memory_id: str) -> str:
+    return f"mem0:{COLLECTION_NAME}:{memory_id}"
+
+
+def _is_memory(memory_id: str) -> bool:
+    """True iff the ID has a live hash in the memories namespace.
+
+    Entity mentions live under mem0:{collection}_entities and leak into
+    search results via index-prefix overlap — they are context, never
+    actionable, and forget_preference must refuse them.
+    """
+    if not memory_id:
+        return False
+    return bool(Valkey.from_url(VALKEY_URL).exists(_store_key(memory_id)))
+
+
+def _tag(memory_id: str) -> str:
+    return "mem" if _is_memory(memory_id) else "entity"
+
+
 @tool
 def save_user_preference(fact: str) -> str:
     """Save a user preference or definition for future sessions.
@@ -96,7 +117,8 @@ def save_user_preference(fact: str) -> str:
     Call when the user states something to remember ("remember...",
     "X means Y...", "I prefer..."). Pass their words through unchanged.
     Returns what the store actually did, verified against Valkey — an
-    unverified ADD is reported as a failure, never as success.
+    unverified ADD is reported as a failure, never as success. An empty
+    result means nothing stored: retry once, then report failure.
     """
     print(f"[mem] save_user_preference(fact={fact!r})", file=sys.stderr)
     response = get_store().add(
@@ -110,19 +132,23 @@ def save_user_preference(fact: str) -> str:
     if not results:
         return (
             "Nothing was stored (no new fact extracted — it may already be "
-            "known). Tell the user nothing changed."
+            "known). You may retry the save once; if still empty, tell the "
+            "user it did NOT stick."
         )
     client = Valkey.from_url(VALKEY_URL)
     lines = []
     for r in results:
         rid = r.get("id", "")
-        landed = bool(rid) and bool(
-            client.exists(f"mem0:{COLLECTION_NAME}:{rid}")
+        landed = bool(rid) and bool(client.exists(_store_key(rid)))
+        print(
+            f"[mem] verify {rid} -> {'exists' if landed else 'MISSING'}",
+            file=sys.stderr,
         )
-        print(f"[mem] verify {rid} -> {'exists' if landed else 'MISSING'}",
-              file=sys.stderr)
         status = "stored" if landed else "NOT FOUND in store"
-        lines.append(f"- {r.get('event', '?')}: {r.get('memory', '?')} [{status}]")
+        lines.append(
+            f"- [{rid or '?'}] {r.get('event', '?')}: "
+            f"{r.get('memory', '?')} [{status}]"
+        )
     if all("NOT FOUND" in line for line in lines):
         return (
             "Store result:\n" + "\n".join(lines) + "\nThe write did not land. "
@@ -136,7 +162,9 @@ def search_memory(query: str) -> str:
     """Search the user's saved preferences and definitions.
 
     Call when the question uses user-relative terms (high-value, preferred,
-    my region...). Returns matching saved facts, or states that none match.
+    my region...). Results are tagged [mem] (real facts with actionable IDs)
+    or [entity] (fragment mentions — context only, never pass their IDs to
+    forget_preference). States plainly when nothing matches.
     """
     print(f"[mem] search_memory(query={query!r})", file=sys.stderr)
     response = get_store().search(
@@ -145,11 +173,48 @@ def search_memory(query: str) -> str:
     lines = []
     for r in _as_list(response):
         if isinstance(r, dict):
-            lines.append(f"- (score {r.get('score', '?')}) {r.get('memory', '?')}")
+            rid = r.get("id", "?")
+            lines.append(
+                f"- [{_tag(rid)} {rid}] "
+                f"(score {r.get('score', '?')}) {r.get('memory', '?')}"
+            )
         else:
             lines.append(f"- {r}")
     print(f"[mem] search() -> {len(lines)} factor(s)", file=sys.stderr)
     return "\n".join(lines) if lines else "No saved preferences match."
+
+
+@tool
+def forget_preference(memory_id: str) -> str:
+    """Delete a saved preference by ID.
+
+    Call with a [mem]-tagged ID from search_memory output when replacing a
+    rival or when the user says to forget something. Non-memory IDs
+    ([entity] fragments, ghosts, guesses) are REFUSED — deleting those is
+    either a no-op or destroys the wrong thing. Reports verified deletion,
+    never silent success.
+    """
+    print(f"[mem] forget_preference(memory_id={memory_id!r})", file=sys.stderr)
+    if not _is_memory(memory_id):
+        print(f"[mem] refuse {memory_id} (not a stored memory ID)", file=sys.stderr)
+        return (
+            f"Refused: {memory_id} is not a stored memory ID (entity mention, "
+            "ghost, or guess). Only [mem]-tagged IDs from search_memory "
+            "output can be forgotten. Tell the user nothing was deleted."
+        )
+    get_store().delete(memory_id)
+    client = Valkey.from_url(VALKEY_URL)
+    still = bool(client.exists(_store_key(memory_id)))
+    print(
+        f"[mem] delete {memory_id} -> {'STILL PRESENT' if still else 'gone'}",
+        file=sys.stderr,
+    )
+    if still:
+        return (
+            f"Deletion of {memory_id} did NOT take effect. "
+            "Tell the user it is still stored."
+        )
+    return f"Deleted {memory_id} (verified absent). Tell the user it is forgotten."
 
 
 def debug_dump() -> None:
@@ -160,6 +225,7 @@ def debug_dump() -> None:
         return
     for r in results:
         if isinstance(r, dict):
-            print(f"- [{r.get('id', '?')}] {r.get('memory', r)}")
+            rid = r.get("id", "?")
+            print(f"- [{_tag(rid)} {rid}] {r.get('memory', r)}")
         else:
             print(f"- {r}")
