@@ -1,0 +1,4 @@
+# Compiled MDL — rebuild with `wren context build`
+target/
+# LanceDB memory index — rebuild with `wren memory index`
+.wren/memory/

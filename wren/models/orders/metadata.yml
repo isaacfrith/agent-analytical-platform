@@ -1,0 +1,46 @@
+name: orders
+table_reference:
+  catalog: iceberg
+  schema: ecommerce
+  table: orders
+columns:
+  - name: order_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Surrogate primary key, 1-30000."
+  - name: customer_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Foreign key to customers.customer_id."
+  - name: created_at
+    type: TIMESTAMP
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Day-partition column; ~1.5x weekend lift baked into the generator — do not read trends off it naively."
+  - name: status
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "ORDER lifecycle: completed|cancelled|pending. NOT payment outcome — see payments.status."
+  - name: total_amount
+    type: DECIMAL
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "AUD; equals the sum of its order_items.line_total by construction."
+  - name: customer
+    type: customers
+    relationship: orders_customers
+    properties:
+      description: "Join handle to the ordering customer (many-to-one)."
+primary_key: order_id
+cached: false
+properties:
+  description: "One row per order. Money fields reconcile exactly with order_items."

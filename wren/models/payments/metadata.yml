@@ -1,0 +1,46 @@
+name: payments
+table_reference:
+  catalog: iceberg
+  schema: ecommerce
+  table: payments
+columns:
+  - name: payment_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Surrogate primary key; equals order_id — exactly one payment per order by construction."
+  - name: order_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Foreign key to orders.order_id (1:1 with this table)."
+  - name: amount
+    type: DECIMAL
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "AUD; equals the order total."
+  - name: status
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "ATTEMPT outcome: succeeded|failed|refunded. NOT order status — see orders.status."
+  - name: paid_at
+    type: TIMESTAMP
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Order created_at + 5-180 minutes."
+  - name: order
+    type: orders
+    relationship: payments_orders
+    properties:
+      description: "Join handle to the paid order (one-to-one)."
+primary_key: payment_id
+cached: false
+properties:
+  description: "Payment attempts, 1:1 with orders. A return flips the status to refunded."

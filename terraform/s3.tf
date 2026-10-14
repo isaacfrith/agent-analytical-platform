@@ -33,3 +33,20 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
     }
   }
 }
+
+# CORS for the Lakekeeper UI: it runs DuckDB-WASM in the browser and fetches
+# data files cross-origin with Authorization headers (vended STS creds) plus
+# Range requests. Without this rule the browser blocks the reads and DuckDB
+# misreports them as "404 Full download failed" (Phase 2 UI fix).
+# Server-side readers (Trino, PyIceberg, AWS CLI) never touch CORS.
+resource "aws_s3_bucket_cors_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = ["http://localhost:8181"]
+    expose_headers  = ["ETag", "Content-Length", "Content-Range", "Accept-Ranges"]
+    max_age_seconds = 3000
+  }
+}

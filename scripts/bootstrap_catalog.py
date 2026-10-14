@@ -92,6 +92,23 @@ def bootstrap(base_uri: str) -> bool:
     return False
 
 
+def warehouse_already_exists(response: requests.Response) -> bool:
+    """Detect the 'warehouse already exists' outcome across Lakekeeper versions.
+
+    A repeat POST does not return 200: current releases answer 400 with error
+    type CreateWarehouseStorageProfileOverlap ("storage profile overlaps with
+    existing warehouse ..."). Match the typed error, not just the word
+    "already", so genuine 400s (bad bucket, bad role ARN) still FAIL loudly.
+    """
+    if "already" in response.text.lower():
+        return True
+    try:
+        error_type = response.json().get("error", {}).get("type", "")
+    except ValueError:
+        return False
+    return error_type == "CreateWarehouseStorageProfileOverlap"
+
+
 def create_warehouse(base_uri: str, keys: ReadOnlyCredentials) -> bool:
     """Create the S3-backed warehouse with STS credential vending enabled."""
     url = f"{base_uri}/management/v1/warehouse"
@@ -121,7 +138,7 @@ def create_warehouse(base_uri: str, keys: ReadOnlyCredentials) -> bool:
     if response.ok:
         pass_line(f"warehouse: {payload['warehouse-name']} created (S3 + STS vending)")
         return True
-    if "already" in response.text.lower():
+    if warehouse_already_exists(response):
         pass_line(f"warehouse: {payload['warehouse-name']} already exists (skipping)")
         return True
     fail_line(f"warehouse: HTTP {response.status_code}", response.text[:300])

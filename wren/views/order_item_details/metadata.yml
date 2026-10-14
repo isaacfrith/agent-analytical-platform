@@ -1,0 +1,9 @@
+name: order_item_details
+statement: |
+  SELECT i.order_item_id, i.order_id, i.product_id, i.quantity,
+         i.unit_price AS item_unit_price, i.line_total,
+         p.name AS product_name, p.category AS category
+  FROM order_items AS i
+  JOIN products AS p ON i.product_id = p.product_id
+properties:
+  description: "Line items pre-joined to products. Grain: one row per order line; use as the base for product-level aggregation (avoids fan-out)."

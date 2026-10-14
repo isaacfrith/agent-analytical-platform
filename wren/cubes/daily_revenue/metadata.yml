@@ -1,0 +1,15 @@
+name: daily_revenue
+base_object: orders
+measures:
+  - name: gross_revenue
+    expression: SUM(CASE WHEN status = 'completed' THEN total_amount ELSE 0 END)
+    type: DOUBLE
+  - name: order_count
+    expression: COUNT(CASE WHEN status = 'completed' THEN 1 END)
+    type: BIGINT
+time_dimensions:
+  - name: created_day
+    expression: created_at
+    type: TIMESTAMP
+properties:
+  description: "Daily completed-order revenue. Gross only — subtract refunds_cube.refund_total for net."

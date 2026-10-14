@@ -1,0 +1,18 @@
+name: product_performance
+base_object: order_item_details
+measures:
+  - name: units_sold
+    expression: SUM(quantity)
+    type: BIGINT
+  - name: revenue
+    expression: SUM(line_total)
+    type: DOUBLE
+dimensions:
+  - name: product_name
+    expression: product_name
+    type: VARCHAR
+  - name: category
+    expression: category
+    type: VARCHAR
+properties:
+  description: "Per-product sales over the order_items * products join, via the order_item_details view."

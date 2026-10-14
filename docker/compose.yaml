@@ -96,6 +96,12 @@ services:
   valkey:
     image: valkey/valkey-bundle:9.1.3-alpine
     container_name: valkey
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
     ports:
       - "6379:6379"
     mem_limit: 512m

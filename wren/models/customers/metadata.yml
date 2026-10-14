@@ -1,0 +1,53 @@
+name: customers
+table_reference:
+  catalog: iceberg
+  schema: ecommerce
+  table: customers
+columns:
+  - name: customer_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Surrogate primary key, 1-5000."
+  - name: first_name
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Synthetic first name (en_AU Faker locale)."
+  - name: last_name
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Synthetic last name."
+  - name: email
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Synthetic; unique by construction: firstname.lastname.<id>@example.com."
+  - name: country
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Customer country, skewed ~60% Australia with a US/UK/NZ/CA/SG tail."
+  - name: city
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Australian city; mismatches country for non-AU rows (cosmetic only)."
+  - name: signup_at
+    type: TIMESTAMP
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Signup timestamp; may predate the 90-day order window by up to a year."
+primary_key: customer_id
+cached: false
+properties:
+  description: "People who place orders. One row per customer."

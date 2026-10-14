@@ -1,0 +1,46 @@
+name: returned_orders
+table_reference:
+  catalog: iceberg
+  schema: ecommerce
+  table: returned_orders
+columns:
+  - name: return_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Surrogate primary key."
+  - name: order_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Foreign key to orders.order_id."
+  - name: reason
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Changed mind|Defective item|Wrong size|Late delivery|Damaged in transit."
+  - name: returned_at
+    type: TIMESTAMP
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Order created_at + 2-20 days."
+  - name: refund_amount
+    type: DECIMAL
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "AUD; always equals the order total — full refunds only."
+  - name: order
+    type: orders
+    relationship: returned_orders_orders
+    properties:
+      description: "Join handle to the returned order (many-to-one)."
+primary_key: return_id
+cached: false
+properties:
+  description: "Post-purchase returns, ~5% of completed orders. A return flips its payment to refunded."

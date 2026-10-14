@@ -1,0 +1,35 @@
+name: products
+table_reference:
+  catalog: iceberg
+  schema: ecommerce
+  table: products
+columns:
+  - name: product_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Surrogate primary key, 1-150."
+  - name: name
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Synthetic product name."
+  - name: category
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "8 values, round-robin — even spread by construction, NOT observed demand."
+  - name: unit_price
+    type: DECIMAL
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "AUD list price, 5-500."
+primary_key: product_id
+cached: false
+properties:
+  description: "Sellable items. Prices are snapshots; order-time prices live on order_items."

@@ -1,0 +1,57 @@
+name: order_items
+table_reference:
+  catalog: iceberg
+  schema: ecommerce
+  table: order_items
+columns:
+  - name: order_item_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Surrogate primary key."
+  - name: order_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Foreign key to orders.order_id."
+  - name: product_id
+    type: BIGINT
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Foreign key to products.product_id."
+  - name: quantity
+    type: INTEGER
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Units in this line, 1-3."
+  - name: unit_price
+    type: DECIMAL
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "AUD price snapshot at order time — may differ from products.unit_price later."
+  - name: line_total
+    type: DECIMAL
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "AUD; quantity * unit_price."
+  - name: order
+    type: orders
+    relationship: order_items_orders
+    properties:
+      description: "Join handle to the parent order (many-to-one)."
+  - name: product
+    type: products
+    relationship: order_items_products
+    properties:
+      description: "Join handle to the sold product (many-to-one)."
+primary_key: order_item_id
+cached: false
+properties:
+  description: "Line items: the grain where quantity * price happens."

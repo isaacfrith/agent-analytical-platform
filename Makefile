@@ -4,7 +4,7 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap
+        up down logs ps bootstrap data pipeline mdl memory wren-query
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -33,3 +33,17 @@ ps:
 ## bootstrap — one-time-per-install: accept terms, create the S3-backed warehouse
 bootstrap:
 	uv run python scripts/bootstrap_catalog.py
+
+## data/pipeline — Phase 2: Faker → landing Parquet → Iceberg tables
+data:
+	uv run python scripts/generate_data.py
+pipeline:
+	uv run python scripts/run_pipeline.py
+
+## mdl/memory/wren-query — Phase 3: compile MDL, index memory, query the layer
+mdl:
+	cd wren && uv run wren context build
+memory:
+	cd wren && uv run wren memory index
+wren-query:
+	cd wren && uv run wren --sql "$(q)"

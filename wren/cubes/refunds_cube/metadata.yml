@@ -1,0 +1,19 @@
+name: refunds_cube
+base_object: returned_orders
+measures:
+  - name: refund_total
+    expression: SUM(refund_amount)
+    type: DOUBLE
+  - name: return_count
+    expression: COUNT(*)
+    type: BIGINT
+dimensions:
+  - name: reason
+    expression: reason
+    type: VARCHAR
+time_dimensions:
+  - name: returned_day
+    expression: returned_at
+    type: TIMESTAMP
+properties:
+  description: "Processed refunds only (rows in returned_orders). Pair with daily_revenue for net revenue."
