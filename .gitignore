@@ -2,6 +2,8 @@
 .venv
 __pycache__/
 .ruff_cache/
+evaluations/last_run.md
+evaluations/*.log
 
 # Terraform — state must never be committed (it is plaintext and would hold
 # secrets if we ever let it). The lock file (.terraform.lock.hcl) IS committed,

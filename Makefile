@@ -4,7 +4,7 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline mdl memory wren-query ask ask-mem memory-check
+        up down logs ps bootstrap data pipeline mdl memory wren-query ask ask-mem memory-check evals
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -57,3 +57,7 @@ ask-mem:
 	uv run python scripts/ask.py --use-memory "$(q)"
 memory-check:
 	PYTHONPATH=src uv run python -c "from agent.memory import debug_dump; debug_dump()"
+
+## evals — Phase 6: deterministic eval suite (sequential; ~30-45 min full run)
+evals:
+	uv run python evaluations/run_evals.py
