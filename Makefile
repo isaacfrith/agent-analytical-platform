@@ -4,7 +4,7 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline mdl memory wren-query
+        up down logs ps bootstrap data pipeline mdl memory wren-query ask ask-mem memory-check
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -47,3 +47,13 @@ memory:
 	cd wren && uv run wren memory index
 wren-query:
 	cd wren && uv run wren --sql "$(q)"
+
+## ask — Phase 4: ask the analytics agent (fresh agent per question)
+ask:
+	uv run python scripts/ask.py "$(q)"
+
+## ask-mem/memory-check — Phase 5: memory-enabled agent, direct store reads
+ask-mem:
+	uv run python scripts/ask.py --use-memory "$(q)"
+memory-check:
+	PYTHONPATH=src uv run python -c "from agent.memory import debug_dump; debug_dump()"

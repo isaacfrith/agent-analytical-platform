@@ -93,6 +93,9 @@ services:
 
   # Unwired until Phase 5 (Mem0 agent memory). Included now so this file does
   # not need rework then.
+  # NOTE (Phase 5): memories live in Valkey RAM — no volume, no appendonly.
+  # `make down` wipes them. Accepted for dev; harden with a named volume +
+  # appendonly if down/up persistence ever matters.
   valkey:
     image: valkey/valkey-bundle:9.1.3-alpine
     container_name: valkey

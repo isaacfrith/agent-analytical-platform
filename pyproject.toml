@@ -5,13 +5,18 @@ requires-python = ">=3.12"
 dependencies = [
     "boto3>=1.43.106",
     "faker>=40.43.0",
+    "fastembed>=0.9.0",
+    "mcp>=1.0,<2",
+    "mem0ai>=2.2.1",
     "pyarrow>=26.0.0",
     "pyiceberg[pyarrow,pyiceberg-core,s3fs]>=0.12.0",
     "python-dotenv>=1.2.4",
     "requests>=2.34.2",
     "s3fs>=2026.9.0",
+    "spacy>=3.8.16",
     "strands-agents>=1.60.0",
     "strands-agents-tools>=0.8.9",
+    "valkey>=6.2.0",
     "wrenai[main,mcp,memory,memory-onnx,trino]>=0.15.0",
 ]
 
