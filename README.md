@@ -14,23 +14,29 @@ The LLM never sees raw tables. It reasons over governed models, cubes, and busin
 | Memory | Mem0 over Valkey | User preferences persist across sessions |
 | Infra | Terraform (AWS) + Docker Compose (local) | Bucket/IAM provisioned; Postgres, Lakekeeper, Trino, Valkey local |
 
+![Architecture](docs/architecture_diagram.png)
+
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) with Python 3.12+
 - Docker with compose support
 - AWS credentials under a profile (`~/.aws/credentials`), with Bedrock + S3 access
 
-## Setup
+## Deploy
+
+Two halves: AWS resources via Terraform, compute locally via Docker.
 
 ```bash
 cp .env.example .env   # fill in profile, region, bucket, Bedrock model ID
 make preflight         # verify AWS identity, bucket, Bedrock access
-make infra-init infra-apply   # provision S3 bucket + IAM (Terraform)
+make infra-init infra-apply   # provision S3 bucket + IAM roles (Terraform)
 make up                # start Postgres, Lakekeeper, Trino, Valkey
 make bootstrap         # create the S3-backed warehouse
 make data pipeline     # generate Faker data -> landing Parquet -> Iceberg tables
 make mdl memory        # compile MDL, index semantic memory
 ```
+
+Tear down: `make down` stops the local stack (keeps the Postgres volume, so bootstrap survives restarts); `make infra-destroy` wipes the bucket and all AWS resources.
 
 ## Usage
 
@@ -61,6 +67,8 @@ make evals
 
 ## Learn it (guided tour)
 
+![Query flow](docs/query_flow_diagram.png)
+
 Every `ask` prints the answer on stdout and the agent's trace on stderr: `Tool #N:` lines show each step, `[budget]` shows turns/tokens. Watch the trace — it's where the learning happens.
 
 1. **Health check, no LLM:** `make mdl-test` — 14 checks prove models, joins, cubes, and seed queries all resolve. If this is red, don't bother asking the agent anything.
@@ -84,3 +92,27 @@ Every `ask` prints the answer on stdout and the agent's trace on stderr: `Tool #
 ## Scope
 
 Single-user local proof of concept: destructive data reloads, one fixed memory user, agent holds `run_sql`, secrets in `.env`. See upstream's [PRODUCTION_CONSIDERATIONS.md](https://github.com/jaehyeon-kim/agentic-analytics-system/blob/main/PRODUCTION_CONSIDERATIONS.md) for what production would take.
+
+## Demo (play around)
+
+```bash
+# Governed metric — watch the trace use query_cube, no hand-written SQL
+make ask q="What was daily gross revenue over the last 7 days?"
+
+# Raw SQL fallback — no cube covers this, so dry_run then run_sql
+make ask q="How many orders are there in total?"
+
+# Multi-table reasoning through the product_performance cube
+make ask q="Which product category brings in the most revenue?"
+
+# Ambiguity — status lives on two tables; watch it qualify which one
+make ask q="Show me orders by status."
+
+# Refusal — return_reason names no column; it should offer reason instead
+make ask q="Show me returns by return_reason."
+
+# Memory — teach once, use across fresh agents
+make ask-mem q="Remember: high-value orders means total_amount greater than 1000."
+make ask-mem q="Show me high-value orders from last week."
+make memory-check
+```
