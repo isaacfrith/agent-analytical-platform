@@ -19,11 +19,15 @@ from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import BotoCoreError, ClientError, ProfileNotFound
-from dotenv import load_dotenv
+
+from repo_config import fail_line, pass_line, require_env
 
 REQUIRED_KEYS: tuple[str, ...] = (
     "AWS_PROFILE",
@@ -31,16 +35,6 @@ REQUIRED_KEYS: tuple[str, ...] = (
     "AWS_S3_BUCKET",
     "BEDROCK_MODEL_ID",
 )
-
-
-def pass_line(message: str) -> None:
-    print(f"[PASS] {message}")
-
-
-def fail_line(message: str, hint: str | None = None) -> None:
-    print(f"[FAIL] {message}")
-    if hint:
-        print(f"       hint: {hint}")
 
 
 def check_identity(sts: BaseClient) -> bool:
@@ -199,16 +193,7 @@ def check_bedrock_discovery(bedrock: BaseClient, model_id: str) -> bool:
 
 
 def main() -> int:
-    load_dotenv()
-
-    missing = [key for key in REQUIRED_KEYS if not os.environ.get(key)]
-    if missing:
-        fail_line(
-            f"config: missing {', '.join(missing)} in .env",
-            "run from the repo root (python-dotenv reads ./.env); "
-            "copy .env.example to .env if you have not",
-        )
-        return 1
+    require_env(*REQUIRED_KEYS)
 
     aws_profile = os.environ["AWS_PROFILE"]
     aws_region = os.environ["AWS_REGION"]

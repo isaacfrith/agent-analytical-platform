@@ -31,10 +31,12 @@ from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import pyarrow.fs as pa_fs
 import pyarrow.parquet as pq
-from dotenv import load_dotenv
 from pyiceberg.catalog import load_catalog
 from pyiceberg.exceptions import (
     NamespaceAlreadyExistsError,
@@ -52,6 +54,8 @@ from pyiceberg.types import (
     StringType,
     TimestampType,
 )
+
+from repo_config import pass_line, require_env
 
 
 def F(field_id: int, name: str, field_type: IcebergType, required: bool = False) -> NestedField:
@@ -131,33 +135,14 @@ TABLES = (
 )
 
 
-def pass_line(message: str) -> None:
-    print(f"[PASS] {message}")
-
-
-def fail_line(message: str, hint: str | None = None) -> None:
-    print(f"[FAIL] {message}")
-    if hint:
-        print(f"       hint: {hint}")
-
-
 def main() -> int:
-    load_dotenv()
-
-    missing = [
-        key
-        for key in (
-            "AWS_PROFILE",
-            "AWS_REGION",
-            "AWS_S3_BUCKET",
-            "LAKEKEEPER_URI",
-            "ICEBERG_WAREHOUSE",
-        )
-        if not os.environ.get(key)
-    ]
-    if missing:
-        fail_line(f"config: missing {', '.join(missing)} in .env")
-        return 1
+    require_env(
+        "AWS_PROFILE",
+        "AWS_REGION",
+        "AWS_S3_BUCKET",
+        "LAKEKEEPER_URI",
+        "ICEBERG_WAREHOUSE",
+    )
     bucket = os.environ["AWS_S3_BUCKET"]
 
     # The warehouse key selects dev_lakehouse on Lakekeeper's side; it becomes

@@ -38,9 +38,9 @@ from mem0 import Memory
 from strands import tool
 from valkey import Valkey
 
+from repo_config import COLLECTION_NAME, VALKEY_URL, is_memory, store_key
+
 MEMORY_USER_ID = "analyst"  # single-user project; both test runs share this
-VALKEY_URL = "redis://localhost:6379"
-COLLECTION_NAME = "agent_memories"
 EMBEDDING_DIMS = 1024  # thenlper/gte-large output — must match vector_store
 
 _store: Memory | None = None
@@ -82,7 +82,7 @@ def get_store() -> Memory:
     return _store
 
 
-def _as_list(response: object) -> list:
+def as_list(response: object) -> list:
     if isinstance(response, list):
         return response
     if isinstance(response, dict):
@@ -90,24 +90,8 @@ def _as_list(response: object) -> list:
     return []
 
 
-def _store_key(memory_id: str) -> str:
-    return f"mem0:{COLLECTION_NAME}:{memory_id}"
-
-
-def _is_memory(memory_id: str) -> bool:
-    """True iff the ID has a live hash in the memories namespace.
-
-    Entity mentions live under mem0:{collection}_entities and leak into
-    search results via index-prefix overlap — they are context, never
-    actionable, and forget_preference must refuse them.
-    """
-    if not memory_id:
-        return False
-    return bool(Valkey.from_url(VALKEY_URL).exists(_store_key(memory_id)))
-
-
 def _tag(memory_id: str) -> str:
-    return "mem" if _is_memory(memory_id) else "entity"
+    return "mem" if is_memory(memory_id) else "entity"
 
 
 @tool
@@ -124,7 +108,7 @@ def save_user_preference(fact: str) -> str:
     response = get_store().add(
         [{"role": "user", "content": fact}], user_id=MEMORY_USER_ID
     )
-    results = [r for r in _as_list(response) if isinstance(r, dict)]
+    results = [r for r in as_list(response) if isinstance(r, dict)]
     print(
         f"[mem] add() -> {[(r.get('event'), r.get('memory')) for r in results]}",
         file=sys.stderr,
@@ -139,7 +123,7 @@ def save_user_preference(fact: str) -> str:
     lines = []
     for r in results:
         rid = r.get("id", "")
-        landed = bool(rid) and bool(client.exists(_store_key(rid)))
+        landed = bool(rid) and bool(client.exists(store_key(rid)))
         print(
             f"[mem] verify {rid} -> {'exists' if landed else 'MISSING'}",
             file=sys.stderr,
@@ -171,7 +155,7 @@ def search_memory(query: str) -> str:
         query, filters={"user_id": MEMORY_USER_ID}, top_k=5
     )
     lines = []
-    for r in _as_list(response):
+    for r in as_list(response):
         if isinstance(r, dict):
             rid = r.get("id", "?")
             lines.append(
@@ -195,7 +179,7 @@ def forget_preference(memory_id: str) -> str:
     never silent success.
     """
     print(f"[mem] forget_preference(memory_id={memory_id!r})", file=sys.stderr)
-    if not _is_memory(memory_id):
+    if not is_memory(memory_id):
         print(f"[mem] refuse {memory_id} (not a stored memory ID)", file=sys.stderr)
         return (
             f"Refused: {memory_id} is not a stored memory ID (entity mention, "
@@ -204,7 +188,7 @@ def forget_preference(memory_id: str) -> str:
         )
     get_store().delete(memory_id)
     client = Valkey.from_url(VALKEY_URL)
-    still = bool(client.exists(_store_key(memory_id)))
+    still = bool(client.exists(store_key(memory_id)))
     print(
         f"[mem] delete {memory_id} -> {'STILL PRESENT' if still else 'gone'}",
         file=sys.stderr,
@@ -219,7 +203,7 @@ def forget_preference(memory_id: str) -> str:
 
 def debug_dump() -> None:
     """Print every stored memory for the user ( powers `make memory-check`)."""
-    results = _as_list(get_store().get_all(filters={"user_id": MEMORY_USER_ID}))
+    results = as_list(get_store().get_all(filters={"user_id": MEMORY_USER_ID}))
     if not results:
         print("No memories stored.")
         return

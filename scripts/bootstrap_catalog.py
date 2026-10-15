@@ -19,11 +19,15 @@ from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import boto3
 import requests
 from botocore.credentials import ReadOnlyCredentials
-from dotenv import load_dotenv
+
+from repo_config import fail_line, pass_line, require_env
 
 REQUIRED_KEYS: tuple[str, ...] = (
     "AWS_PROFILE",
@@ -35,16 +39,6 @@ REQUIRED_KEYS: tuple[str, ...] = (
 )
 
 TIMEOUT_SECONDS = 30
-
-
-def pass_line(message: str) -> None:
-    print(f"[PASS] {message}")
-
-
-def fail_line(message: str, hint: str | None = None) -> None:
-    print(f"[FAIL] {message}")
-    if hint:
-        print(f"       hint: {hint}")
 
 
 def load_app_credentials() -> ReadOnlyCredentials | None:
@@ -166,16 +160,7 @@ def verify_warehouse(base_uri: str, warehouse_name: str) -> bool:
 
 
 def main() -> int:
-    load_dotenv()
-
-    missing = [key for key in REQUIRED_KEYS if not os.environ.get(key)]
-    if missing:
-        fail_line(
-            f"config: missing {', '.join(missing)} in .env",
-            "copy .env.example to .env; fill LAKEKEEPER_STS_ROLE_ARN from: "
-            "terraform output -raw lakekeeper_vending_role_arn",
-        )
-        return 1
+    require_env(*REQUIRED_KEYS)
 
     base_uri = os.environ["LAKEKEEPER_URI"].rstrip("/")
     warehouse_name = os.environ["ICEBERG_WAREHOUSE"]

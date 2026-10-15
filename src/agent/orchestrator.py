@@ -16,20 +16,16 @@ from __future__ import annotations
 import contextlib
 import os
 from collections.abc import Iterator, Sequence
-from pathlib import Path
 from typing import Any
 
 import boto3
-from dotenv import load_dotenv
 from mcp import StdioServerParameters, stdio_client
 from strands import Agent
 from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
 from agent.memory import forget_preference, save_user_preference, search_memory
-
-REPO_ROOT = Path(__file__).resolve().parents[2]
-WREN_DIR = REPO_ROOT / "wren"
+from repo_config import REPO_ROOT, WREN_DIR, require_env
 
 TURNS_BUDGET = 10
 # Calibrated 2026-10-14 from transcripts, not upstream: a simple 3-turn run
@@ -98,11 +94,7 @@ def wren_mcp_tools() -> Iterator[Sequence[Any]]:
 
 def build_agent(tools: Sequence[Any], use_memory: bool = False) -> Agent:
     """Assemble the Bedrock-backed agent. Call inside wren_mcp_tools()."""
-    load_dotenv()
-
-    missing = [key for key in REQUIRED_KEYS if not os.environ.get(key)]
-    if missing:
-        raise RuntimeError(f"missing in .env: {', '.join(missing)}")
+    require_env(*REQUIRED_KEYS)
 
     # Explicit profile + region (same idiom as bootstrap_catalog.py): no
     # dependence on ambient credential/region chains.

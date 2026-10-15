@@ -4,7 +4,7 @@ Deterministic (seeded) Faker data mirroring the upstream repo's six-table
 shape: customers, products, orders, order_items, payments, returned_orders.
 
 Credential model: landing/ lives OUTSIDE the catalog, so this script talks to
-S3 directly. load_dotenv() first — AWS_PROFILE in the environment is then
+S3 directly. require_env() first — AWS_PROFILE in the environment is then
 picked up by pyarrow's S3 client (AWS SDK default chain). Contrast with
 run_pipeline.py, which configures no S3 keys at all (vended credentials).
 
@@ -24,12 +24,16 @@ import re
 import sys
 from datetime import datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import pyarrow as pa
 import pyarrow.fs as pa_fs
 import pyarrow.parquet as pq
-from dotenv import load_dotenv
 from faker import Faker
+
+from repo_config import require_env
 
 fake = Faker("en_AU")
 Faker.seed(42)
@@ -283,19 +287,10 @@ def make_orders(
 
 
 def main() -> int:
-    load_dotenv()
-
-    missing = [
-        key
-        for key in ("AWS_PROFILE", "AWS_REGION", "AWS_S3_BUCKET")
-        if not os.environ.get(key)
-    ]
-    if missing:
-        print(f"[FAIL] config: missing {', '.join(missing)} in .env")
-        return 1
+    require_env("AWS_PROFILE", "AWS_REGION", "AWS_S3_BUCKET")
     bucket = os.environ["AWS_S3_BUCKET"]
     # No explicit keys: the AWS SDK default chain picks up AWS_PROFILE from the
-    # environment that load_dotenv() just populated.
+    # environment that require_env() just populated.
     s3 = pa_fs.S3FileSystem(region=os.environ["AWS_REGION"])
 
     customers = make_customers()

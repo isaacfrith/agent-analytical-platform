@@ -19,30 +19,14 @@ from __future__ import annotations
 
 import argparse
 import datetime
-import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-WREN_DIR = REPO_ROOT / "wren"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from repo_config import WREN_DIR, run_wren
+
 RULES_FILE = WREN_DIR / "knowledge" / "rules" / "business_definitions.md"
-STEP_TIMEOUT_S = 300
-
-
-def run_wren(args: list[str]) -> str:
-    """Run one wren CLI step; raise with the tail on failure."""
-    proc = subprocess.run(
-        ["uv", "run", "wren", *args],
-        check=False,
-        cwd=WREN_DIR,
-        capture_output=True,
-        text=True,
-        timeout=STEP_TIMEOUT_S,
-    )
-    if proc.returncode != 0:
-        tail = (proc.stderr or proc.stdout or "")[-1500:]
-        raise RuntimeError(f"wren {' '.join(args)} failed:\n{tail}")
-    return "OK"
 
 
 def main(argv: list[str]) -> int:
@@ -71,10 +55,9 @@ def main(argv: list[str]) -> int:
 
     for step in (["context", "validate"], ["context", "build"], ["memory", "index"]):
         print(f"  [run] wren {' '.join(step)}", flush=True)
-        try:
-            run_wren(step)
-        except RuntimeError as e:
-            print(str(e), file=sys.stderr)
+        ok, detail = run_wren(step)
+        if not ok:
+            print(f"wren {' '.join(step)} failed:\n{detail}", file=sys.stderr)
             print(
                 "rule is saved but the layer did NOT rebuild — fix and rerun `make mdl`.",
                 file=sys.stderr,

@@ -59,9 +59,22 @@ Run the eval suite (8 cases: cube routing, ambiguity, refusals, memory lifecycle
 make evals
 ```
 
+## Learn it (guided tour)
+
+Every `ask` prints the answer on stdout and the agent's trace on stderr: `Tool #N:` lines show each step, `[budget]` shows turns/tokens. Watch the trace — it's where the learning happens.
+
+1. **Health check, no LLM:** `make mdl-test` — 14 checks prove models, joins, cubes, and seed queries all resolve. If this is red, don't bother asking the agent anything.
+2. **Governed metric:** `make ask q="What was daily gross revenue over the last 7 days?"` — trace should show `query_cube` on `daily_revenue`. The agent never wrote `GROUP BY`; WrenAI compiled it.
+3. **Fallback path:** `make ask q="How many orders are there in total?"` — no cube covers this, so watch it switch to `dry_run` then `run_sql` (answer: 30,000).
+4. **Refusal:** `make ask q="Show me returns by return_reason."` — `return_reason` names no column. A good answer names the unknown identifier and offers the closest real one (`reason`) instead of hallucinating.
+5. **Memory:** `make ask-mem q="Remember: high-value orders means total_amount greater than 1000."` then `make ask-mem q="Show me high-value orders from last week."` then `make memory-check` — the definition persists across the two fresh agents via Valkey.
+6. **One eval case:** `uv run python evaluations/run_evals.py --tests ambiguous_status` — see how `golden_suite.json` pins behaviour and `run_evals.py` grades it.
+7. **Read the prompt:** `src/agent/orchestrator.py:43-69` — the whole agent policy (cube-first, dry-run-before-execute, refusal, disambiguation) fits on one screen. Every trace you watched above is this prompt playing out.
+
 ## Layout
 
 - `src/agent/` — orchestrator (system prompt, budgets) and memory tools
+- `src/repo_config.py` — shared setup: paths, env validation, Valkey namespace, wren runner
 - `scripts/` — `ask.py`, pipeline, bootstrap, `refresh_semantics.py`, `test_semantics.py`
 - `wren/` — MDL project: `models/`, `cubes/`, `relationships.yml`, `knowledge/` (rules, seed SQL)
 - `evaluations/` — golden suite + harness (`run_evals.py`)

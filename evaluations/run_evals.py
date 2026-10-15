@@ -37,17 +37,12 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from agent.memory import (
-    MEMORY_USER_ID,
-    _as_list,
-    _is_memory,
-    get_store,
-)
+from agent.memory import MEMORY_USER_ID, as_list, get_store
+from repo_config import VALKEY_INDEXES, VALKEY_URL, is_memory, run_wren
 
 DEFAULT_SUITE = REPO_ROOT / "evaluations" / "golden_suite.json"
 DEFAULT_REPORT = REPO_ROOT / "evaluations" / "last_run.md"
 STEP_TIMEOUT_S = 600
-VALKEY_URL = "redis://localhost:6379"
 JUDGE_MAX_TOKENS = 300
 TRANSCRIPT_CHARS = 6000
 
@@ -72,7 +67,7 @@ def wipe_store() -> str:
     client = Valkey.from_url(VALKEY_URL)
     keys = list(client.scan_iter("mem0:*"))
     n = client.delete(*keys) if keys else 0
-    for index in ("agent_memories", "agent_memories_entities"):
+    for index in VALKEY_INDEXES:
         try:
             client.execute_command("FT.DROPINDEX", index)
         except ResponseError as e:  # index may not exist yet — not a failure
@@ -82,16 +77,9 @@ def wipe_store() -> str:
 
 def wren_build() -> str:
     """Recompile the MDL so evals grade the current project, not a stale one."""
-    proc = subprocess.run(
-        ["uv", "run", "wren", "context", "build"],
-        check=False,
-        cwd=REPO_ROOT / "wren",
-        capture_output=True,
-        text=True,
-        timeout=STEP_TIMEOUT_S,
-    )
-    if proc.returncode != 0:
-        raise RuntimeError(f"wren context build failed:\n{proc.stderr[-2000:]}")
+    ok, detail = run_wren(["context", "build"], timeout_s=STEP_TIMEOUT_S)
+    if not ok:
+        raise RuntimeError(f"wren context build failed:\n{detail}")
     return "wren context build OK"
 
 
@@ -188,8 +176,8 @@ def store_facts() -> list[dict[str, Any]]:
     response = get_store().get_all(filters={"user_id": MEMORY_USER_ID})
     return [
         r
-        for r in _as_list(response)
-        if isinstance(r, dict) and _is_memory(r.get("id", ""))
+        for r in as_list(response)
+        if isinstance(r, dict) and is_memory(r.get("id", ""))
     ]
 
 

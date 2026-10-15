@@ -14,14 +14,14 @@ Usage: uv run python scripts/test_semantics.py  (or `make mdl-test`)
 
 from __future__ import annotations
 
-import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-WREN_DIR = REPO_ROOT / "wren"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from repo_config import WREN_DIR, run_wren
+
 SQL_DIR = WREN_DIR / "knowledge" / "sql"
-STEP_TIMEOUT_S = 300
 
 # Mirrors relationships.yml — update together. COUNT(*) probes validate that
 # each governed join path compiles through the MDL and executes on Trino.
@@ -95,28 +95,6 @@ CUBE_PROBES: list[tuple[str, list[str]]] = [
         ],
     ),
 ]
-
-
-def run_wren(args: list[str], sql: str | None = None) -> tuple[bool, str]:
-    """Run one wren CLI invocation; return (ok, output tail on failure)."""
-    cmd = ["uv", "run", "wren", *args]
-    if sql is not None:
-        cmd += ["--sql", sql]
-    try:
-        proc = subprocess.run(
-            cmd,
-            check=False,
-            cwd=WREN_DIR,
-            capture_output=True,
-            text=True,
-            timeout=STEP_TIMEOUT_S,
-        )
-    except subprocess.TimeoutExpired:
-        return False, f"TIMEOUT after {STEP_TIMEOUT_S}s: {' '.join(cmd)}"
-    if proc.returncode == 0:
-        return True, ""
-    tail = (proc.stderr or proc.stdout or "")[-1500:]
-    return False, tail
 
 
 def parse_seed(path: Path) -> tuple[str, str] | None:
