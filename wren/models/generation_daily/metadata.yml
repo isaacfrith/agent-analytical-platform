@@ -1,0 +1,51 @@
+name: generation_daily
+table_reference:
+  catalog: iceberg
+  schema: energy
+  table: generation_daily
+columns:
+  - name: day
+    type: TIMESTAMP
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "NEM-local calendar day (midnight). 90-day rolling window."
+  - name: network_region
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "NEM region: NSW1|QLD1|SA1|TAS1|VIC1."
+  - name: fueltech
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Fuel technology. Joins to fueltech_groups.fueltech for group + renewable flag — never hardcode which techs are renewable."
+  - name: energy_mwh
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "MWh generated that day. Battery rows go NEGATIVE when charging (load exceeds discharge) — this is correct, not dirty data."
+  - name: emissions_tco2e
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Tonnes CO2e emitted that day. Null/zero for non-emitting tech."
+  - name: market_value_aud
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "AUD value of that day's output at spot prices."
+  - name: fueltech_group
+    type: fueltech_groups
+    relationship: generation_fueltech_groups
+    properties:
+      description: "Join handle to the governed fuel grouping (many-to-one)."
+primary_key: day
+cached: false
+properties:
+  description: "Daily NEM generation by region and fuel tech. Grain: one row per region x fueltech x day. For market context join market_daily on region + day."

@@ -1,0 +1,8 @@
+name: generation_with_group
+statement: |
+  SELECT g.day, g.network_region, g.fueltech, m.fueltech_group,
+         m.is_renewable, g.energy_mwh, g.emissions_tco2e, g.market_value_aud
+  FROM generation_daily AS g
+  JOIN fueltech_groups AS m ON g.fueltech = m.fueltech
+properties:
+  description: "Daily generation pre-joined to the governed fuel grouping. Grain: one row per region x fueltech x day; use as the base for renewable-share aggregation (avoids re-declaring the mapping)."

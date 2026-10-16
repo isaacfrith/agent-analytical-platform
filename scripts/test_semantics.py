@@ -47,6 +47,22 @@ JOIN_PROBES: list[tuple[str, str]] = [
         "SELECT COUNT(*) AS n FROM returned_orders JOIN orders ON returned_orders.order_id = orders.order_id",
     ),
     ("view_order_item_details", "SELECT COUNT(*) AS n FROM order_item_details"),
+    (
+        "generation_fueltech_groups",
+        "SELECT COUNT(*) AS n FROM generation_daily JOIN fueltech_groups ON generation_daily.fueltech = fueltech_groups.fueltech",
+    ),
+    (
+        "facilities_fueltech_groups",
+        "SELECT COUNT(*) AS n FROM facilities JOIN fueltech_groups ON facilities.fueltech = fueltech_groups.fueltech",
+    ),
+    (
+        "market_generation",
+        "SELECT COUNT(*) AS n FROM market_daily JOIN generation_daily ON market_daily.network_region = generation_daily.network_region AND market_daily.day = generation_daily.day",
+    ),
+    (
+        "view_generation_with_group",
+        "SELECT COUNT(*) AS n FROM generation_with_group",
+    ),
 ]
 
 # Measure-only probes (no time dimensions — see module docstring).
@@ -90,6 +106,45 @@ CUBE_PROBES: list[tuple[str, list[str]]] = [
             "units_sold,revenue",
             "--dimensions",
             "category",
+            "-l",
+            "5",
+        ],
+    ),
+    (
+        "daily_generation",
+        [
+            "cube",
+            "query",
+            "--cube",
+            "daily_generation",
+            "--measures",
+            "energy_total,emissions_total,market_value_total",
+            "-l",
+            "5",
+        ],
+    ),
+    (
+        "daily_price",
+        [
+            "cube",
+            "query",
+            "--cube",
+            "daily_price",
+            "--measures",
+            "avg_price,demand_energy_total",
+            "-l",
+            "5",
+        ],
+    ),
+    (
+        "renewable_share",
+        [
+            "cube",
+            "query",
+            "--cube",
+            "renewable_share",
+            "--measures",
+            "renewable_energy,total_energy",
             "-l",
             "5",
         ],

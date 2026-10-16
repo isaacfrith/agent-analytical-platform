@@ -1,0 +1,29 @@
+name: fueltech_groups
+table_reference:
+  catalog: iceberg
+  schema: energy
+  table: fueltech_groups
+columns:
+  - name: fueltech
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Fuel technology identifier, matches generation_daily.fueltech and facilities.fueltech."
+  - name: fueltech_group
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Coarse group: coal|gas|hydro|wind|solar|battery|fossil|renewable|other."
+  - name: is_renewable
+    type: BOOLEAN
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "THE governed renewable flag. Wind/solar/hydro/bioenergy only — batteries and pumps store energy, they do not generate it. Never redefine renewable in SQL."
+primary_key: fueltech
+cached: false
+properties:
+  description: "Static 29-row mapping. The single source of truth for 'what counts as renewable' — join it, don't enumerate techs."

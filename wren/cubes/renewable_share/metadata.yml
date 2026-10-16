@@ -1,0 +1,19 @@
+name: renewable_share
+base_object: generation_with_group
+measures:
+  - name: renewable_energy
+    expression: SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END)
+    type: DOUBLE
+  - name: total_energy
+    expression: SUM(energy_mwh)
+    type: DOUBLE
+dimensions:
+  - name: network_region
+    expression: network_region
+    type: VARCHAR
+time_dimensions:
+  - name: day
+    expression: day
+    type: TIMESTAMP
+properties:
+  description: "Renewable vs total daily generation by region. Share = renewable_energy / total_energy. Renewable follows the governed is_renewable flag (wind/solar/hydro/bioenergy; batteries excluded)."

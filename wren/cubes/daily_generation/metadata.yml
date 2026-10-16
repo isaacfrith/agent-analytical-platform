@@ -1,0 +1,25 @@
+name: daily_generation
+base_object: generation_daily
+measures:
+  - name: energy_total
+    expression: SUM(energy_mwh)
+    type: DOUBLE
+  - name: emissions_total
+    expression: SUM(emissions_tco2e)
+    type: DOUBLE
+  - name: market_value_total
+    expression: SUM(market_value_aud)
+    type: DOUBLE
+dimensions:
+  - name: network_region
+    expression: network_region
+    type: VARCHAR
+  - name: fueltech
+    expression: fueltech
+    type: VARCHAR
+time_dimensions:
+  - name: day
+    expression: day
+    type: TIMESTAMP
+properties:
+  description: "Daily NEM generation output, emissions, and market value by region and fuel tech. Gross energy, MWh — battery rows can be negative (charging). Pair with renewable_share for the clean share."

@@ -84,10 +84,31 @@ Every `ask` prints the answer on stdout and the agent's trace on stderr: `Tool #
 - `src/agent/` — orchestrator (system prompt, budgets) and memory tools
 - `src/repo_config.py` — shared setup: paths, env validation, Valkey namespace, wren runner
 - `scripts/` — `ask.py`, pipeline, bootstrap, `refresh_semantics.py`, `test_semantics.py`
+- `scripts/fetch_energy_data.py` + `test_energy_data.py` — energy pipeline and its gate
 - `wren/` — MDL project: `models/`, `cubes/`, `relationships.yml`, `knowledge/` (rules, seed SQL)
 - `evaluations/` — golden suite + harness (`run_evals.py`)
 - `terraform/` — S3 bucket, IAM roles
 - `docker/` — local lakehouse stack
+
+## Energy domain (showcase)
+
+Live NEM data from the [Open Electricity API](https://openelectricity.org.au)
+(free key in `.env` as `OPENELECTRICITY_API_KEY`; data licenced CC BY-NC 4.0)
+sits beside ecommerce in a separate `energy` namespace — same warehouse,
+nothing existing moves.
+
+```bash
+make energy-data   # fetch 90 daily days → landing Parquet → energy.* tables
+make energy-test   # 11 data-invariant checks against Trino (counts, 90-day
+                   # coverage, key uniqueness, fueltech mapping, recency)
+```
+
+| Table | Rows | Grain |
+| --- | --- | --- |
+| `energy.facilities` | ~1,000 | unit (site columns carried; statuses include operating, committed, commissioning, retired) |
+| `energy.generation_daily` | ~4,770 | region × fueltech × day (energy MWh, emissions tCO2e, market value AUD; battery negatives = charging) |
+| `energy.market_daily` | 450 | region × day (price AUD/MWh, demand MW, demand energy MWh) |
+| `energy.fueltech_groups` | 29 | static mapping: fueltech → group + governed `is_renewable` flag |
 
 ## Scope
 

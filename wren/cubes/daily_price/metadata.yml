@@ -1,0 +1,19 @@
+name: daily_price
+base_object: market_daily
+measures:
+  - name: avg_price
+    expression: AVG(price_aud_mwh)
+    type: DOUBLE
+  - name: demand_energy_total
+    expression: SUM(demand_energy_mwh)
+    type: DOUBLE
+dimensions:
+  - name: network_region
+    expression: network_region
+    type: VARCHAR
+time_dimensions:
+  - name: day
+    expression: day
+    type: TIMESTAMP
+properties:
+  description: "Daily NEM spot price (AUD/MWh, averaged — never summed) and additive demand energy by region. Join generation for fuel-mix-during-price-events questions."

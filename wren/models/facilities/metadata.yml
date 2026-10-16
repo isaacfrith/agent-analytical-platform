@@ -1,0 +1,76 @@
+name: facilities
+table_reference:
+  catalog: iceberg
+  schema: energy
+  table: facilities
+columns:
+  - name: facility_code
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Site identifier (e.g. a power station). One site has many units — COUNT(DISTINCT facility_code) for site counts."
+  - name: facility_name
+    type: VARCHAR
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Display name of the site."
+  - name: network_region
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "NEM region: NSW1|QLD1|SA1|TAS1|VIC1 (state-scale zones)."
+  - name: unit_code
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    is_primary_key: true
+    properties:
+      description: "Generator identifier. Grain: one row per UNIT, not per site."
+  - name: fueltech
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Unit fuel technology (coal_black|wind|solar_utility|battery|...). Joins to fueltech_groups.fueltech for group + renewable flag."
+  - name: status
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Unit status: operating|committed|commissioning|retired. Commissioning units report <=90% of capacity — they are not full output."
+  - name: capacity_registered_mw
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Registered capacity in MW. SUM this for capacity questions — never output."
+  - name: capacity_maximum_mw
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Maximum achievable capacity in MW."
+  - name: capacity_storage_mwh
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Storage capacity in MWh. Only batteries and pumped hydro have values."
+  - name: emissions_factor_tco2e_mwh
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Tonnes CO2e per MWh. Null for non-emitting tech (wind, solar)."
+  - name: fueltech_group
+    type: fueltech_groups
+    relationship: facilities_fueltech_groups
+    properties:
+      description: "Join handle to the governed fuel grouping (many-to-one)."
+primary_key: unit_code
+cached: false
+properties:
+  description: "NEM generation registry at unit grain. Capacity questions SUM capacity_registered_mw; output questions belong to generation_daily — this table holds no output."

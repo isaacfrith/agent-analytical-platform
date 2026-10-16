@@ -4,7 +4,7 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline mdl memory wren-query refresh mdl-test ask ask-mem memory-check evals
+        up down logs ps bootstrap data pipeline energy-data energy-test mdl memory wren-query refresh mdl-test ask ask-mem memory-check evals
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -39,6 +39,14 @@ data:
 	uv run python scripts/generate_data.py
 pipeline:
 	uv run python scripts/run_pipeline.py
+
+## energy-data — Phase 1 (energy): Open Electricity API → landing → Iceberg
+energy-data:
+	uv run python scripts/fetch_energy_data.py
+
+## energy-test — Phase 1 (energy) gate: data invariants against Trino
+energy-test:
+	uv run python scripts/test_energy_data.py
 
 ## mdl/memory/wren-query — Phase 3: compile MDL, index memory, query the layer
 mdl:

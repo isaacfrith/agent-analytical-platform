@@ -29,3 +29,21 @@ relationships:
       - orders
     join_type: MANY_TO_ONE
     condition: returned_orders.order_id = orders.order_id
+  - name: generation_fueltech_groups
+    models:
+      - generation_daily
+      - fueltech_groups
+    join_type: MANY_TO_ONE
+    condition: generation_daily.fueltech = fueltech_groups.fueltech
+  - name: facilities_fueltech_groups
+    models:
+      - facilities
+      - fueltech_groups
+    join_type: MANY_TO_ONE
+    condition: facilities.fueltech = fueltech_groups.fueltech
+  - name: market_generation
+    models:
+      - generation_daily
+      - market_daily
+    join_type: MANY_TO_ONE
+    condition: generation_daily.network_region = market_daily.network_region AND generation_daily.day = market_daily.day

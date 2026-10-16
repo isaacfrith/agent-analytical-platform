@@ -1,0 +1,45 @@
+name: market_daily
+table_reference:
+  catalog: iceberg
+  schema: energy
+  table: market_daily
+columns:
+  - name: day
+    type: TIMESTAMP
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "NEM-local calendar day (midnight). 90-day rolling window."
+  - name: network_region
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "NEM region: NSW1|QLD1|SA1|TAS1|VIC1."
+  - name: price_aud_mwh
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Volume-weighted average spot price that day, AUD/MWh. A rate — average it, never sum it. Can go negative."
+  - name: demand_mw
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Average demand in MW (a rate). For additive demand use demand_energy_mwh."
+  - name: demand_energy_mwh
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Total energy demanded that day in MWh. The additive demand metric — sum this."
+  - name: generation
+    type: generation_daily
+    relationship: market_generation
+    properties:
+      description: "Join handle to daily generation rows for the same region + day (one-to-many)."
+primary_key: day
+cached: false
+properties:
+  description: "Daily NEM market outcomes by region. Grain: one row per region x day. Join generation_daily on region + day for fuel-mix-during-price-events questions."
