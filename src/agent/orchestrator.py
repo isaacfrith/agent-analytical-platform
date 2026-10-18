@@ -25,7 +25,7 @@ from strands import Agent
 from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
-from agent.memory import forget_preference, save_user_preference, search_memory
+from agent.memory import MemoryTools, _build_store
 from config import Config
 from repo_config import REPO_ROOT, WREN_DIR
 
@@ -121,11 +121,14 @@ def _build_agent(
         cache_config=CacheConfig(strategy="auto"),
         boto_session=session,
     )
-    all_tools = list(tools) + (
-        [save_user_preference, search_memory, forget_preference]
-        if use_memory
-        else []
-    )
+    all_tools = list(tools)
+    if use_memory:
+        memory_tools = MemoryTools(_build_store(config), config)
+        all_tools = all_tools + [
+            memory_tools.search_memory,
+            memory_tools.save_user_preference,
+            memory_tools.forget_preference,
+        ]
     return Agent(
         model=model,
         tools=all_tools,
