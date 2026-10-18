@@ -2,7 +2,7 @@
 
 Usage: uv run python scripts/ask.py [--use-memory] [--domain energy|ecommerce|all] "your question"
 Fresh agent per invocation — no cross-question memory unless --use-memory
-enables the Mem0-backed preference tools.
+enables the Mem0-backed preference tools. Configuration loaded from .env.
 """
 
 from __future__ import annotations
@@ -40,10 +40,16 @@ def main(argv: list[str]) -> int:
         )
         return 2
     question = " ".join(args)
-    result = answer_question(question, user_id="cli", use_memory=use_memory, domains=domains)
-    print(result.metrics_line, file=sys.stderr)
-    print(result.text)
-    return 0
+    try:
+        result = answer_question(
+            question, user_id="cli", use_memory=use_memory, domains=domains
+        )
+        print(result.metrics_line, file=sys.stderr)
+        print(result.text)
+        return 0
+    except ValueError as e:
+        print(f"Configuration error: {e}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

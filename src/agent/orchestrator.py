@@ -1,6 +1,6 @@
 """Phase 4 orchestrator: Strands agent over the Wren MCP server (Bedrock).
 
-Entry point: answer_question(question, user_id, use_memory=True, domains=DOMAINS)
+Entry point: answer_question(question, user_id, config=None, use_memory=True, domains=DOMAINS)
 Returns AnswerResult with text, metrics, and pre-formatted budget line.
 
 One fresh agent per question — no cross-question memory unless use_memory=True.
@@ -26,20 +26,16 @@ from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
 from agent.memory import forget_preference, save_user_preference, search_memory
-from repo_config import REPO_ROOT, WREN_DIR, require_env
+from config import Config
+from repo_config import REPO_ROOT, WREN_DIR
 
 _PROMPTS_DIR = REPO_ROOT / "prompts"
 _DOMAINS = ("ecommerce", "energy")
 
-_TURNS_BUDGET = 10
-_TOTAL_TOKENS_BUDGET = 150_000
-
-_REQUIRED_KEYS = ("AWS_PROFILE", "AWS_REGION", "BEDROCK_MODEL_ID")
-
 # Public for ask.py's CLI parsing (can be removed once ask.py is refactored)
 DOMAINS = _DOMAINS
-TURNS_BUDGET = _TURNS_BUDGET
-TOTAL_TOKENS_BUDGET = _TOTAL_TOKENS_BUDGET
+TURNS_BUDGET = 10
+TOTAL_TOKENS_BUDGET = 150_000
 
 
 @dataclass
@@ -109,18 +105,17 @@ def _wren_mcp_tools() -> Iterator[Sequence[Any]]:
 
 def _build_agent(
     tools: Sequence[Any],
+    config: Config,
     use_memory: bool = False,
     domains: Sequence[str] = _DOMAINS,
 ) -> Agent:
     """Assemble the Bedrock-backed agent. Call inside _wren_mcp_tools()."""
-    require_env(*_REQUIRED_KEYS)
-
     session = boto3.Session(
-        profile_name=os.environ["AWS_PROFILE"],
-        region_name=os.environ["AWS_REGION"],
+        profile_name=config.aws.profile,
+        region_name=config.aws.region,
     )
     model = BedrockModel(
-        model_id=os.environ["BEDROCK_MODEL_ID"],
+        model_id=config.aws.bedrock_model_id,
         temperature=0,
         max_tokens=4096,
         cache_config=CacheConfig(strategy="auto"),
@@ -150,17 +145,19 @@ def _extract_answer_text(result: Any) -> str:
     return text or str(result)
 
 
-def _format_metrics(result: Any | None) -> tuple[int, int | str, bool, str]:
+def _format_metrics(
+    result: Any | None, tokens_budget: int = 150_000
+) -> tuple[int, int | str, bool, str]:
     """Extract metrics from result and return (turns, tokens, over_budget, formatted_line)."""
     if result is None:
         return 0, "?", False, "[budget] no result (failed before the first turn)"
     usage = result.metrics.accumulated_usage
     total = usage.get("totalTokens", "?")
     turns = result.metrics.cycle_count
-    over = isinstance(total, int) and total > _TOTAL_TOKENS_BUDGET
+    over = isinstance(total, int) and total > tokens_budget
     line = (
-        f"[budget] turns={turns}/{_TURNS_BUDGET} "
-        f"tokens={total}/{_TOTAL_TOKENS_BUDGET} "
+        f"[budget] turns={turns}/{TURNS_BUDGET} "
+        f"tokens={total}/{tokens_budget} "
         f"({'OVER BUDGET' if over else 'within budget'})"
     )
     return turns, total, over, line
@@ -169,6 +166,7 @@ def _format_metrics(result: Any | None) -> tuple[int, int | str, bool, str]:
 def answer_question(
     question: str,
     user_id: str,
+    config: Config | None = None,
     use_memory: bool = True,
     domains: Sequence[str] = _DOMAINS,
 ) -> AnswerResult:
@@ -177,23 +175,34 @@ def answer_question(
     Args:
         question: The user's question.
         user_id: User identifier (used for memory scoping).
+        config: Configuration object (default: loaded from environment).
         use_memory: Enable user-scoped memory persistence (default: True).
         domains: Semantic domains to include (default: both ecommerce and energy).
 
     Returns:
         AnswerResult with text, metrics, and pre-formatted budget line.
-        Raises: Any exception from Bedrock or Wren is propagated.
+        Raises: Any exception from Bedrock, Wren, or missing config is propagated.
     """
+    if config is None:
+        config = Config.from_env()
+
     result = None
     try:
         with _wren_mcp_tools() as tools:
-            agent = _build_agent(list(tools), use_memory=use_memory, domains=domains)
+            agent = _build_agent(
+                list(tools), config=config, use_memory=use_memory, domains=domains
+            )
             result = agent(
                 question,
-                limits={"turns": _TURNS_BUDGET, "total_tokens": _TOTAL_TOKENS_BUDGET},
+                limits={
+                    "turns": config.agent.turns_budget,
+                    "total_tokens": config.agent.tokens_budget,
+                },
             )
         text = _extract_answer_text(result)
-        turns, tokens, over, metrics = _format_metrics(result)
+        turns, tokens, over, metrics = _format_metrics(
+            result, config.agent.tokens_budget
+        )
         return AnswerResult(
             text=text,
             turns=turns,
@@ -204,7 +213,7 @@ def answer_question(
     finally:
         # Ensure metrics print even on exception
         if result is not None:
-            _, _, _, metrics = _format_metrics(result)
+            _, _, _, metrics = _format_metrics(result, config.agent.tokens_budget)
             import sys
             print(metrics, file=sys.stderr)
 
@@ -214,16 +223,18 @@ def wren_mcp_tools():
     return _wren_mcp_tools()
 
 
-def build_agent(tools, use_memory=False, domains=_DOMAINS):
-    return _build_agent(tools, use_memory, domains)
+def build_agent(tools, use_memory=False, domains=_DOMAINS, config: Config | None = None):
+    if config is None:
+        config = Config.from_env()
+    return _build_agent(tools, config, use_memory, domains)
 
 
 def answer_text(result):
     return _extract_answer_text(result)
 
 
-def budget_line(result):
-    _, _, _, line = _format_metrics(result)
+def budget_line(result, tokens_budget: int = 150_000):
+    _, _, _, line = _format_metrics(result, tokens_budget)
     return line
 
 
