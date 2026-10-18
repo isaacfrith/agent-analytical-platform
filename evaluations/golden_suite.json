@@ -165,7 +165,7 @@
                 {
                     "asserts": [
                         {
-                            "pattern": "2,?000",
+                            "pattern": "5,?000",
                             "type": "store_matches_regex"
                         },
                         {
@@ -173,7 +173,7 @@
                             "type": "store_absent_regex"
                         }
                     ],
-                    "question": "Actually, high-value means total_amount greater than 2000.",
+                    "question": "Actually, high-value means total_amount greater than 5000.",
                     "use_memory": true
                 },
                 {
@@ -183,11 +183,11 @@
                             "pattern": "1,?000"
                         },
                         {
-                            "pattern": "2,?000",
+                            "pattern": "5,?000",
                             "type": "matches_regex"
                         },
                         {
-                            "pattern": "2,?000",
+                            "pattern": "5,?000",
                             "type": "store_matches_regex"
                         }
                     ],
@@ -201,16 +201,96 @@
                             "pattern": "1,?000"
                         },
                         {
-                            "pattern": "2,?000",
+                            "pattern": "5,?000",
                             "type": "matches_regex"
                         },
                         {
-                            "pattern": "2,?000",
+                            "pattern": "5,?000",
                             "type": "store_matches_regex"
                         }
                     ],
                     "question": "Orders over the high-value bar, last 7 days.",
                     "use_memory": true
+                }
+            ]
+        },
+        {
+            "category": "cube_routing",
+            "id": "energy_renewable_share",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "tool": "query_cube",
+                            "type": "tool_used"
+                        },
+                        {
+                            "text": "renewable_share",
+                            "type": "contains"
+                        }
+                    ],
+                    "question": "What share of NSW generation was renewable over the last 30 days?",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
+        },
+        {
+            "category": "semantic_model",
+            "id": "energy_price_spike_join",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "tool": "run_sql",
+                            "type": "tool_used"
+                        },
+                        {
+                            "rubric": "The user asked which fuel types generated most on the highest-price day in the last 30 days. This needs a market+generation join. PASS if the answer names fuel types with MWh figures from executed SQL (any fuel names, any case) and identifies the high-price day. FAIL if no fuel mix is reported or no SQL was executed.",
+                            "type": "judge"
+                        }
+                    ],
+                    "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
+        },
+        {
+            "category": "semantic_model",
+            "id": "energy_capacity_status",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "rubric": "The user asked for operating coal capacity by state. Capacity is registered MW from facilities (never MWh output from generation_daily). PASS only if the answer reports capacity in MW (summing registered capacity, operating status, coal fuel) and does not present energy output as capacity. FAIL on MWh figures presented as capacity or an unqualified silent choice.",
+                            "type": "judge"
+                        }
+                    ],
+                    "question": "Show me operating coal capacity by state.",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
+        },
+        {
+            "category": "negative_test",
+            "id": "energy_refuse_efficiency",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "tool": "run_sql",
+                            "type": "tool_absent"
+                        },
+                        {
+                            "pattern": "efficien",
+                            "type": "matches_regex"
+                        }
+                    ],
+                    "question": "Show me generation by unit efficiency.",
+                    "use_memory": false,
+                    "domain": "energy"
                 }
             ]
         }

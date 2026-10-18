@@ -38,6 +38,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from agent.memory import MEMORY_USER_ID, as_list, get_store
+from agent.orchestrator import prompt_version
 from repo_config import VALKEY_INDEXES, VALKEY_URL, is_memory, run_wren
 
 DEFAULT_SUITE = REPO_ROOT / "evaluations" / "golden_suite.json"
@@ -83,11 +84,15 @@ def wren_build() -> str:
     return "wren context build OK"
 
 
-def run_step(question: str, use_memory: bool) -> dict[str, Any]:
+def run_step(
+    question: str, use_memory: bool, domain: str | None = None
+) -> dict[str, Any]:
     """Spawn one fresh agent; capture answer (stdout) and transcript (stderr)."""
     cmd = [sys.executable, str(REPO_ROOT / "scripts" / "ask.py")]
     if use_memory:
         cmd.append("--use-memory")
+    if domain:
+        cmd += ["--domain", domain]
     cmd.append(question)
     try:
         proc = subprocess.run(
@@ -286,6 +291,19 @@ RETRYABLE_ASSERTS = frozenset(
     }
 )
 
+# Store asserts depend on the extraction LLM, which degrades to [] under
+# sustained suite load (observed: standalone green, late-in-suite red).
+# One bounded cooldown before the retry gives quota room to recover.
+STORE_ASSERTS = frozenset(
+    {
+        "store_contains",
+        "store_absent",
+        "store_matches_regex",
+        "store_absent_regex",
+    }
+)
+STORE_RETRY_DELAY_S = 90
+
 
 def run_case(case: dict[str, Any]) -> dict[str, Any]:
     """Run one case's steps in order; abort on the first failure."""
@@ -296,7 +314,7 @@ def run_case(case: dict[str, Any]) -> dict[str, Any]:
     for i, step in enumerate(case.get("steps", []), 1):
         q = step["question"]
         print(f"  step {i}: {q[:80]}", flush=True)
-        result = run_step(q, step.get("use_memory", False))
+        result = run_step(q, step.get("use_memory", False), step.get("domain"))
         verdict, detail = "PASS", ""
         if not result["ok"] and not result["stdout"]:
             verdict, detail = "ERROR", result["note"] or "no output"
@@ -310,11 +328,19 @@ def run_case(case: dict[str, Any]) -> dict[str, Any]:
                 if verdict != "PASS":
                     failed_kind = str(spec.get("type", "?"))
                     if failed_kind in RETRYABLE_ASSERTS:
+                        if failed_kind in STORE_ASSERTS:
+                            import time
+
+                            print(
+                                f"    [cooldown] {STORE_RETRY_DELAY_S}s for quota recovery",
+                                flush=True,
+                            )
+                            time.sleep(STORE_RETRY_DELAY_S)
                         print(
                             "    [retry] flaky-oracle assert — one fresh attempt",
                             flush=True,
                         )
-                        result = run_step(q, step.get("use_memory", False))
+                        result = run_step(q, step.get("use_memory", False), step.get("domain"))
                         verdict, detail, _ = grade_step(step, result)
                         if verdict == "PASS":
                             detail += " (passed on retry)"
@@ -423,6 +449,7 @@ def main(argv: list[str]) -> int:
 
     print(f"Running {len(cases)} case(s), strictly sequential.", flush=True)
     setup_lines: list[str] = []
+    setup_lines.append(f"prompt {prompt_version()} (base+ecommerce+energy)")
     if args.skip_setup:
         setup_lines.append("wren build skipped (--skip-setup)")
     else:

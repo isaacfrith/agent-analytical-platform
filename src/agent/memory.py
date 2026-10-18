@@ -115,9 +115,14 @@ def save_user_preference(fact: str) -> str:
     )
     if not results:
         return (
-            "Nothing was stored (no new fact extracted — it may already be "
-            "known). You may retry the save once; if still empty, tell the "
-            "user it did NOT stick."
+            "Nothing was stored (no new fact extracted). Recovery path: "
+            "this often means the fact contradicts an already-stored rival "
+            "that the extractor refused to supersede. If your pre-save "
+            "search_memory found a rival [mem] ID on this topic, call "
+            "forget_preference on the rival, then save this fact again — "
+            "with the rival gone the save lands as novel. If no rival "
+            "exists, retry the save once; if still empty, tell the user "
+            "it did NOT stick."
         )
     client = Valkey.from_url(VALKEY_URL)
     lines = []
