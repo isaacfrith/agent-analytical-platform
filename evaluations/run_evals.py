@@ -15,8 +15,9 @@ Strict counting: ERROR and UNKNOWN verdicts fail. The first failing assert
 stops the step; the first failing step stops the case (abort-on-first-failure).
 
 Setup: `wren context build` once up front (the MCP server warns on stale MDL
-but serves it — evals must grade the current project), plus a Valkey wipe
-before any case flagged clean_store (entity ghosts proved shared state lies).
+but serves it — evals must grade the current project), plus a Memory store
+wipe before any case flagged clean_store (entity ghosts proved shared state
+lies).
 
 Usage:
     uv run python evaluations/run_evals.py [--tests ID,...] [--limit N]
@@ -37,9 +38,10 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from agent.memory import MEMORY_USER_ID, as_list, get_store
 from agent.orchestrator import prompt_version
-from repo_config import VALKEY_INDEXES, VALKEY_URL, is_memory, run_wren
+from config import Config
+from memory import Memory, MemoryStore, build_memory_store
+from repo_config import run_wren
 
 DEFAULT_SUITE = REPO_ROOT / "evaluations" / "golden_suite.json"
 DEFAULT_REPORT = REPO_ROOT / "evaluations" / "last_run.md"
@@ -60,20 +62,20 @@ def load_suite(path: Path) -> list[dict[str, Any]]:
     return data["cases"] if isinstance(data, dict) else data
 
 
-def wipe_store() -> str:
-    """Delete the mem0 namespaces + indexes so the next case starts clean."""
-    from valkey import Valkey
-    from valkey.exceptions import ResponseError
+_store: MemoryStore | None = None
 
-    client = Valkey.from_url(VALKEY_URL)
-    keys = list(client.scan_iter("mem0:*"))
-    n = client.delete(*keys) if keys else 0
-    for index in VALKEY_INDEXES:
-        try:
-            client.execute_command("FT.DROPINDEX", index)
-        except ResponseError as e:  # index may not exist yet — not a failure
-            print(f"  [setup] drop {index}: {e}", flush=True)
-    return f"wiped {n} key(s), dropped indexes"
+
+def memory_store() -> MemoryStore:
+    """The same Memory store the agent writes to, built once per run."""
+    global _store
+    if _store is None:
+        _store = build_memory_store(Config.from_env())
+    return _store
+
+
+def wipe_store() -> str:
+    """Remove every Memory and Entity mention so the next case starts clean."""
+    return f"wiped {memory_store().wipe()} record(s), rebuilt indexes"
 
 
 def wren_build() -> str:
@@ -172,18 +174,13 @@ def judge_call(question: str, answer: str, rubric: str) -> tuple[str, str]:
     return "UNKNOWN", text
 
 
-def store_facts() -> list[dict[str, Any]]:
-    """Live [mem]-tagged facts from Valkey — the honest oracle for save steps.
+def store_facts() -> list[Memory]:
+    """Live Memories — the honest oracle for save steps.
 
     Answer text echoes user words whether the write landed or not; only the
-    store knows. Entities are excluded (fragment mentions, not facts).
+    store knows. Entity mentions are excluded (fragments, not Memories).
     """
-    response = get_store().get_all(filters={"user_id": MEMORY_USER_ID})
-    return [
-        r
-        for r in as_list(response)
-        if isinstance(r, dict) and is_memory(r.get("id", ""))
-    ]
+    return memory_store().memories()
 
 
 def check_assert(
@@ -223,31 +220,31 @@ def check_assert(
         return judge_call(question, stdout, spec["rubric"])
     if kind == "store_contains":
         facts = store_facts()
-        hits = [f for f in facts if spec["text"] in (f.get("memory", "") or "")]
+        hits = [f for f in facts if spec["text"] in f.text]
         if hits:
             return "PASS", f"store holds fact containing {spec['text']!r}"
-        known = [str(f.get("memory", "?"))[:80] for f in facts]
+        known = [f.text[:80] for f in facts]
         return (
             "FAIL",
             f"store holds {len(facts)} fact(s), none with {spec['text']!r}: {known}",
         )
     if kind == "store_absent":
         facts = store_facts()
-        hits = [f for f in facts if spec["text"] in (f.get("memory", "") or "")]
+        hits = [f for f in facts if spec["text"] in f.text]
         if hits:
             return (
                 "FAIL",
-                f"rival still stored: {[str(f.get('memory', '?'))[:80] for f in hits]}",
+                f"rival still stored: {[f.text[:80] for f in hits]}",
             )
         return "PASS", f"no stored fact contains {spec['text']!r}"
     if kind == "store_matches_regex":
         facts = store_facts()
         hits = [
-            f for f in facts if re.search(spec["pattern"], f.get("memory", "") or "")
+            f for f in facts if re.search(spec["pattern"], f.text)
         ]
         if hits:
             return "PASS", f"store holds fact matching /{spec['pattern']}/"
-        known = [str(f.get("memory", "?"))[:80] for f in facts]
+        known = [f.text[:80] for f in facts]
         return (
             "FAIL",
             f"store holds {len(facts)} fact(s), none matching /{spec['pattern']}/: {known}",
@@ -255,12 +252,12 @@ def check_assert(
     if kind == "store_absent_regex":
         facts = store_facts()
         hits = [
-            f for f in facts if re.search(spec["pattern"], f.get("memory", "") or "")
+            f for f in facts if re.search(spec["pattern"], f.text)
         ]
         if hits:
             return (
                 "FAIL",
-                f"rival still stored: {[str(f.get('memory', '?'))[:80] for f in hits]}",
+                f"rival still stored: {[f.text[:80] for f in hits]}",
             )
         return "PASS", f"no stored fact matches /{spec['pattern']}/"
     return "ERROR", f"unknown assert type {kind!r}"

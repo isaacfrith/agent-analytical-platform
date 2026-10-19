@@ -4,7 +4,7 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline energy-data energy-test mdl memory wren-query refresh mdl-test ask ask-mem memory-check evals
+        up down logs ps bootstrap data pipeline energy-data energy-test mdl memory wren-query refresh mdl-test ask ask-mem memory-check memory-wipe test test-integration evals
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -68,11 +68,19 @@ mdl-test:
 ask:
 	uv run python scripts/ask.py "$(q)"
 
-## ask-mem/memory-check — Phase 5: memory-enabled agent, direct store reads
+## ask-mem/memory-check/memory-wipe — Phase 5: memory-enabled agent, direct store reads
 ask-mem:
 	uv run python scripts/ask.py --use-memory "$(q)"
 memory-check:
-	PYTHONPATH=src uv run python -c "from agent.memory import debug_dump; debug_dump()"
+	PYTHONPATH=src uv run python -m memory check
+memory-wipe: # destructive: removes every Memory and Entity mention
+	PYTHONPATH=src uv run python -m memory wipe
+
+## test/test-integration — pytest; integration needs `make up` + AWS creds in .env
+test:
+	uv run pytest
+test-integration:
+	uv run pytest -m integration -v
 
 ## evals — Phase 6: deterministic eval suite (sequential; ~30-45 min full run)
 evals:

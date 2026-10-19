@@ -1,8 +1,8 @@
-"""Shared repo setup: paths, env, Valkey namespace, wren runner, report lines.
+"""Shared repo setup: paths, env, wren runner, report lines.
 
 One module owns everything every script re-derives. Import it; don't
-re-derive it. Domain logic (Mem0 assembly, catalog schemas, eval oracles)
-stays with its owner — this module holds only namespaces, processes, and
+re-derive it. Domain logic (the Memory store, catalog schemas, eval oracles)
+stays with its owner — this module holds only paths, processes, and
 startup validation.
 """
 
@@ -13,14 +13,9 @@ import subprocess
 from pathlib import Path
 
 from dotenv import load_dotenv
-from valkey import Valkey
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WREN_DIR = REPO_ROOT / "wren"
-
-VALKEY_URL = "redis://localhost:6379"
-COLLECTION_NAME = "agent_memories"
-VALKEY_INDEXES = (COLLECTION_NAME, f"{COLLECTION_NAME}_entities")
 
 WREN_TIMEOUT_S = 300
 
@@ -36,23 +31,6 @@ def require_env(*keys: str) -> None:
     missing = [key for key in keys if not os.environ.get(key)]
     if missing:
         raise RuntimeError(f"missing in .env: {', '.join(missing)}")
-
-
-def store_key(memory_id: str) -> str:
-    """Valkey hash key for one stored memory."""
-    return f"mem0:{COLLECTION_NAME}:{memory_id}"
-
-
-def is_memory(memory_id: str) -> bool:
-    """True iff the ID has a live hash in the memories namespace.
-
-    Entity mentions live under mem0:{collection}_entities and leak into
-    search results via index-prefix overlap — they are context, never
-    actionable.
-    """
-    if not memory_id:
-        return False
-    return bool(Valkey.from_url(VALKEY_URL).exists(store_key(memory_id)))
 
 
 def run_wren(

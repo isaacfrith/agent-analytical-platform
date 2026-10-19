@@ -25,8 +25,9 @@ from strands import Agent
 from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
-from agent.memory import MemoryTools, _build_store
+from agent.memory import MemoryTools
 from config import Config
+from memory import build_memory_store
 from repo_config import REPO_ROOT, WREN_DIR
 
 _PROMPTS_DIR = REPO_ROOT / "prompts"
@@ -123,12 +124,7 @@ def _build_agent(
     )
     all_tools = list(tools)
     if use_memory:
-        memory_tools = MemoryTools(_build_store(config), config)
-        all_tools = all_tools + [
-            memory_tools.search_memory,
-            memory_tools.save_user_preference,
-            memory_tools.forget_preference,
-        ]
+        all_tools += MemoryTools(build_memory_store(config)).as_list()
     return Agent(
         model=model,
         tools=all_tools,

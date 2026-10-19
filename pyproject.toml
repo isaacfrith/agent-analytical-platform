@@ -23,5 +23,14 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "pytest>=9.1.1",
     "ruff>=0.17.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-m 'not integration'"
+markers = [
+    "integration: needs `make up` (Valkey) and AWS credentials; run via make test-integration",
 ]
