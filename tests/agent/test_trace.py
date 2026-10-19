@@ -9,15 +9,25 @@ import pytest
 
 from agent.trace import ChartTools, TraceRecorder, parse_rows
 
-ROWS = [{"network_region": "NSW1", "avg_price": 87.5}, {"network_region": "VIC1", "avg_price": 49.0}]
+ROWS = [
+    {"network_region": "NSW1", "avg_price": 87.5},
+    {"network_region": "VIC1", "avg_price": 49.0},
+]
 
 
 def wren_result(rows=ROWS, truncated=False) -> dict:
-    payload = {"columns": list(rows[0]), "rows": rows, "row_count": len(rows), "truncated": truncated}
+    payload = {
+        "columns": list(rows[0]),
+        "rows": rows,
+        "row_count": len(rows),
+        "truncated": truncated,
+    }
     return {"status": "success", "toolUseId": "x", "content": [{"text": json.dumps(payload)}]}
 
 
-def run_tool(rec: TraceRecorder, name: str, tool_input: dict, result, use_id: str = "u1", duration=0.25):
+def run_tool(
+    rec: TraceRecorder, name: str, tool_input: dict, result, use_id: str = "u1", duration=0.25
+):
     use = {"toolUseId": use_id, "name": name, "input": tool_input}
     rec._before_tool(SimpleNamespace(tool_use=use))
     rec._after_tool(SimpleNamespace(tool_use=use, result=result, duration=duration))
@@ -29,7 +39,11 @@ def rec() -> TraceRecorder:
 
 
 def test_parse_rows_reads_wren_payload():
-    assert parse_rows(wren_result()) == {"columns": ["network_region", "avg_price"], "rows": ROWS, "truncated": False}
+    assert parse_rows(wren_result()) == {
+        "columns": ["network_region", "avg_price"],
+        "rows": ROWS,
+        "truncated": False,
+    }
 
 
 def test_parse_rows_ignores_errors_and_non_json():
@@ -67,7 +81,12 @@ def test_compiler_failure_never_breaks_the_step():
 
 
 def test_no_data_means_refused(rec: TraceRecorder):
-    run_tool(rec, "get_context", {"question": "efficiency"}, {"status": "success", "content": [{"text": "{}"}]})
+    run_tool(
+        rec,
+        "get_context",
+        {"question": "efficiency"},
+        {"status": "success", "content": [{"text": "{}"}]},
+    )
     run_tool(rec, "run_sql", {"sql": "SELECT efficiency"}, Exception("unknown column"), use_id="u2")
 
     assert rec.events[-1]["status"] == "error" and "unknown column" in rec.events[-1]["error"]
@@ -82,8 +101,14 @@ def test_sink_receives_events_live():
 
 
 def test_reasoning_only_for_intermediate_assistant_turns(rec: TraceRecorder):
-    rec._message_added(SimpleNamespace(message={"role": "assistant", "content": [{"text": "Checking cubes"}, {"toolUse": {}}]}))
-    rec._message_added(SimpleNamespace(message={"role": "assistant", "content": [{"text": "Final answer"}]}))
+    rec._message_added(
+        SimpleNamespace(
+            message={"role": "assistant", "content": [{"text": "Checking cubes"}, {"toolUse": {}}]}
+        )
+    )
+    rec._message_added(
+        SimpleNamespace(message={"role": "assistant", "content": [{"text": "Final answer"}]})
+    )
     rec._message_added(SimpleNamespace(message={"role": "user", "content": [{"text": "q"}]}))
 
     assert [e["text"] for e in rec.events if e["type"] == "reasoning"] == ["Checking cubes"]
@@ -97,7 +122,9 @@ def test_usage_reads_agent_metrics(rec: TraceRecorder):
 
 def test_show_chart_attaches_captured_rows(rec: TraceRecorder):
     run_tool(rec, "query_cube", {}, wren_result())
-    out = ChartTools(rec).show_chart(kind="bar", title="Price", x="network_region", y=["avg_price"], map_key="network_region")
+    out = ChartTools(rec).show_chart(
+        kind="bar", title="Price", x="network_region", y=["avg_price"], map_key="network_region"
+    )
 
     chart = rec.events[-1]
     assert out.startswith("Chart shown")
@@ -121,7 +148,9 @@ def test_show_chart_needs_data_first(rec: TraceRecorder):
 def test_stacked_bar_needs_series(rec: TraceRecorder):
     run_tool(rec, "query_cube", {}, wren_result())
     with pytest.raises(ValueError, match="needs a series"):
-        ChartTools(rec).show_chart(kind="stacked_bar", title="P", x="network_region", y=["avg_price"])
+        ChartTools(rec).show_chart(
+            kind="stacked_bar", title="P", x="network_region", y=["avg_price"]
+        )
 
 
 def test_map_key_defaults_to_a_region_column(rec: TraceRecorder):

@@ -1,5 +1,5 @@
 /* Light theme only: the fuel palette validates all-pairs on the light surface
-   and no dark step set does (see demos/energy-ui-plan.md). */
+   and no dark step set does (see docs/energy-ui.md). */
 :root {
   color-scheme: light;
   --page: #f9f9f7;

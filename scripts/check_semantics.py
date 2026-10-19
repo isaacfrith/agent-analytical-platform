@@ -4,12 +4,13 @@ Deterministic and LLM-free — structure validation, MDL compile, then
 bounded execution of every knowledge/sql example, one join probe per
 relationship in relationships.yml, and one measure-only probe per cube.
 
-Cube probes deliberately avoid time dimensions: cube time filters hit the
-known Trino TIMESTAMP/VARCHAR TYPE_MISMATCH (the agent covers that path
-via its run_sql fallback). The view order_item_details gets its own probe
+Cube probes deliberately avoid time windows: Wren's own `cube query` CLI
+still emits untyped time literals that Trino rejects (TIMESTAMP vs VARCHAR).
+The agent's query_cube (src/agent/cube_query.py) types them; the
+energy_cube_time_window eval covers that path. The view order_item_details gets its own probe
 since product_performance is built on it.
 
-Usage: uv run python scripts/test_semantics.py  (or `make mdl-test`)
+Usage: uv run python scripts/check_semantics.py  (or `make mdl-test`)
 """
 
 from __future__ import annotations

@@ -49,7 +49,9 @@ def wait_for(url: str, timeout: float) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--local", action="store_true", help="no tunnel; test against `make demo-serve`")
+    parser.add_argument(
+        "--local", action="store_true", help="no tunnel; test against `make demo-serve`"
+    )
     args = parser.parse_args()
 
     config = Config.from_env()
@@ -57,7 +59,9 @@ def main() -> int:
         print("DEMO_PASSCODE is not set in .env — live mode needs one (see .env.example).")
         return 1
     if not args.local and shutil.which("cloudflared") is None:
-        print("cloudflared not found. Install it with `brew install cloudflared`, or run with --local.")
+        print(
+            "cloudflared not found. Install it with `brew install cloudflared`, or run with --local."
+        )
         return 1
 
     port = config.demo.port
@@ -74,11 +78,25 @@ def main() -> int:
 
     signal.signal(signal.SIGTERM, lambda *_: (stop(), sys.exit(0)))
     env = {**os.environ, "PYTHONPATH": str(REPO_ROOT / "src")}
-    procs.append(subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "api.server:build_app", "--factory",
-         "--host", "127.0.0.1", "--port", str(port), "--log-level", "warning"],
-        cwd=REPO_ROOT, env=env,
-    ))
+    procs.append(
+        subprocess.Popen(
+            [
+                sys.executable,
+                "-m",
+                "uvicorn",
+                "api.server:build_app",
+                "--factory",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                str(port),
+                "--log-level",
+                "warning",
+            ],
+            cwd=REPO_ROOT,
+            env=env,
+        )
+    )
     try:
         if not wait_for(f"http://127.0.0.1:{port}/api/health", STARTUP_TIMEOUT_S):
             print("Live API did not come up — is Valkey running (`make up`)?")
@@ -86,11 +104,15 @@ def main() -> int:
         print(f"[PASS] live API on http://127.0.0.1:{port} (cap {config.demo.daily_cap}/day)")
 
         if args.local:
-            print(f"\nLocal test link (with `make demo-serve`):\n  http://localhost:8765/?live={quote(f'http://127.0.0.1:{port}', safe='')}")
+            print(
+                f"\nLocal test link (with `make demo-serve`):\n  http://localhost:8765/?live={quote(f'http://127.0.0.1:{port}', safe='')}"
+            )
         else:
             tunnel = subprocess.Popen(
                 ["cloudflared", "tunnel", "--no-autoupdate", "--url", f"http://127.0.0.1:{port}"],
-                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                text=True,
             )
             procs.append(tunnel)
             public = None
@@ -105,7 +127,9 @@ def main() -> int:
                 print("Tunnel did not come up.")
                 return 1
             print(f"[PASS] tunnel {public}")
-            print(f"\nShare link (with the passcode):\n  {config.demo.site_url}?live={quote(public, safe='')}")
+            print(
+                f"\nShare link (with the passcode):\n  {config.demo.site_url}?live={quote(public, safe='')}"
+            )
         print("\nCtrl-C to stop. Live mode goes offline with this process.")
         while all(p.poll() is None for p in procs):
             time.sleep(1)

@@ -1,99 +1,87 @@
-# Agent Analytical Platform — infra and tooling targets.
-# Recipes need real tabs (Make syntax); VS Code's Makefile mode handles it.
+# Agent Analytical Platform. Run `make help` for the list of targets.
+# Recipes need real tabs (Make syntax).
 
 COMPOSE := docker compose -f docker/compose.yaml
+.DEFAULT_GOAL := help
 
-.PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline energy-data energy-test mdl memory wren-query refresh mdl-test ask ask-mem memory-check memory-wipe test test-integration evals \
+.PHONY: help preflight infra-init infra-plan infra-apply infra-destroy up down logs ps \
+        bootstrap data pipeline energy-data energy-test mdl memory mdl-test refresh wren-query \
+        ask ask-mem memory-check memory-wipe test test-integration lint evals \
         demo-record demo-serve demo-live
 
-## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
-preflight:
+help: ## Show this list
+	@awk 'BEGIN {FS = ":.*## "} /^## / {printf "\n\033[1m%s\033[0m\n", substr($$0, 4)} /^[a-z-]+:.*## / {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+## Infrastructure
+preflight: ## Check AWS access as the app user (identity, bucket, Bedrock)
 	uv run python scripts/aws_preflight.py
-
-## infra-* — Terraform lifecycle. Runs with ADMIN credentials (default chain).
-infra-init:
+infra-init: ## Terraform init (admin credentials)
 	cd terraform && terraform init
-infra-plan:
+infra-plan: ## Terraform plan
 	cd terraform && terraform plan
-infra-apply:
+infra-apply: ## Create the S3 bucket and IAM roles
 	cd terraform && terraform apply
-infra-destroy:
-	cd terraform && terraform destroy # wipes bucket contents (force_destroy)
-
-## up/down/logs/ps — the local lakehouse stack (postgres, lakekeeper, trino, valkey)
-up:
+infra-destroy: ## Destroy AWS resources, including bucket contents
+	cd terraform && terraform destroy
+up: ## Start the local stack (Postgres, Lakekeeper, Trino, Valkey)
 	$(COMPOSE) up -d --wait
-down:
-	$(COMPOSE) down # keeps the postgres volume — bootstrap survives restarts
-logs:
+down: ## Stop the local stack (keeps the Postgres volume)
+	$(COMPOSE) down
+logs: ## Follow the local stack's logs
 	$(COMPOSE) logs -f
-ps:
+ps: ## Show the local stack's containers
 	$(COMPOSE) ps
-
-## bootstrap — one-time-per-install: accept terms, create the S3-backed warehouse
-bootstrap:
+bootstrap: ## One-time: create the S3-backed Iceberg warehouse
 	uv run python scripts/bootstrap_catalog.py
 
-## data/pipeline — Phase 2: Faker → landing Parquet → Iceberg tables
-data:
+## Data
+data: ## Ecommerce: generate fake data into landing Parquet
 	uv run python scripts/generate_data.py
-pipeline:
+pipeline: ## Ecommerce: load landing Parquet into Iceberg
 	uv run python scripts/run_pipeline.py
-
-## energy-data — Phase 1 (energy): Open Electricity API → landing → Iceberg
-energy-data:
+energy-data: ## Energy: fetch 90 days (NEM + WA) from Open Electricity into Iceberg
 	uv run python scripts/fetch_energy_data.py
+energy-test: ## Energy: data checks against Trino (no LLM)
+	uv run python scripts/check_energy_data.py
 
-## energy-test — Phase 1 (energy) gate: data invariants against Trino
-energy-test:
-	uv run python scripts/test_energy_data.py
-
-## mdl/memory/wren-query — Phase 3: compile MDL, index memory, query the layer
-mdl:
+## Semantic layer
+mdl: ## Compile the Wren model (MDL)
 	cd wren && uv run wren context build
-memory:
+memory: ## Index the model and example queries for retrieval
 	cd wren && uv run wren memory index
-wren-query:
+mdl-test: ## Check the semantic layer end to end (no LLM)
+	uv run python scripts/check_semantics.py
+refresh: ## Add a business rule, rebuild and reindex: rule="..." title="..."
+	uv run python scripts/refresh_semantics.py --rule "$(rule)" --title "$(title)"
+wren-query: ## Run SQL through the semantic layer: q="SELECT ..."
 	cd wren && uv run wren --sql "$(q)"
 
-## refresh — one-step learning loop: append a rule, rebuild MDL, reindex memory
-refresh:
-	uv run python scripts/refresh_semantics.py --rule "$(rule)" --title "$(title)"
-
-## mdl-test — agent-free MDL smoke test (validate, build, seeds, joins, cubes)
-mdl-test:
-	uv run python scripts/test_semantics.py
-
-## ask — Phase 4: ask the analytics agent (fresh agent per question)
-ask:
+## Agent
+ask: ## Ask a question: q="..."
 	uv run python scripts/ask.py "$(q)"
-
-## ask-mem/memory-check/memory-wipe — Phase 5: memory-enabled agent, direct store reads
-ask-mem:
+ask-mem: ## Ask with saved preferences enabled: q="..."
 	uv run python scripts/ask.py --use-memory "$(q)"
-memory-check:
+memory-check: ## List saved preferences
 	PYTHONPATH=src uv run python -m memory check
-memory-wipe: # destructive: removes every Memory and Entity mention
+memory-wipe: ## Delete every saved preference (destructive)
 	PYTHONPATH=src uv run python -m memory wipe
 
-## test/test-integration — pytest; integration needs `make up` + AWS creds in .env
-test:
+## Quality
+test: ## Unit tests
 	uv run pytest
-test-integration:
+test-integration: ## Integration tests (needs `make up` and AWS credentials)
 	uv run pytest -m integration -v
-
-## evals — Phase 6: deterministic eval suite (sequential; ~30-45 min full run)
-evals:
+lint: ## Lint and format check
+	uv run ruff check src scripts tests evaluations
+	uv run ruff format --check src scripts tests evaluations
+evals: ## Full eval suite against the real agent (~30-45 min, costs Bedrock tokens)
 	uv run python evaluations/run_evals.py
 
-## demo-* — energy demo UI (ui/). demo-record re-runs the chips (~$1 Bedrock)
-## and snapshots the map overview into ui/data/; commit the result to publish.
-demo-record:
+## Demo UI
+demo-record: ## Re-record the demo questions, map and data catalog (~$1 of Bedrock)
 	uv run python scripts/demo_record.py
-demo-serve:
+demo-serve: ## Serve the UI at http://localhost:8765
 	@echo "http://localhost:8765"
 	cd ui && python3 -m http.server 8765
-## demo-live — live questions from this laptop via a Cloudflare quick tunnel
-demo-live:
+demo-live: ## Live questions from this laptop via a Cloudflare quick tunnel
 	uv run python scripts/demo_live.py

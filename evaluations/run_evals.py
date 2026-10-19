@@ -86,16 +86,14 @@ def wren_build() -> str:
     return "wren context build OK"
 
 
-def run_step(
-    question: str, use_memory: bool, domain: str | None = None
-) -> dict[str, Any]:
+def run_step(question: str, use_memory: bool, domain: str | None = None) -> dict[str, Any]:
     """Spawn one fresh agent; capture answer (stdout) and transcript (stderr)."""
     cmd = [sys.executable, str(REPO_ROOT / "scripts" / "ask.py")]
     if use_memory:
         cmd.append("--use-memory")
     if domain:
         cmd += ["--domain", domain]
-    cmd.append(question)
+    cmd += ["--", question]
     try:
         proc = subprocess.run(
             cmd,
@@ -239,9 +237,7 @@ def check_assert(
         return "PASS", f"no stored fact contains {spec['text']!r}"
     if kind == "store_matches_regex":
         facts = store_facts()
-        hits = [
-            f for f in facts if re.search(spec["pattern"], f.text)
-        ]
+        hits = [f for f in facts if re.search(spec["pattern"], f.text)]
         if hits:
             return "PASS", f"store holds fact matching /{spec['pattern']}/"
         known = [f.text[:80] for f in facts]
@@ -251,9 +247,7 @@ def check_assert(
         )
     if kind == "store_absent_regex":
         facts = store_facts()
-        hits = [
-            f for f in facts if re.search(spec["pattern"], f.text)
-        ]
+        hits = [f for f in facts if re.search(spec["pattern"], f.text)]
         if hits:
             return (
                 "FAIL",
@@ -317,9 +311,7 @@ def run_case(case: dict[str, Any]) -> dict[str, Any]:
             verdict, detail = "ERROR", result["note"] or "no output"
         else:
             for spec in step.get("asserts", []):
-                verdict, detail = check_assert(
-                    spec, q, result["stdout"], result["combined"]
-                )
+                verdict, detail = check_assert(spec, q, result["stdout"], result["combined"])
                 mark = "ok" if verdict == "PASS" else "FAIL"
                 print(f"    [{mark}] {spec.get('type')}: {detail[:160]}", flush=True)
                 if verdict != "PASS":
@@ -431,9 +423,7 @@ def main(argv: list[str]) -> int:
     cases = load_suite(Path(args.suite))
     if args.list:
         for c in cases:
-            print(
-                f"{c.get('id')} [{c.get('category')}] ({len(c.get('steps', []))} steps)"
-            )
+            print(f"{c.get('id')} [{c.get('category')}] ({len(c.get('steps', []))} steps)")
         return 0
     if args.tests:
         wanted = {t.strip() for t in args.tests.split(",")}

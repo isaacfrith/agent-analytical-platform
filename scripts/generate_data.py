@@ -168,8 +168,10 @@ def make_customers() -> list[dict]:
     rows = []
     for cid in range(1, N_CUSTOMERS + 1):
         first, last = fake.first_name(), fake.last_name()
-        signup = START - timedelta(days=random.randint(0, 365)) + timedelta(
-            seconds=random.randint(0, 86_399)
+        signup = (
+            START
+            - timedelta(days=random.randint(0, 365))
+            + timedelta(seconds=random.randint(0, 86_399))
         )
         rows.append(
             {
@@ -278,8 +280,7 @@ def make_orders(
                 "return_id": rid,
                 "order_id": oid,
                 "reason": random.choice(RETURN_REASONS),
-                "returned_at": order["created_at"]
-                + timedelta(days=random.randint(2, 20)),
+                "returned_at": order["created_at"] + timedelta(days=random.randint(2, 20)),
                 "refund_amount": order["total_amount"],
             }
         )

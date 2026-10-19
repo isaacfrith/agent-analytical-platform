@@ -28,9 +28,7 @@ def test_save_reports_a_verified_write(store: MemoryStore):
     outcome = store.save("I prefer AUD")
 
     assert outcome.status is SaveStatus.STORED
-    assert [(w.event, w.text, w.landed) for w in outcome.writes] == [
-        ("ADD", "I prefer AUD", True)
-    ]
+    assert [(w.event, w.text, w.landed) for w in outcome.writes] == [("ADD", "I prefer AUD", True)]
     assert store.memories() == [Memory(outcome.writes[0].id, "I prefer AUD")]
 
 
@@ -89,9 +87,7 @@ def test_retiring_a_rival_leaves_one_current_memory(store: MemoryStore):
 
     store.forget(rival)
 
-    assert [m.text for m in store.memories()] == [
-        "high-value means total_amount over 5000"
-    ]
+    assert [m.text for m in store.memories()] == ["high-value means total_amount over 5000"]
 
 
 def test_memories_are_scoped_to_the_user(backend: FakeBackend):
@@ -103,7 +99,9 @@ def test_memories_are_scoped_to_the_user(backend: FakeBackend):
     assert mine.search("prefer") == []
 
 
-def test_contents_include_entity_mentions_but_memories_do_not(store: MemoryStore, backend: FakeBackend):
+def test_contents_include_entity_mentions_but_memories_do_not(
+    store: MemoryStore, backend: FakeBackend
+):
     store.save("I prefer AUD")
     backend.add_entity("AUD")
 

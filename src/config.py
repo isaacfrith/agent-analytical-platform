@@ -1,21 +1,20 @@
-"""Configuration module for the Agent Analytical Platform.
+"""Runtime configuration: agent budgets, memory, AWS, and the demo's live mode.
 
-Single source of truth for all configuration: agent budgets, memory settings,
-AWS credentials, timeouts, and paths. Loaded from environment with sensible
-defaults for local development; all credentials required.
+Loaded from the environment (.env) with local-development defaults; AWS
+credentials are required. Repo paths and script helpers live in repo_config.
 
 Usage:
-    config = Config.from_env()  # Called at startup
+    config = Config.from_env()
     config.agent.turns_budget
     config.memory.valkey_url
     config.aws.bedrock_model_id
+    config.demo.passcode
 """
 
 from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -50,12 +49,8 @@ class MemoryConfig:
     @classmethod
     def from_env(cls) -> MemoryConfig:
         """Load from MEMORY_* environment variables with local dev defaults."""
-        valkey_url = os.environ.get(
-            "MEMORY_VALKEY_URL", "redis://localhost:6379"
-        )
-        collection_name = os.environ.get(
-            "MEMORY_COLLECTION_NAME", "agent_memories"
-        )
+        valkey_url = os.environ.get("MEMORY_VALKEY_URL", "redis://localhost:6379")
+        collection_name = os.environ.get("MEMORY_COLLECTION_NAME", "agent_memories")
         return cls(
             valkey_url=valkey_url,
             collection_name=collection_name,

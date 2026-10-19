@@ -118,9 +118,6 @@ class MemoryTools:
             )
         if outcome.status is ForgetStatus.STILL_PRESENT:
             _log(f"delete {memory_id} -> STILL PRESENT")
-            return (
-                f"Deletion of {memory_id} did NOT take effect. "
-                "Tell the user it is still stored."
-            )
+            return f"Deletion of {memory_id} did NOT take effect. Tell the user it is still stored."
         _log(f"delete {memory_id} -> gone")
         return f"Deleted {memory_id} (verified absent). Tell the user it is forgotten."

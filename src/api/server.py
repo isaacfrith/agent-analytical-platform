@@ -47,7 +47,9 @@ class Counter(Protocol):
 class DailyCap:
     """Live questions per UTC day, shared by every visitor."""
 
-    def __init__(self, store: Counter, cap: int, now: Callable[[], datetime] = lambda: datetime.now(UTC)):
+    def __init__(
+        self, store: Counter, cap: int, now: Callable[[], datetime] = lambda: datetime.now(UTC)
+    ):
         self.store = store
         self.cap = cap
         self.now = now
@@ -92,12 +94,14 @@ def create_app(config: Config, cap: DailyCap, run_question: QuestionRunner) -> S
     busy = threading.Lock()
 
     async def health(request: Request) -> JSONResponse:
-        return JSONResponse({
-            "ok": True,
-            "daily_cap": cap.cap,
-            "remaining": cap.remaining(),
-            "busy": busy.locked(),
-        })
+        return JSONResponse(
+            {
+                "ok": True,
+                "daily_cap": cap.cap,
+                "remaining": cap.remaining(),
+                "busy": busy.locked(),
+            }
+        )
 
     async def ask(request: Request) -> JSONResponse | StreamingResponse:
         try:
@@ -112,12 +116,23 @@ def create_app(config: Config, cap: DailyCap, run_question: QuestionRunner) -> S
         if not question:
             return JSONResponse({"detail": "Ask a question."}, status_code=400)
         if len(question) > MAX_QUESTION_CHARS:
-            return JSONResponse({"detail": f"Keep questions under {MAX_QUESTION_CHARS} characters."}, status_code=400)
+            return JSONResponse(
+                {"detail": f"Keep questions under {MAX_QUESTION_CHARS} characters."},
+                status_code=400,
+            )
         if not busy.acquire(blocking=False):
-            return JSONResponse({"detail": "Someone else's question is running. Try again in a minute."}, status_code=429)
+            return JSONResponse(
+                {"detail": "Someone else's question is running. Try again in a minute."},
+                status_code=429,
+            )
         if not cap.take():
             busy.release()
-            return JSONResponse({"detail": "Today's live questions are used up. Come back tomorrow, or try a demo question."}, status_code=429)
+            return JSONResponse(
+                {
+                    "detail": "Today's live questions are used up. Come back tomorrow, or try a demo question."
+                },
+                status_code=429,
+            )
 
         loop = asyncio.get_running_loop()
         queue: asyncio.Queue[dict | None] = asyncio.Queue()

@@ -84,9 +84,7 @@ class MemoryStore:
         self._user_id = user_id
 
     def search(self, query: str, top_k: int = SEARCH_TOP_K) -> list[Hit]:
-        return [
-            self._hit(r) for r in self._backend.search(query, self._user_id, top_k)
-        ]
+        return [self._hit(r) for r in self._backend.search(query, self._user_id, top_k)]
 
     def save(self, text: str) -> SaveOutcome:
         records = self._backend.add(text, self._user_id)
@@ -101,11 +99,7 @@ class MemoryStore:
             )
             for r in records
         )
-        status = (
-            SaveStatus.STORED
-            if any(w.landed for w in writes)
-            else SaveStatus.NOT_LANDED
-        )
+        status = SaveStatus.STORED if any(w.landed for w in writes) else SaveStatus.NOT_LANDED
         return SaveOutcome(status, writes)
 
     def forget(self, memory_id: str) -> ForgetOutcome:

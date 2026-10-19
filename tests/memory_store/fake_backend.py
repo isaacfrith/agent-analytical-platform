@@ -57,9 +57,7 @@ class FakeBackend:
 
     def list(self, user_id: str) -> list[dict[str, Any]]:
         return [
-            {"id": rid, "memory": text}
-            for rid, (uid, text) in self._records()
-            if uid == user_id
+            {"id": rid, "memory": text} for rid, (uid, text) in self._records() if uid == user_id
         ]
 
     def delete(self, record_id: str) -> None:

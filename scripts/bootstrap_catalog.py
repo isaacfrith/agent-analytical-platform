@@ -67,9 +67,7 @@ def bootstrap(base_uri: str) -> bool:
     """One-time-per-install: accept terms, create the default project."""
     url = f"{base_uri}/management/v1/bootstrap"
     try:
-        response = requests.post(
-            url, json={"accept-terms-of-use": True}, timeout=TIMEOUT_SECONDS
-        )
+        response = requests.post(url, json={"accept-terms-of-use": True}, timeout=TIMEOUT_SECONDS)
     except requests.RequestException as error:
         fail_line(
             f"bootstrap: could not reach Lakekeeper ({type(error).__name__})",

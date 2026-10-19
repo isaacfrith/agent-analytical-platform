@@ -6,7 +6,7 @@ consistency, and referential integrity between generation facts and the
 fueltech_groups mapping. Anything red here means
 `make energy-data` produced bad data — fix the fetch, not the layer.
 
-Usage: uv run python scripts/test_energy_data.py  (or `make energy-test`)
+Usage: uv run python scripts/check_energy_data.py  (or `make energy-test`)
 """
 
 from __future__ import annotations
@@ -139,8 +139,7 @@ def main() -> int:
         else:
             detail = rows[0][0] if rows else "no output"
         print(
-            f"  [{'ok' if ok else 'FAIL'}] {label}"
-            + (f" ({detail})" if detail else ""),
+            f"  [{'ok' if ok else 'FAIL'}] {label}" + (f" ({detail})" if detail else ""),
             flush=True,
         )
         if not ok:

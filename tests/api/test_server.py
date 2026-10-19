@@ -65,7 +65,12 @@ def test_refuses_to_start_without_passcode():
 
 
 def test_health_reports_remaining(counter):
-    assert client_for(counter).get("/api/health").json() == {"ok": True, "daily_cap": 2, "remaining": 2, "busy": False}
+    assert client_for(counter).get("/api/health").json() == {
+        "ok": True,
+        "daily_cap": 2,
+        "remaining": 2,
+        "busy": False,
+    }
 
 
 def test_ask_streams_events(counter):
@@ -93,7 +98,9 @@ def test_daily_cap_stops_runs(counter):
 def test_question_validation(counter):
     client = client_for(counter)
     assert client.post("/api/ask", json={"question": " ", "passcode": PASS}).status_code == 400
-    assert client.post("/api/ask", json={"question": "x" * 501, "passcode": PASS}).status_code == 400
+    assert (
+        client.post("/api/ask", json={"question": "x" * 501, "passcode": PASS}).status_code == 400
+    )
     assert counter.values == {}
 
 
@@ -116,6 +123,10 @@ def test_cap_counter_is_per_utc_day_and_expires(counter):
 def test_cors_preflight_allows_the_site(counter):
     resp = client_for(counter).options(
         "/api/ask",
-        headers={"Origin": "https://isaacfrith.github.io", "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type"},
+        headers={
+            "Origin": "https://isaacfrith.github.io",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
     )
     assert resp.status_code == 200

@@ -119,7 +119,11 @@ class TraceRecorder(HookProvider):
     def path(self) -> str:
         """Overall route: the charted step's tool if any; else cube if a cube
         returned rows, else sql, else refused."""
-        ends = [e for e in self.events if e["type"] == "step_end" and e["status"] == "success" and "row_count" in e]
+        ends = [
+            e
+            for e in self.events
+            if e["type"] == "step_end" and e["status"] == "success" and "row_count" in e
+        ]
         charts = [e for e in self.events if e["type"] == "chart"]
         if charts:
             charted = next((e for e in ends if e["step"] == charts[-1]["step"]), None)
@@ -245,7 +249,9 @@ class ChartTools:
         refs = [x, *y, series, map_key, map_metric]
         missing = [c for c in refs if c is not None and c not in columns]
         if missing:
-            raise ValueError(f"Unknown column(s) {missing} for step {target}. Available: {columns}.")
+            raise ValueError(
+                f"Unknown column(s) {missing} for step {target}. Available: {columns}."
+            )
         if kind == "stacked_bar" and series is None:
             raise ValueError("stacked_bar needs a series column.")
         spec = {"kind": kind, "title": title, "x": x, "y": list(y), "series": series}

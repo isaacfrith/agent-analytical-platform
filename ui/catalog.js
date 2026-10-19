@@ -3,7 +3,7 @@
 // Three tiers: topics → cubes/view → models; SVG edges drawn between measured boxes.
 // The diagram has a fixed natural width and is scaled/panned inside the canvas,
 // so the whole model fits any window; edge geometry uses unscaled offsets.
-// Uses globals from app.js: $, el, fmt, state, playReplay, marked, DOMPurify.
+// Uses globals from core.js and app.js: $, el, fmt, state, playReplay; marked and DOMPurify (vendor/).
 
 const TYPE_MARK = { TIMESTAMP: "date", DATE: "date", VARCHAR: "text", BOOLEAN: "y/n", DOUBLE: "num", INTEGER: "num", BIGINT: "num", DECIMAL: "num", REAL: "num" };
 const TIER_ORDER = {

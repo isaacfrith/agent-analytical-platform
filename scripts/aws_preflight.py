@@ -145,9 +145,7 @@ def check_bedrock_invoke(bedrock_runtime: BaseClient, model_id: str) -> bool:
 
     # Guard against a non-text reply (e.g. stop reason hit before any text).
     text_blocks = [
-        block["text"]
-        for block in response["output"]["message"]["content"]
-        if "text" in block
+        block["text"] for block in response["output"]["message"]["content"] if "text" in block
     ]
     if not text_blocks:
         fail_line(

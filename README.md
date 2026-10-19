@@ -1,160 +1,150 @@
 # Agent Analytical Platform
 
-Conversational analytics over an Iceberg lakehouse: a Strands agent answers data questions through a governed WrenAI semantic layer, with Trino execution and Mem0 long-term memory. Inspired by [jaehyeon-kim/agentic-analytics-system](https://github.com/jaehyeon-kim/agentic-analytics-system), adapted for AWS (S3 + Bedrock + Terraform).
+Ask questions about data in plain English and get answers you can trust. An AI agent works through a **governed semantic layer**: it never sees raw tables and never types the numbers itself. WrenAI compiles every query from governed models, metrics and business rules, and Trino runs it over an Iceberg lakehouse on S3.
 
-The LLM never sees raw tables. It reasons over governed models, cubes, and business rules; WrenAI compiles the SQL deterministically.
+![The demo UI: the agent's steps, the answer with its chart, and the map](docs/ui-ask.png)
 
-## Architecture
+Two domains share the platform:
 
-| Component | Technology | Role |
-| --- | --- | --- |
-| Agent | Strands SDK (Bedrock) | Interprets questions, plans tool calls, one fresh agent per question |
-| Semantic layer | WrenAI (MDL) | Governed models, relationships, cubes, business rules; exposes MCP tools |
-| Execution | Trino + Iceberg (Lakekeeper catalog, S3 storage) | Physical query engine over the lakehouse |
-| Memory | Mem0 over Valkey | User preferences persist across sessions |
-| Infra | Terraform (AWS) + Docker Compose (local) | Bucket/IAM provisioned; Postgres, Lakekeeper, Trino, Valkey local |
+- **Energy** (the showcase): 90 days of live Australian electricity data for the east-coast NEM and Western Australia's WEM, from [Open Electricity](https://openelectricity.org.au). It comes with a web demo: recorded runs anyone can replay, a map, and a browsable data model.
+- **Ecommerce**: generated orders, payments and returns. A small, deterministic domain for testing the infrastructure and the agent's memory.
+
+Inspired by [jaehyeon-kim/agentic-analytics-system](https://github.com/jaehyeon-kim/agentic-analytics-system), adapted for AWS (S3, Bedrock, Terraform).
+
+## How it works
 
 ![Architecture](docs/architecture_diagram.png)
 
-## Prerequisites
+| Component | Technology | Role |
+| --- | --- | --- |
+| Agent | Strands SDK on Bedrock | One fresh agent per question; plans tool calls under a turn and token budget |
+| Semantic layer | WrenAI (MDL) | Governed models, joins, cubes (metrics) and business rules, exposed as MCP tools |
+| Execution | Trino + Iceberg (Lakekeeper catalog, S3 storage) | Runs the SQL WrenAI compiles |
+| Memory | Mem0 over Valkey | Optional: user definitions that persist across sessions |
+| Infrastructure | Terraform (AWS) + Docker Compose (local) | S3 bucket and IAM on AWS; Postgres, Lakekeeper, Trino and Valkey locally |
 
-- [uv](https://docs.astral.sh/uv/) with Python 3.12+
-- Docker with compose support
-- AWS credentials under a profile (`~/.aws/credentials`), with Bedrock + S3 access
+The agent's policy is written down in [`prompts/`](prompts): metrics first (cubes), validate SQL before running it, refuse instead of guessing, and say which definition was used when a word is ambiguous. The business rules live in the semantic layer itself ([`wren/knowledge/rules/`](wren/knowledge/rules)).
 
-## Deploy
+## Quick start
 
-Two halves: AWS resources via Terraform, compute locally via Docker.
-
-```bash
-cp .env.example .env   # fill in profile, region, bucket, Bedrock model ID
-make preflight         # verify AWS identity, bucket, Bedrock access
-make infra-init infra-apply   # provision S3 bucket + IAM roles (Terraform)
-make up                # start Postgres, Lakekeeper, Trino, Valkey
-make bootstrap         # create the S3-backed warehouse
-make data pipeline     # generate Faker data -> landing Parquet -> Iceberg tables
-make mdl memory        # compile MDL, index semantic memory
-```
-
-Tear down: `make down` stops the local stack (keeps the Postgres volume, so bootstrap survives restarts); `make infra-destroy` wipes the bucket and all AWS resources.
-
-## Usage
+You need [uv](https://docs.astral.sh/uv/) (Python 3.12+), Docker, and an AWS profile with Bedrock and S3 access.
 
 ```bash
-make ask q="What was daily gross revenue over the last 7 days?"
-make ask-mem q="Show me high-value orders from last week."   # memory-enabled
-make memory-check      # dump stored preferences
-make wren-query q="SELECT COUNT(*) FROM orders"              # query WrenAI directly
+cp .env.example .env              # AWS profile, region, bucket, Bedrock model, Open Electricity key
+make preflight                    # check AWS identity, bucket and Bedrock access
+make infra-init infra-apply       # create the S3 bucket and IAM roles (Terraform)
+make up                           # start Postgres, Lakekeeper, Trino and Valkey
+make bootstrap                    # one-time: create the S3-backed warehouse
+make energy-data                  # load the energy data (needs OPENELECTRICITY_API_KEY)
+make data pipeline                # load the ecommerce data
+make mdl memory                   # compile the semantic layer and index it
 ```
 
-Teach it a rule (rebuilds + reindexes in one step):
+`make help` lists every target. `make down` stops the local stack (data survives); `make infra-destroy` deletes the AWS resources, including the bucket.
+
+## Try it
+
+Every answer prints to stdout, and the agent's trace to stderr: one `Tool #N:` line per step, then a `[budget]` line. The trace is where you see the governance working.
 
 ```bash
-make refresh rule="When asked for refunds by status, always use return_status from returned_orders." title="Refunds by Status"
+make ask q="What share of NSW generation was renewable over the last 30 days?"
 ```
 
-Check the layer without the agent (fast, deterministic, no LLM):
+| Question | What to watch for |
+| --- | --- |
+| What share of NSW generation was renewable over the last 30 days? | One `query_cube` call on `renewable_share`, using the governed share measure |
+| On the highest-price day in the last 30 days, which fuel types generated the most? | A two-step question answered with a single SQL query |
+| Show me operating coal capacity by state. | Capacity in MW from the registry; "coal" includes Victoria's brown coal |
+| Show me generation by unit efficiency. | A refusal: no such data, so it says so instead of inventing a metric |
+| How many orders are there in total? | No metric fits, so it validates SQL (`dry_run`) and then runs it (30,000) |
+| Show me orders by status. | `status` exists on two tables, so it states which one it used |
+
+Domain flags and memory:
 
 ```bash
-make mdl-test
+uv run python scripts/ask.py --domain energy "Compare emissions for NSW and WA last week"
+make ask-mem q="Remember: high-value orders means total_amount greater than 1000."
+make ask-mem q="Show me high-value orders from last week."     # a fresh agent recalls it
+make memory-check
 ```
 
-Run the eval suite (8 cases: cube routing, ambiguity, refusals, memory lifecycle):
+Teach the semantic layer a new rule (rebuilds and reindexes in one step):
 
 ```bash
-make evals
+make refresh rule="Refunds by status always use return_status from returned_orders." title="Refunds by Status"
 ```
 
-## Learn it (guided tour)
+## The demo UI
 
-![Query flow](docs/query_flow_diagram.png)
+A static site in [`ui/`](ui), published to GitHub Pages on every push to `main`.
 
-Every `ask` prints the answer on stdout and the agent's trace on stderr: `Tool #N:` lines show each step, `[budget]` shows turns/tokens. Watch the trace — it's where the learning happens.
+- **Ask.** Seven demo questions replay recorded runs, free to view and identical every time. Each one shows the agent's steps (labelled governed cube, SQL fallback or refused), the SQL WrenAI compiled, a chart drawn only from rows the semantic layer returned, and a map that recolours by region or highlights power stations.
+- **What's in the data.** The governed model as a diagram: topics, cubes, the pre-joined view and the tables, with every column and join. Click a topic to light up exactly which columns its questions use; hover a column for its meaning and real values.
 
-1. **Health check, no LLM:** `make mdl-test` — 14 checks prove models, joins, cubes, and seed queries all resolve. If this is red, don't bother asking the agent anything.
-2. **Governed metric:** `make ask q="What was daily gross revenue over the last 7 days?"` — trace should show `query_cube` on `daily_revenue`. The agent never wrote `GROUP BY`; WrenAI compiled it.
-3. **Fallback path:** `make ask q="How many orders are there in total?"` — no cube covers this, so watch it switch to `dry_run` then `run_sql` (answer: 30,000).
-4. **Refusal:** `make ask q="Show me returns by return_reason."` — `return_reason` names no column. A good answer names the unknown identifier and offers the closest real one (`reason`) instead of hallucinating.
-5. **Memory:** `make ask-mem q="Remember: high-value orders means total_amount greater than 1000."` then `make ask-mem q="Show me high-value orders from last week."` then `make memory-check` — the definition persists across the two fresh agents via Valkey.
-6. **One eval case:** `uv run python evaluations/run_evals.py --tests ambiguous_status` — see how `golden_suite.json` pins behaviour and `run_evals.py` grades it.
-7. **Read the prompt:** `src/agent/orchestrator.py:43-69` — the whole agent policy (cube-first, dry-run-before-execute, refusal, disambiguation) fits on one screen. Every trace you watched above is this prompt playing out.
-
-## Layout
-
-- `src/agent/` — orchestrator (system prompt, budgets) and memory tools
-- `src/repo_config.py` — shared setup: paths, env validation, Valkey namespace, wren runner
-- `scripts/` — `ask.py`, pipeline, bootstrap, `refresh_semantics.py`, `test_semantics.py`
-- `scripts/fetch_energy_data.py` + `test_energy_data.py` — energy pipeline and its gate
-- `wren/` — MDL project: `models/`, `cubes/`, `relationships.yml`, `knowledge/` (rules, seed SQL)
-- `evaluations/` — golden suite + harness (`run_evals.py`)
-- `terraform/` — S3 bucket, IAM roles
-- `docker/` — local lakehouse stack
-
-## Energy domain (showcase)
-
-Live data for both markets the [Open Electricity API](https://openelectricity.org.au)
-covers — the east-coast NEM (five regions) and WA's WEM (south-west WA, one
-region; a separate, unconnected market). Every fact row carries `network`
-(NEM|WEM). The Northern Territory has no public market data and is not covered.
-It needs a free key in `.env` (`OPENELECTRICITY_API_KEY`; data licenced
-CC BY-NC 4.0) and sits beside ecommerce in a separate `energy` namespace —
-same warehouse, nothing existing moves.
+![The data model tab with the Renewables topic traced](docs/ui-data.png)
 
 ```bash
-make energy-data   # fetch 90 daily days → landing Parquet → energy.* tables
-make energy-test   # 15 data-invariant checks against Trino (counts, 90-day
-                   # coverage per network, key uniqueness, network/region
-                   # consistency, fueltech mapping, locations, recency)
+make demo-serve     # view locally at http://localhost:8765 (serve it; don't open the file directly)
+make demo-record    # re-record the questions, map and data catalog (~$1 of Bedrock)
+make demo-live      # live questions from this laptop through a Cloudflare quick tunnel
 ```
+
+Commit `ui/data/` after recording to publish it. Live mode needs `DEMO_PASSCODE` in `.env` and `brew install cloudflared`, and is capped at 30 questions a day. The design and its decisions are in [`docs/energy-ui.md`](docs/energy-ui.md); a presenter script for the CLI is in [`demos/energy.md`](demos/energy.md).
+
+## The data
+
+**Energy** (`energy` namespace, refreshed with `make energy-data`). Every fact row carries `network`: the NEM and the WEM are separate, unconnected markets, so "the NEM" never includes WA. The Northern Territory has no public market data and is not covered. Data from Open Electricity, licensed [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
 
 | Table | Rows | Grain |
 | --- | --- | --- |
-| `energy.facilities` | ~1,140 | unit (site columns + latitude/longitude carried; statuses include operating, committed, commissioning, retired) |
-| `energy.generation_daily` | ~5,940 | region × fueltech × day (energy MWh, emissions tCO2e, market value AUD; battery negatives = charging) |
-| `energy.market_daily` | 540 | region × day, 6 regions (price AUD/MWh, demand MW, demand energy MWh) |
-| `energy.fueltech_groups` | 29 | static mapping: fueltech → group + governed `is_renewable` flag |
+| `facilities` | ~1,140 | Generating unit: fuel, status, registered capacity (MW), location |
+| `generation_daily` | ~5,940 | Region × fuel × day: energy (MWh), emissions (tCO2e), market value (AUD) |
+| `market_daily` | 540 | Region × day, 6 regions: spot price (AUD/MWh), demand |
+| `fueltech_groups` | 29 | Governed mapping: fuel tech → fuel group and the `is_renewable` flag |
 
-## Visual demo (energy UI)
+Three cubes sit on top: `daily_generation`, `daily_price` and `renewable_share`.
 
-A three-pane web page — agent steps | answer + chart | NEM map — in `ui/`,
-published to GitHub Pages. Demo questions replay recorded runs ($0 per
-view); free-text questions go live from this laptop, passcode-gated.
+**Ecommerce** (`ecommerce` namespace, `make data pipeline`): generated customers, products, orders (30,000), order items, payments and returns, with the `daily_revenue`, `product_performance` and `refunds_cube` cubes.
 
-```bash
-make demo-record   # re-run the six chips (~$1 Bedrock) + map snapshot → ui/data/
-make demo-serve    # view locally at http://localhost:8765
-make demo-live     # live mode: API + Cloudflare quick tunnel, prints the share link
-```
-
-Commit `ui/data/` after recording; pushing to `main` deploys the site. Live
-mode needs `DEMO_PASSCODE` in `.env` and `brew install cloudflared`. Design
-and decisions: `demos/energy-ui-plan.md`. Presenter script for the CLI:
-`demos/energy.md`.
-
-## Scope
-
-Single-user local proof of concept: destructive data reloads, one fixed memory user, agent holds `run_sql`, secrets in `.env`. See upstream's [PRODUCTION_CONSIDERATIONS.md](https://github.com/jaehyeon-kim/agentic-analytics-system/blob/main/PRODUCTION_CONSIDERATIONS.md) for what production would take.
-
-## Demo (play around)
+## Quality
 
 ```bash
-# Governed metric — watch the trace use query_cube, no hand-written SQL
-make ask q="What was daily gross revenue over the last 7 days?"
-
-# Raw SQL fallback — no cube covers this, so dry_run then run_sql
-make ask q="How many orders are there in total?"
-
-# Multi-table reasoning through the product_performance cube
-make ask q="Which product category brings in the most revenue?"
-
-# Ambiguity — status lives on two tables; watch it qualify which one
-make ask q="Show me orders by status."
-
-# Refusal — return_reason names no column; it should offer reason instead
-make ask q="Show me returns by return_reason."
-
-# Memory — teach once, use across fresh agents
-make ask-mem q="Remember: high-value orders means total_amount greater than 1000."
-make ask-mem q="Show me high-value orders from last week."
-make memory-check
+make test           # unit tests (no services needed)
+make lint           # ruff lint and format check
+make mdl-test       # 24 checks on the semantic layer: models, joins, cubes, example queries (no LLM)
+make energy-test    # 15 checks on the energy data: coverage, keys, networks, locations (no LLM)
+make evals          # 16 cases against the real agent (~30-45 min)
 ```
+
+The eval suite ([`evaluations/golden_suite.json`](evaluations/golden_suite.json)) covers cube routing, semantic-model questions, refusals and the memory lifecycle. A judge model grades open-ended answers against a rubric. Run one case with `uv run python evaluations/run_evals.py --tests energy_cube_time_window`.
+
+## Project layout
+
+```
+src/
+  agent/          the agent: orchestrator, cube tool, trace events for the UI, memory tools
+  api/            live mode for the demo UI (passcode, daily cap, server-sent events)
+  demo/           builds the UI's data catalog from the compiled semantic layer
+  memory/         the Memory store over Mem0 and Valkey
+  config.py       runtime configuration from the environment
+  repo_config.py  repo paths and helpers shared by the scripts
+scripts/          entry points: ask, data loading, checks, demo recording and live mode
+prompts/          the agent's policy: base rules plus one block per domain
+wren/             the semantic layer: models, views, cubes, joins, rules, example queries
+ui/               the static demo site (data/ holds the recordings and catalog)
+evaluations/      the eval suite and its harness
+tests/            unit tests
+demos/            the CLI presenter script and the UI's curated topics
+docs/             diagrams, screenshots and the UI design notes
+docker/           the local lakehouse stack
+terraform/        AWS resources
+```
+
+## Scope and known limitations
+
+A single-user local proof of concept: data reloads are destructive, memory has one fixed user, the agent can run SQL, and secrets live in `.env`. See upstream's [PRODUCTION_CONSIDERATIONS.md](https://github.com/jaehyeon-kim/agentic-analytics-system/blob/main/PRODUCTION_CONSIDERATIONS.md) for what production would take.
+
+Two workarounds for WrenAI 0.15/0.16, both worth retiring when fixed upstream:
+
+- **Cube time windows.** Wren compiles cube date filters to untyped text, which Trino rejects. The agent's `query_cube` ([`src/agent/cube_query.py`](src/agent/cube_query.py)) types those literals before running the query.
+- **Row order.** Wren's `run_sql` can return rows out of `ORDER BY` order (the right rows, unsorted). Charts and answers re-sort, so nothing user-facing depends on it.

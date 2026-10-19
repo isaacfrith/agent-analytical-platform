@@ -13,7 +13,7 @@ The stack (`make up`) and infra must already be running. Then:
 ```bash
 make preflight      # AWS identity, bucket, Bedrock access
 make energy-data    # refresh the 90-day window (data ends yesterday)
-make energy-test    # 11 data checks against Trino
+make energy-test    # 15 data checks against Trino
 make mdl-test       # semantic layer health, no LLM
 ```
 

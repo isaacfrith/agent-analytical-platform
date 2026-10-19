@@ -165,10 +165,7 @@ def fetch_all() -> dict[str, tuple]:
     print(f"window: {start} .. {end} ({', '.join(NETWORKS)}, daily)")
 
     with OEClient() as client:
-        return {
-            network: fetch_network(client, network, start_dt, end_dt)
-            for network in NETWORKS
-        }
+        return {network: fetch_network(client, network, start_dt, end_dt) for network in NETWORKS}
 
 
 def fetch_network(client, network: str, start_dt: datetime, end_dt: datetime) -> tuple:
@@ -318,15 +315,11 @@ def main() -> int:
         ]
 
     tables = {
-        "energy_facilities": to_arrow(
-            tagged(flatten_facilities, 0), SCHEMAS["facilities"]
-        ),
+        "energy_facilities": to_arrow(tagged(flatten_facilities, 0), SCHEMAS["facilities"]),
         "energy_generation_daily": to_arrow(
             tagged(flatten_generation, 1), SCHEMAS["generation_daily"]
         ),
-        "energy_market_daily": to_arrow(
-            tagged(flatten_market, 2), SCHEMAS["market_daily"]
-        ),
+        "energy_market_daily": to_arrow(tagged(flatten_market, 2), SCHEMAS["market_daily"]),
         "energy_fueltech_groups": to_arrow(
             [
                 {
@@ -358,9 +351,7 @@ def main() -> int:
 
     # Full reload every run (agreed): purge + recreate, never append.
     for landing, table_name in TABLES.items():
-        arrow_table = pq.read_table(
-            f"{bucket}/landing/{landing}/part-0.parquet", filesystem=s3
-        )
+        arrow_table = pq.read_table(f"{bucket}/landing/{landing}/part-0.parquet", filesystem=s3)
         try:
             catalog.purge_table(f"energy.{table_name}")
         except NoSuchTableError:

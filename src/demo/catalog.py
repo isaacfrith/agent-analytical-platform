@@ -33,7 +33,9 @@ def expr_columns(expression: str) -> set[str]:
 
 def energy_subset(mdl: dict) -> dict:
     """Models in the energy schema, plus the views, cubes and joins over them only."""
-    models = [m for m in mdl.get("models") or [] if m.get("tableReference", {}).get("schema") == SCHEMA]
+    models = [
+        m for m in mdl.get("models") or [] if m.get("tableReference", {}).get("schema") == SCHEMA
+    ]
     names = {m["name"] for m in models}
     views = [v for v in mdl.get("views") or [] if _view_sources(v) and _view_sources(v) <= names]
     objects = names | {v["name"] for v in views}
@@ -92,20 +94,30 @@ def validate_topics(topics: dict, subset: dict, seeds: dict[str, dict]) -> None:
                     problems.append(f"{where}: no energy cube {use['cube']!r}")
                     continue
                 known = {m["name"] for m in cube["measures"]}
-                problems += [f"{where}: cube {use['cube']} has no measure {m!r}" for m in use.get("measures") or [] if m not in known]
+                problems += [
+                    f"{where}: cube {use['cube']} has no measure {m!r}"
+                    for m in use.get("measures") or []
+                    if m not in known
+                ]
             elif "model" in use:
                 cols = models.get(use["model"])
                 if cols is None:
                     problems.append(f"{where}: no energy model {use['model']!r}")
                     continue
-                problems += [f"{where}: model {use['model']} has no column {c!r}" for c in use.get("columns") or [] if c not in cols]
+                problems += [
+                    f"{where}: model {use['model']} has no column {c!r}"
+                    for c in use.get("columns") or []
+                    if c not in cols
+                ]
             else:
                 problems.append(f"{where}: a use needs 'cube' or 'model'")
         for ex in topic.get("examples") or []:
             if ex.get("seed") and ex["seed"] not in seeds:
                 problems.append(f"{where}: no seed query {ex['seed']!r} in wren/knowledge/sql/")
     if problems:
-        raise ValueError("Topics file doesn't match the semantic model:\n  " + "\n  ".join(problems))
+        raise ValueError(
+            "Topics file doesn't match the semantic model:\n  " + "\n  ".join(problems)
+        )
 
 
 def topic_path(topic: dict, subset: dict) -> dict:
@@ -205,25 +217,44 @@ def build_catalog(
         outputs, _ = view_lineage(v)
         cols = []
         for out, (model, mcol) in outputs.items():
-            source = next((c for c in _model_columns(model_index[model]) if c["name"] == mcol), {"name": mcol, "type": "?"})
+            source = next(
+                (c for c in _model_columns(model_index[model]) if c["name"] == mcol),
+                {"name": mcol, "type": "?"},
+            )
             cols.append({**column_entry(model, source), "name": out, "source": f"{model}.{mcol}"})
-        views.append({
-            "id": node_id("view", v["name"]),
-            "name": v["name"],
-            "description": (v.get("properties") or {}).get("description", ""),
-            "sources": sorted(_view_sources(v)),
-            "columns": cols,
-        })
+        views.append(
+            {
+                "id": node_id("view", v["name"]),
+                "name": v["name"],
+                "description": (v.get("properties") or {}).get("description", ""),
+                "sources": sorted(_view_sources(v)),
+                "columns": cols,
+            }
+        )
     cubes = [
         {
             "id": node_id("cube", c["name"]),
             "name": c["name"],
-            "base": node_id("view" if c["baseObject"] in {v["name"] for v in subset["views"]} else "model", c["baseObject"]),
+            "base": node_id(
+                "view" if c["baseObject"] in {v["name"] for v in subset["views"]} else "model",
+                c["baseObject"],
+            ),
             "description": (c.get("properties") or {}).get("description", ""),
-            "measures": [{"name": m["name"], "kind": "measure", "type": m["type"], "expression": m["expression"]} for m in c["measures"]],
+            "measures": [
+                {
+                    "name": m["name"],
+                    "kind": "measure",
+                    "type": m["type"],
+                    "expression": m["expression"],
+                }
+                for m in c["measures"]
+            ],
             "dimensions": [
                 {"name": d["name"], "kind": kind, "type": d["type"], "expression": d["expression"]}
-                for kind, group in (("dimension", c.get("dimensions") or []), ("time", c.get("timeDimensions") or []))
+                for kind, group in (
+                    ("dimension", c.get("dimensions") or []),
+                    ("time", c.get("timeDimensions") or []),
+                )
                 for d in group
             ],
         }
@@ -235,7 +266,12 @@ def build_catalog(
             "type": r.get("joinType"),
             "condition": r["condition"],
             "keys": [
-                {"from": node_id("model", a), "from_col": ac, "to": node_id("model", b), "to_col": bc}
+                {
+                    "from": node_id("model", a),
+                    "from_col": ac,
+                    "to": node_id("model", b),
+                    "to_col": bc,
+                }
                 for a, ac, b, bc in relationship_keys(r)
             ],
         }
@@ -251,14 +287,16 @@ def build_catalog(
             if ex.get("seed"):
                 item["sql"] = seeds[ex["seed"]]["sql"].strip()
             examples.append(item)
-        out_topics.append({
-            "id": node_id("topic", t["id"]),
-            "name": t["name"],
-            "summary": t["summary"],
-            "limits": t.get("limits") or [],
-            "examples": examples,
-            "path": topic_path(t, subset),
-        })
+        out_topics.append(
+            {
+                "id": node_id("topic", t["id"]),
+                "name": t["name"],
+                "summary": t["summary"],
+                "limits": t.get("limits") or [],
+                "examples": examples,
+                "path": topic_path(t, subset),
+            }
+        )
     return {
         "recorded_at": recorded_at,
         "limits": topics.get("limits") or [],
@@ -291,7 +329,11 @@ def parse_stats(model: dict, row: dict) -> dict:
             key = f"{c['name']}__{bound}"
             if row.get(key) is not None:
                 value = row[key]
-                entry[bound] = value[:10] if isinstance(value, str) and c["type"].upper() in ("TIMESTAMP", "DATE") else value
+                entry[bound] = (
+                    value[:10]
+                    if isinstance(value, str) and c["type"].upper() in ("TIMESTAMP", "DATE")
+                    else value
+                )
         columns[c["name"]] = entry
     return {"rows": row.get("__rows"), "columns": columns}
 

@@ -37,3 +37,7 @@ addopts = "-m 'not integration'"
 markers = [
     "integration: needs `make up` (Valkey) and AWS credentials; run via make test-integration",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

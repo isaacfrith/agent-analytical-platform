@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import yaml
 
-from agent.orchestrator import _wren_mcp_tools, answer_question
+from agent.orchestrator import answer_question, wren_mcp_tools
 from agent.trace import parse_rows
 from demo.catalog import (
     build_catalog,
@@ -41,12 +41,32 @@ REPLAY_DIR = DATA_DIR / "replays"
 
 # (id, chip label, question). Order is the order the chips appear in the UI.
 CHIPS: list[tuple[str, str, str]] = [
-    ("renewable_share_nsw", "Renewable share, NSW", "What share of NSW generation was renewable over the last 30 days?"),
-    ("price_by_region", "Spot price by region", "What was the average spot price by region over the last 30 days?"),
-    ("price_spike_fuel_mix", "Fuel mix on the price spike", "On the highest-price day in the last 30 days, which fuel types generated the most?"),
+    (
+        "renewable_share_nsw",
+        "Renewable share, NSW",
+        "What share of NSW generation was renewable over the last 30 days?",
+    ),
+    (
+        "price_by_region",
+        "Spot price by region",
+        "What was the average spot price by region over the last 30 days?",
+    ),
+    (
+        "price_spike_fuel_mix",
+        "Fuel mix on the price spike",
+        "On the highest-price day in the last 30 days, which fuel types generated the most?",
+    ),
     ("coal_capacity", "Coal capacity by state", "Show me operating coal capacity by state."),
-    ("wa_vs_nem", "WA vs the east coast", "How does WA's renewable share compare with each NEM region over the last 30 days?"),
-    ("largest_wind_solar", "Largest wind & solar farms", "Which are the 15 largest operating wind and solar facilities by registered capacity?"),
+    (
+        "wa_vs_nem",
+        "WA vs the east coast",
+        "How does WA's renewable share compare with each NEM region over the last 30 days?",
+    ),
+    (
+        "largest_wind_solar",
+        "Largest wind & solar farms",
+        "Which are the 15 largest operating wind and solar facilities by registered capacity?",
+    ),
     ("refuse_efficiency", "Generation by efficiency", "Show me generation by unit efficiency."),
 ]
 
@@ -81,11 +101,13 @@ def write_json(path: Path, payload: object) -> None:
 
 def record_overview(recorded_at: str) -> dict:
     out: dict = {"recorded_at": recorded_at}
-    with _wren_mcp_tools() as tools:
+    with wren_mcp_tools() as tools:
         run_sql = next(t for t in tools if t.tool_name == "run_sql")
         for key, sql in OVERVIEW_SQL.items():
             result = run_sql.mcp_client.call_tool_sync(
-                tool_use_id=f"overview-{key}", name="run_sql", arguments={"sql": sql, "limit": 10000}
+                tool_use_id=f"overview-{key}",
+                name="run_sql",
+                arguments={"sql": sql, "limit": 10000},
             )
             data = parse_rows(result)
             if data is None:
@@ -93,7 +115,9 @@ def record_overview(recorded_at: str) -> dict:
             out[key] = data["rows"]
     out["window"] = out["window"][0]
     write_json(DATA_DIR / "overview.json", out)
-    print(f"[PASS] overview: {len(out['facilities'])} facility rows, {len(out['regions'])} regions, window {out['window']}")
+    print(
+        f"[PASS] overview: {len(out['facilities'])} facility rows, {len(out['regions'])} regions, window {out['window']}"
+    )
     return out
 
 
@@ -112,12 +136,14 @@ def load_seeds() -> dict[str, dict]:
 
 def record_catalog(recorded_at: str) -> dict:
     """ui/data/model.json: the governed model, its stats, and the curated topics."""
-    with _wren_mcp_tools() as tools:
+    with wren_mcp_tools() as tools:
         by_name = {t.tool_name: t for t in tools}
         client = by_name["run_sql"].mcp_client
 
         def call(name: str, arguments: dict) -> str:
-            result = client.call_tool_sync(tool_use_id=f"catalog-{name}", name=name, arguments=arguments)
+            result = client.call_tool_sync(
+                tool_use_id=f"catalog-{name}", name=name, arguments=arguments
+            )
             if result.get("status") != "success":
                 raise RuntimeError(f"{name} failed: {str(result)[:500]}")
             return "\n".join(b.get("text", "") for b in result.get("content") or [])
@@ -128,8 +154,15 @@ def record_catalog(recorded_at: str) -> dict:
             rows = json.loads(call("run_sql", {"sql": stats_sql(model)}))["rows"]
             stats[model["name"]] = parse_stats(model, rows[0])
             for col in low_cardinality_columns(model, stats[model["name"]]):
-                values = json.loads(call("run_sql", {"sql": f"SELECT DISTINCT {col} AS v FROM {model['name']}", "limit": 100}))["rows"]
-                stats[model["name"]]["columns"][col]["values"] = sorted(str(r["v"]) for r in values if r["v"] is not None)
+                values = json.loads(
+                    call(
+                        "run_sql",
+                        {"sql": f"SELECT DISTINCT {col} AS v FROM {model['name']}", "limit": 100},
+                    )
+                )["rows"]
+                stats[model["name"]]["columns"][col]["values"] = sorted(
+                    str(r["v"]) for r in values if r["v"] is not None
+                )
     catalog = build_catalog(
         mdl,
         yaml.safe_load(TOPICS_FILE.read_text()),
@@ -141,15 +174,25 @@ def record_catalog(recorded_at: str) -> dict:
     )
     write_json(DATA_DIR / "model.json", catalog)
     columns = sum(len(m["columns"]) for m in catalog["models"])
-    print(f"[PASS] catalog: {len(catalog['topics'])} topics, {len(catalog['cubes'])} cubes, {len(catalog['models'])} models, {columns} columns")
+    print(
+        f"[PASS] catalog: {len(catalog['topics'])} topics, {len(catalog['cubes'])} cubes, {len(catalog['models'])} models, {columns} columns"
+    )
     return catalog
 
 
-def record_chip(chip_id: str, label: str, question: str, recorded_at: str, window: dict | None) -> dict:
+def record_chip(
+    chip_id: str, label: str, question: str, recorded_at: str, window: dict | None
+) -> dict:
     events: list[dict] = []
     status = "ok"
     try:
-        answer_question(question, user_id="demo-record", use_memory=False, domains=("energy",), on_event=events.append)
+        answer_question(
+            question,
+            user_id="demo-record",
+            use_memory=False,
+            domains=("energy",),
+            on_event=events.append,
+        )
     except Exception as e:  # noqa: BLE001 — the error event is already in the stream; keep the file for inspection
         status = f"error: {e}"
     replay = {
@@ -168,15 +211,23 @@ def record_chip(chip_id: str, label: str, question: str, recorded_at: str, windo
         f"turns={answer.get('turns', '?')} tokens={answer.get('tokens', '?')} charts={charts}"
         + ("" if status == "ok" else f" ({status})")
     )
-    return {"id": chip_id, "label": label, "question": question, "recorded_at": recorded_at,
-            "path": answer.get("path"), "ok": status == "ok"}
+    return {
+        "id": chip_id,
+        "label": label,
+        "question": question,
+        "recorded_at": recorded_at,
+        "path": answer.get("path"),
+        "ok": status == "ok",
+    }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--only", default="", help="comma-separated chip ids to re-record")
     parser.add_argument("--overview-only", action="store_true")
-    parser.add_argument("--catalog-only", action="store_true", help="only the data catalog (no LLM)")
+    parser.add_argument(
+        "--catalog-only", action="store_true", help="only the data catalog (no LLM)"
+    )
     args = parser.parse_args()
     load_env()
 
@@ -195,7 +246,11 @@ def main() -> int:
         return 2
 
     index_path = REPLAY_DIR / "index.json"
-    previous = {c["id"]: c for c in json.loads(index_path.read_text())["chips"]} if index_path.exists() else {}
+    previous = (
+        {c["id"]: c for c in json.loads(index_path.read_text())["chips"]}
+        if index_path.exists()
+        else {}
+    )
     results = []
     for chip_id, label, question in CHIPS:
         if only and chip_id not in only:
@@ -205,7 +260,9 @@ def main() -> int:
         results.append(record_chip(chip_id, label, question, recorded_at, overview["window"]))
     write_json(index_path, {"chips": results})
     failed = [r["id"] for r in results if not r.get("ok")]
-    print(f"{len(results) - len(failed)}/{len(results)} replays ok → {REPLAY_DIR.relative_to(REPO_ROOT)}")
+    print(
+        f"{len(results) - len(failed)}/{len(results)} replays ok → {REPLAY_DIR.relative_to(REPO_ROOT)}"
+    )
     return 1 if failed else 0
 
 

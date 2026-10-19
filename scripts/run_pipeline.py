@@ -118,9 +118,7 @@ SCHEMAS: dict[str, Schema] = {
 # Only orders is partitioned. source_id 3 = created_at in the orders schema.
 PARTITION_SPECS: dict[str, PartitionSpec | None] = {
     "orders": PartitionSpec(
-        PartitionField(
-            source_id=3, field_id=1000, transform=DayTransform(), name="created_at_day"
-        ),
+        PartitionField(source_id=3, field_id=1000, transform=DayTransform(), name="created_at_day"),
         spec_id=0,
     ),
 }
@@ -149,7 +147,9 @@ def main() -> int:
     # the REST prefix (same role iceberg.rest-catalog.warehouse plays for Trino).
     catalog = load_catalog(
         "dev",
-        type="rest", uri=f"{os.environ['LAKEKEEPER_URI'].rstrip('/')}/catalog", warehouse=os.environ["ICEBERG_WAREHOUSE"],
+        type="rest",
+        uri=f"{os.environ['LAKEKEEPER_URI'].rstrip('/')}/catalog",
+        warehouse=os.environ["ICEBERG_WAREHOUSE"],
     )
 
     try:
@@ -161,9 +161,7 @@ def main() -> int:
 
     s3 = pa_fs.S3FileSystem(region=os.environ["AWS_REGION"])
     for name in TABLES:
-        arrow_table = pq.read_table(
-            f"{bucket}/landing/{name}/part-0.parquet", filesystem=s3
-        )
+        arrow_table = pq.read_table(f"{bucket}/landing/{name}/part-0.parquet", filesystem=s3)
         try:
             # partition_spec=None crashes PyIceberg's REST client (it
             # dereferences the spec to assign fresh IDs), so unpartitioned
@@ -173,9 +171,7 @@ def main() -> int:
                     f"ecommerce.{name}", schema=SCHEMAS[name], partition_spec=spec
                 )
             else:
-                table = catalog.create_table(
-                    f"ecommerce.{name}", schema=SCHEMAS[name]
-                )
+                table = catalog.create_table(f"ecommerce.{name}", schema=SCHEMAS[name])
         except TableAlreadyExistsError:
             # Resume, don't fail: append() commits atomically (one snapshot),
             # so a non-empty table is a completed table. An empty one means a
@@ -183,10 +179,7 @@ def main() -> int:
             table = catalog.load_table(f"ecommerce.{name}")
             existing = table.scan().to_arrow().num_rows
             if existing > 0:
-                pass_line(
-                    f"table: ecommerce.{name} already holds {existing} rows "
-                    "(skipping)"
-                )
+                pass_line(f"table: ecommerce.{name} already holds {existing} rows (skipping)")
                 continue
         table.append(arrow_table)
         # Read-back through the catalog proves the write committed and the

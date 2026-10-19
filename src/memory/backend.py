@@ -47,7 +47,7 @@ LIST_LIMIT = 1000  # mem0's get_all defaults to 20 — far too few for an oracle
 # deterministically, whenever there is no prior conversation to imply it.
 SAVE_INSTRUCTIONS = (
     "Every new message is the user explicitly asking you to remember it. "
-    "Treat definitions (\"X means Y\") and preferences as the user's own and "
+    'Treat definitions ("X means Y") and preferences as the user\'s own and '
     "always extract them as memories."
 )
 
@@ -130,19 +130,13 @@ class Mem0ValkeyBackend:
         )
 
     def add(self, text: str, user_id: str) -> list[dict[str, Any]]:
-        return _as_list(
-            self._mem0.add([{"role": "user", "content": text}], user_id=user_id)
-        )
+        return _as_list(self._mem0.add([{"role": "user", "content": text}], user_id=user_id))
 
     def search(self, query: str, user_id: str, top_k: int) -> list[dict[str, Any]]:
-        return _as_list(
-            self._mem0.search(query, filters={"user_id": user_id}, top_k=top_k)
-        )
+        return _as_list(self._mem0.search(query, filters={"user_id": user_id}, top_k=top_k))
 
     def list(self, user_id: str) -> list[dict[str, Any]]:
-        return _as_list(
-            self._mem0.get_all(filters={"user_id": user_id}, top_k=LIST_LIMIT)
-        )
+        return _as_list(self._mem0.get_all(filters={"user_id": user_id}, top_k=LIST_LIMIT))
 
     def delete(self, record_id: str) -> None:
         self._mem0.delete(record_id)

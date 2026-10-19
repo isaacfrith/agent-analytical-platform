@@ -35,7 +35,9 @@ def test_save_reports_a_stored_write(tools: MemoryTools):
     )
 
 
-def test_empty_save_hands_the_agent_the_rival_recovery_path(tools: MemoryTools, backend: FakeBackend):
+def test_empty_save_hands_the_agent_the_rival_recovery_path(
+    tools: MemoryTools, backend: FakeBackend
+):
     backend.extract_nothing = True
 
     out = tools.save_user_preference("I prefer AUD")

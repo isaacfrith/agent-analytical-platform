@@ -125,7 +125,9 @@ class CubeQueryTool:
         return self._time
 
     def _call(self, name: str, arguments: dict) -> dict:
-        result = self._client.call_tool_sync(tool_use_id=f"cube-{name}", name=name, arguments=arguments)
+        result = self._client.call_tool_sync(
+            tool_use_id=f"cube-{name}", name=name, arguments=arguments
+        )
         if result.get("status") != "success":
             raise ValueError(_result_text(result) or f"{name} failed")
         return result
@@ -155,7 +157,9 @@ class CubeQueryTool:
             "offset": offset,
             "sql_only": True,
         }
-        payload = json.loads(_result_text(self._call("query_cube", {k: v for k, v in args.items() if v is not None})))
+        payload = json.loads(
+            _result_text(self._call("query_cube", {k: v for k, v in args.items() if v is not None}))
+        )
         return type_time_literals(payload["sql"], time_columns)
 
     def as_list(self) -> list:

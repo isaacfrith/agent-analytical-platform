@@ -39,6 +39,4 @@ __all__ = [
 
 def build_memory_store(config: Config) -> MemoryStore:
     """The production Memory store for config.memory's user and collection."""
-    return MemoryStore(
-        Mem0ValkeyBackend(config.memory, config.aws), user_id=config.memory.user_id
-    )
+    return MemoryStore(Mem0ValkeyBackend(config.memory, config.aws), user_id=config.memory.user_id)
