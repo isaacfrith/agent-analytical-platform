@@ -1,0 +1,316 @@
+{
+ "id": "coal_share_nem",
+ "topic": "generation",
+ "question": "What share of NEM generation came from coal over the last 30 days?",
+ "recorded_at": "2026-10-19T21:39:56Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "What share of NEM generation came from coal over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.214,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.214,
+   "text": "I'll help you find the share of NEM generation from coal over the last 30 days. Let me start by checking the business rules and then query the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.216,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.228,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 12
+  },
+  {
+   "type": "usage",
+   "t": 3.527,
+   "turns": 2,
+   "tokens": 5153
+  },
+  {
+   "type": "reasoning",
+   "t": 3.527,
+   "text": "Good, I have the business rules. Now let me query the coal generation share for the NEM over the last 30 days. I'll use the daily_generation cube to get the total generation and coal generation separately, then calculate the share."
+  },
+  {
+   "type": "step_start",
+   "t": 3.528,
+   "step": 2,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "energy_mwh"
+    ],
+    "filters": [
+     "network:eq:NEM"
+    ]
+   }
+  },
+  {
+   "type": "step_start",
+   "t": 3.529,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "energy_mwh"
+    ],
+    "filters": [
+     "network:eq:NEM",
+     "fueltech_group:eq:coal"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 3.663,
+   "step": 2,
+   "tool": "query_cube",
+   "status": "error",
+   "path": "cube",
+   "duration_ms": 84,
+   "error": "Error: Error executing tool query_cube: Error during planning: Unknown measure 'energy_mwh' in cube 'daily_generation'"
+  },
+  {
+   "type": "step_end",
+   "t": 3.68,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "error",
+   "path": "cube",
+   "duration_ms": 134,
+   "error": "Error: Error executing tool query_cube: Error during planning: Unknown measure 'energy_mwh' in cube 'daily_generation'"
+  },
+  {
+   "type": "usage",
+   "t": 4.618,
+   "turns": 3,
+   "tokens": 11787
+  },
+  {
+   "type": "reasoning",
+   "t": 4.618,
+   "text": "Let me check what measures are available in the daily_generation cube:"
+  },
+  {
+   "type": "step_start",
+   "t": 4.619,
+   "step": 4,
+   "tool": "describe_cube",
+   "input": {
+    "name": "daily_generation"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 4.635,
+   "step": 4,
+   "tool": "describe_cube",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 16
+  },
+  {
+   "type": "usage",
+   "t": 6.652,
+   "turns": 4,
+   "tokens": 18616
+  },
+  {
+   "type": "reasoning",
+   "t": 6.652,
+   "text": "Perfect! The measure is `energy_total`, not `energy_mwh`. Let me query the coal share for the NEM over the last 30 days:"
+  },
+  {
+   "type": "step_start",
+   "t": 6.652,
+   "step": 5,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "filters": [
+     "network:eq:NEM"
+    ],
+    "measures": [
+     "energy_total"
+    ]
+   }
+  },
+  {
+   "type": "step_start",
+   "t": 6.653,
+   "step": 6,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "filters": [
+     "network:eq:NEM",
+     "fueltech_group:eq:coal"
+    ],
+    "measures": [
+     "energy_total"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 6.976,
+   "step": 6,
+   "tool": "query_cube",
+   "status": "error",
+   "path": "cube",
+   "duration_ms": 43,
+   "error": "Error: Error executing tool query_cube: Error during planning: Unknown filter dimension 'fueltech_group' in cube 'daily_generation'"
+  },
+  {
+   "type": "step_end",
+   "t": 6.996,
+   "step": 5,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 324,
+   "row_count": 1,
+   "columns": [
+    "energy_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT SUM(energy_mwh) AS energy_total FROM generation_daily WHERE network = 'NEM'"
+  },
+  {
+   "type": "usage",
+   "t": 8.226,
+   "turns": 5,
+   "tokens": 26073
+  },
+  {
+   "type": "reasoning",
+   "t": 8.226,
+   "text": "I see \u2014 the cube doesn't have `fueltech_group` as a dimension, only `fueltech`. Let me check the schema to understand the relationship between fueltech and fueltech_group:"
+  },
+  {
+   "type": "step_start",
+   "t": 8.227,
+   "step": 7,
+   "tool": "describe_model",
+   "input": {
+    "name": "fueltech_groups"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 8.254,
+   "step": 7,
+   "tool": "describe_model",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 27
+  },
+  {
+   "type": "usage",
+   "t": 10.674,
+   "turns": 6,
+   "tokens": 33792
+  },
+  {
+   "type": "reasoning",
+   "t": 10.674,
+   "text": "Now I understand. I need to use SQL to join generation_daily with fueltech_groups to filter by coal. Let me write a SQL query:"
+  },
+  {
+   "type": "step_start",
+   "t": 10.675,
+   "step": 8,
+   "tool": "dry_run",
+   "input": {
+    "sql": "\nSELECT \n  SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) as coal_energy,\n  SUM(gd.energy_mwh) as total_energy,\n  ROUND(100.0 * SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) / SUM(gd.energy_mwh), 2) as coal_share_pct\nFROM generation_daily gd\nJOIN fueltech_groups fg ON gd.fueltech = fg.fueltech\nWHERE gd.network = 'NEM'\n  AND gd.day >= CURRENT_DATE - INTERVAL '30' DAY\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 10.774,
+   "step": 8,
+   "tool": "dry_run",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 90,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".\"network\" AS network, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech, generation_daily.\"network\" FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech, __source.\"network\" AS \"network\" FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech AS fueltech, \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) AS coal_energy, SUM(gd.energy_mwh) AS total_energy, ROUND(100.0 * SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) / SUM(gd.energy_mwh), 2) AS coal_share_pct FROM generation_daily AS gd JOIN fueltech_groups AS fg ON gd.fueltech = fg.fueltech WHERE gd.network = 'NEM' AND gd.day >= CURRENT_DATE - INTERVAL '30' DAY"
+  },
+  {
+   "type": "usage",
+   "t": 12.358,
+   "turns": 7,
+   "tokens": 42194
+  },
+  {
+   "type": "reasoning",
+   "t": 12.358,
+   "text": "Great! Now let me run the query:"
+  },
+  {
+   "type": "step_start",
+   "t": 12.359,
+   "step": 9,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) as coal_energy,\n  SUM(gd.energy_mwh) as total_energy,\n  ROUND(100.0 * SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) / SUM(gd.energy_mwh), 2) as coal_share_pct\nFROM generation_daily gd\nJOIN fueltech_groups fg ON gd.fueltech = fg.fueltech\nWHERE gd.network = 'NEM'\n  AND gd.day >= CURRENT_DATE - INTERVAL '30' DAY\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 12.483,
+   "step": 9,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 107,
+   "row_count": 1,
+   "columns": [
+    "coal_energy",
+    "total_energy",
+    "coal_share_pct"
+   ],
+   "truncated": false,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".\"network\" AS network, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech, generation_daily.\"network\" FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech, __source.\"network\" AS \"network\" FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech AS fueltech, \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) AS coal_energy, SUM(gd.energy_mwh) AS total_energy, ROUND(100.0 * SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) / SUM(gd.energy_mwh), 2) AS coal_share_pct FROM generation_daily AS gd JOIN fueltech_groups AS fg ON gd.fueltech = fg.fueltech WHERE gd.network = 'NEM' AND gd.day >= CURRENT_DATE - INTERVAL '30' DAY"
+  },
+  {
+   "type": "usage",
+   "t": 15.152,
+   "turns": 8,
+   "tokens": 50872
+  },
+  {
+   "type": "answer",
+   "t": 15.255,
+   "text": "**Coal accounted for 44.61% of NEM generation over the last 30 days.**\n\n**Tool used:** run_sql\n\n**Query executed:**\n```sql\nSELECT \n  SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) as coal_energy,\n  SUM(gd.energy_mwh) as total_energy,\n  ROUND(100.0 * SUM(CASE WHEN fg.fueltech_group = 'coal' THEN gd.energy_mwh ELSE 0 END) / SUM(gd.energy_mwh), 2) as coal_share_pct\nFROM generation_daily gd\nJOIN fueltech_groups fg ON gd.fueltech = fg.fueltech\nWHERE gd.network = 'NEM'\n  AND gd.day >= CURRENT_DATE - INTERVAL '30' DAY\n```\n\n**Details:**\n- Coal generation: 8,291,193 MWh\n- Total NEM generation: 18,584,523 MWh\n- Coal share: **44.61%**\n\nThis covers the NEM's five regions (NSW1, QLD1, SA1, TAS1, VIC1) over the rolling 30-day window ending yesterday, using the governed coal fueltech_group mapping (coal_black and coal_brown combined).",
+   "turns": 8,
+   "tokens": 60017,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

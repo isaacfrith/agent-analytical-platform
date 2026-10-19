@@ -1,4 +1,4 @@
-"""The data catalog: energy-only subset, derived lineage, and a topics file that can't drift."""
+"""The data catalog: energy-only subset, derived lineage, and curated files that can't drift."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from demo.catalog import (
     parse_stats,
     stats_sql,
     topic_path,
+    validate_questions,
     validate_topics,
 )
 
@@ -142,15 +143,36 @@ def test_validate_topics_lists_every_unknown_name():
                     {"cube": "share", "measures": ["ghost"]},
                     {"model": "gen", "columns": ["fuel_group", "nah"]},
                 ],
-                "examples": [{"question": "q", "seed": "missing"}],
             }
         ]
     }
     with pytest.raises(ValueError) as err:
         validate_topics(topics, energy_subset(MDL), seeds={})
     msg = str(err.value)
-    for name in ("'nope'", "'ghost'", "'nah'", "'fuel_group'", "'missing'"):
+    for name in ("'nope'", "'ghost'", "'nah'", "'fuel_group'"):
         assert name in msg  # fuel_group is a join handle, not a column
+
+
+def test_validate_questions_lists_every_problem():
+    questions = [
+        {"id": "a", "topic": "ren", "question": "Q?"},
+        {"id": "a", "topic": "ren", "question": "dup?"},
+        {"id": "b", "topic": "nope", "question": "Q?"},
+        {"id": "c", "topic": "limits", "question": "Q?", "expect": "maybe"},
+        {"id": "d", "topic": "ren", "question": "Q?", "seed": "missing"},
+        {"id": "e", "topic": "ren"},
+    ]
+    with pytest.raises(ValueError) as err:
+        validate_questions(questions, {"ren"}, seeds={})
+    msg = str(err.value)
+    for problem in ("duplicate id", "'nope'", "expect must be", "'missing'", "'e': needs"):
+        assert problem in msg
+
+
+def test_refusal_questions_need_no_topic_of_their_own():
+    validate_questions(
+        [{"id": "r", "topic": "limits", "question": "Q?", "expect": "refused"}], set(), seeds={}
+    )
 
 
 def test_build_catalog_links_replays_and_seed_sql():
@@ -162,23 +184,29 @@ def test_build_catalog_links_replays_and_seed_sql():
                 "name": "Renewables",
                 "summary": "s",
                 "uses": [{"cube": "share"}],
-                "examples": [{"question": "Q1", "seed": "s1"}, {"question": "Q2"}],
             }
         ],
     }
+    questions = [
+        {"id": "q1", "topic": "ren", "question": "Q1", "seed": "s1"},
+        {"id": "r1", "topic": "limits", "question": "R1", "expect": "refused"},
+        {"id": "q2", "topic": "ren", "question": "Q2"},
+    ]
     stats = {"gen": {"rows": 10, "columns": {"region": {"distinct": 2, "values": ["A", "B"]}}}}
     out = build_catalog(
         MDL,
         topics,
+        questions,
         stats,
         "# rules",
         {"s1": {"sql": "SELECT 1\n"}},
-        {"Q1": "chip_1"},
         "2026-10-19T00:00:00Z",
     )
     ex = out["topics"][0]["examples"]
-    assert ex[0] == {"question": "Q1", "replay": "chip_1", "sql": "SELECT 1"}
-    assert ex[1] == {"question": "Q2"}
+    assert ex == [
+        {"question": "Q1", "replay": "q1", "sql": "SELECT 1"},
+        {"question": "Q2", "replay": "q2"},
+    ]
     gen = next(m for m in out["models"] if m["name"] == "gen")
     assert gen["rows"] == 10 and [c["name"] for c in gen["columns"]] == [
         "day",

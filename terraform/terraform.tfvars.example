@@ -15,3 +15,12 @@ bucket_name = "agent-analytics-dev-<your-suffix>"
 
 # Optional — defaults to "agent-analytics-dev".
 # iam_user_name = "agent-analytics-dev"
+
+# --- Live questions ---------------------------------------------------------
+# Required: where AWS Budgets emails spend alerts.
+budget_email = "you@example.com"
+
+# Optional (defaults shown in variables.tf):
+# budget_limit_usd   = 20
+# live_instance_type = "t4g.large"
+# bedrock_model_id   = "au.anthropic.claude-haiku-4-5-20251001-v1:0"

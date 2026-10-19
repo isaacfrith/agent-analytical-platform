@@ -80,7 +80,8 @@ POLICY
 resource "aws_iam_role" "lakekeeper_vending" {
   name = "agent-analytics-lakekeeper-vending"
 
-  # Trust: only the app user may assume this role.
+  # Trust: the app user (laptop Lakekeeper), and the live server's role
+  # (hosted Lakekeeper, aws-system-identity) only with the external ID.
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -88,6 +89,14 @@ resource "aws_iam_role" "lakekeeper_vending" {
         Effect    = "Allow"
         Principal = { AWS = aws_iam_user.this.arn }
         Action    = "sts:AssumeRole"
+      },
+      {
+        Effect    = "Allow"
+        Principal = { AWS = aws_iam_role.live_server.arn }
+        Action    = ["sts:AssumeRole", "sts:TagSession"]
+        Condition = {
+          StringEquals = { "sts:ExternalId" = random_password.lakekeeper_external_id.result }
+        }
       }
     ]
   })

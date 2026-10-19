@@ -1,15 +1,15 @@
-"""Record the energy demo UI's replays and map overview (Phase 3).
+"""Record the energy demo UI's data: replays, map overview and data catalog.
 
-Runs each suggestion chip through the real agent with trace events on,
-and writes one replay file per chip plus an index. Also snapshots, with
-plain SQL through the semantic layer and no LLM: the map overview (facility
-dots, 30-day renewable share by region) and the data catalog behind the
-"What's in the data" tab (compiled MDL + demos/energy-topics.yml + stats). Everything lands in ui/data/, which is
-committed, so GitHub Pages serves it and re-recordings show up as diffs.
+Runs every suggested question (demos/energy-questions.yml) through the real
+agent with trace events on, checks each run matches what the question expects
+(an answer, or a refusal), and writes one replay file per question plus an
+index. Also snapshots, with plain SQL through the semantic layer and no LLM,
+the map overview and the "What's in the data" catalog. Everything lands in
+ui/data/, which is committed, so GitHub Pages serves it.
 
-Costs Bedrock tokens: about 7 questions at 25-50k tokens each (~$1).
+Costs Bedrock tokens: one agent run per question (15-50k tokens each).
 
-Usage: uv run python scripts/demo_record.py [--only chip_id,...] [--overview-only | --catalog-only]
+Usage: uv run python scripts/demo_record.py [--only id,...] [--overview-only | --catalog-only]
        (or `make demo-record`)
 """
 
@@ -39,36 +39,6 @@ from repo_config import REPO_ROOT, WREN_DIR, load_env
 DATA_DIR = REPO_ROOT / "ui" / "data"
 REPLAY_DIR = DATA_DIR / "replays"
 
-# (id, chip label, question). Order is the order the chips appear in the UI.
-CHIPS: list[tuple[str, str, str]] = [
-    (
-        "renewable_share_nsw",
-        "Renewable share, NSW",
-        "What share of NSW generation was renewable over the last 30 days?",
-    ),
-    (
-        "price_by_region",
-        "Spot price by region",
-        "What was the average spot price by region over the last 30 days?",
-    ),
-    (
-        "price_spike_fuel_mix",
-        "Fuel mix on the price spike",
-        "On the highest-price day in the last 30 days, which fuel types generated the most?",
-    ),
-    ("coal_capacity", "Coal capacity by state", "Show me operating coal capacity by state."),
-    (
-        "wa_vs_nem",
-        "WA vs the east coast",
-        "How does WA's renewable share compare with each NEM region over the last 30 days?",
-    ),
-    (
-        "largest_wind_solar",
-        "Largest wind & solar farms",
-        "Which are the 15 largest operating wind and solar facilities by registered capacity?",
-    ),
-    ("refuse_efficiency", "Generation by efficiency", "Show me generation by unit efficiency."),
-]
 
 OVERVIEW_SQL = {
     # One row per site x fuel group x status: a site can mix techs (solar + battery).
@@ -122,6 +92,12 @@ def record_overview(recorded_at: str) -> dict:
 
 
 TOPICS_FILE = REPO_ROOT / "demos" / "energy-topics.yml"
+QUESTIONS_FILE = REPO_ROOT / "demos" / "energy-questions.yml"
+
+
+def load_questions() -> list[dict]:
+    """The suggested questions, in file order (demos/energy-questions.yml)."""
+    return yaml.safe_load(QUESTIONS_FILE.read_text())["questions"]
 
 
 def load_seeds() -> dict[str, dict]:
@@ -166,10 +142,10 @@ def record_catalog(recorded_at: str) -> dict:
     catalog = build_catalog(
         mdl,
         yaml.safe_load(TOPICS_FILE.read_text()),
+        load_questions(),
         stats,
         (WREN_DIR / "knowledge" / "rules" / "energy.md").read_text(),
         load_seeds(),
-        {question: chip_id for chip_id, _, question in CHIPS},
         recorded_at,
     )
     write_json(DATA_DIR / "model.json", catalog)
@@ -180,11 +156,9 @@ def record_catalog(recorded_at: str) -> dict:
     return catalog
 
 
-def record_chip(
-    chip_id: str, label: str, question: str, recorded_at: str, window: dict | None
-) -> dict:
+def run_question(question: str) -> tuple[list[dict], str | None]:
+    """One recorded agent run: (trace events, error message or None)."""
     events: list[dict] = []
-    status = "ok"
     try:
         answer_question(
             question,
@@ -194,36 +168,62 @@ def record_chip(
             on_event=events.append,
         )
     except Exception as e:  # noqa: BLE001 — the error event is already in the stream; keep the file for inspection
-        status = f"error: {e}"
-    replay = {
-        "id": chip_id,
-        "label": label,
-        "question": question,
-        "recorded_at": recorded_at,
-        "data_window": window,
-        "events": events,
-    }
-    write_json(REPLAY_DIR / f"{chip_id}.json", replay)
+        return events, str(e)
+    return events, None
+
+
+def check_run(events: list[dict], error: str | None, expect: str) -> str | None:
+    """Why a run doesn't match what the question expects, or None if it does."""
+    if error:
+        return f"error: {error[:200]}"
+    answer = next((e for e in events if e["type"] == "answer"), None)
+    if answer is None:
+        return "no answer"
+    refused = answer.get("path") == "refused"
+    if expect == "refused" and not refused:
+        return f"expected a refusal, got path={answer.get('path')}"
+    if expect == "answer" and refused:
+        return "expected an answer, but no query returned rows"
+    return None
+
+
+def record_question(q: dict, recorded_at: str, window: dict | None) -> dict:
+    expect = q.get("expect", "answer")
+    events, error = run_question(q["question"])
+    if error:  # Bedrock has transient outages; one fresh attempt
+        events, error = run_question(q["question"])
+    problem = check_run(events, error, expect)
+    write_json(
+        REPLAY_DIR / f"{q['id']}.json",
+        {
+            "id": q["id"],
+            "topic": q["topic"],
+            "question": q["question"],
+            "recorded_at": recorded_at,
+            "data_window": window,
+            "events": events,
+        },
+    )
     answer = next((e for e in events if e["type"] == "answer"), {})
     charts = sum(e["type"] == "chart" for e in events)
     print(
-        f"[{'PASS' if status == 'ok' else 'FAIL'}] {chip_id}: path={answer.get('path', '?')} "
+        f"[{'PASS' if problem is None else 'FAIL'}] {q['id']}: path={answer.get('path', '?')} "
         f"turns={answer.get('turns', '?')} tokens={answer.get('tokens', '?')} charts={charts}"
-        + ("" if status == "ok" else f" ({status})")
+        + ("" if problem is None else f" ({problem})")
     )
     return {
-        "id": chip_id,
-        "label": label,
-        "question": question,
+        "id": q["id"],
+        "topic": q["topic"],
+        "question": q["question"],
         "recorded_at": recorded_at,
         "path": answer.get("path"),
-        "ok": status == "ok",
+        "ok": problem is None,
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--only", default="", help="comma-separated chip ids to re-record")
+    parser.add_argument("--only", default="", help="comma-separated question ids to re-record")
     parser.add_argument("--overview-only", action="store_true")
     parser.add_argument(
         "--catalog-only", action="store_true", help="only the data catalog (no LLM)"
@@ -239,26 +239,28 @@ def main() -> int:
     if args.overview_only:
         return 0
 
+    questions = load_questions()
     only = {c for c in args.only.split(",") if c}
-    unknown = only - {c[0] for c in CHIPS}
+    unknown = only - {q["id"] for q in questions}
     if unknown:
-        print(f"unknown chip id(s): {sorted(unknown)}")
+        print(f"unknown question id(s): {sorted(unknown)}")
         return 2
 
     index_path = REPLAY_DIR / "index.json"
-    previous = (
-        {c["id"]: c for c in json.loads(index_path.read_text())["chips"]}
-        if index_path.exists()
-        else {}
-    )
+    previous = {}
+    if index_path.exists():
+        saved = json.loads(index_path.read_text())
+        previous = {q["id"]: q for q in saved.get("questions") or saved.get("chips") or []}
     results = []
-    for chip_id, label, question in CHIPS:
-        if only and chip_id not in only:
-            if chip_id in previous:
-                results.append(previous[chip_id])
+    for q in questions:
+        if only and q["id"] not in only:
+            if q["id"] in previous:
+                results.append(
+                    {**previous[q["id"]], "topic": q["topic"], "question": q["question"]}
+                )
             continue
-        results.append(record_chip(chip_id, label, question, recorded_at, overview["window"]))
-    write_json(index_path, {"chips": results})
+        results.append(record_question(q, recorded_at, overview["window"]))
+    write_json(index_path, {"questions": results})
     failed = [r["id"] for r in results if not r.get("ok")]
     print(
         f"{len(results) - len(failed)}/{len(results)} replays ok → {REPLAY_DIR.relative_to(REPO_ROOT)}"

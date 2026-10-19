@@ -1,5 +1,5 @@
 {
- "recorded_at": "2026-10-19T06:52:28Z",
+ "recorded_at": "2026-10-19T21:39:56Z",
  "limits": [
   "Daily figures only, no hourly or 5-minute data.",
   "The last 90 days only, ending yesterday.",
@@ -23,12 +23,17 @@
      "replay": "price_by_region"
     },
     {
+     "question": "Which region had the cheapest average spot price over the last 7 days?",
+     "replay": "cheapest_region_week"
+    },
+    {
      "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
      "replay": "price_spike_fuel_mix",
      "sql": "WITH spike AS (\n  SELECT day, network_region, price_aud_mwh\n  FROM market_daily\n  WHERE day >= CURRENT_DATE - INTERVAL '30' DAY\n  ORDER BY price_aud_mwh DESC\n  LIMIT 1\n)\nSELECT g.fueltech, SUM(g.energy_mwh) AS energy_mwh\nFROM generation_daily AS g\nJOIN spike AS s\n  ON g.network_region = s.network_region AND g.day = s.day\nGROUP BY 1\nORDER BY 2 DESC"
     },
     {
-     "question": "Which region had the most demand over the last 7 days?"
+     "question": "Which region used the most electricity over the last 30 days?",
+     "replay": "demand_by_region"
     }
    ],
    "path": {
@@ -74,10 +79,20 @@
    ],
    "examples": [
     {
-     "question": "Which fuel types generated the most in Queensland over the last 7 days?"
+     "question": "Which fuel types generated the most in Queensland over the last 7 days?",
+     "replay": "fuel_mix_qld_week"
     },
     {
-     "question": "How much did wind generate across the NEM last week?"
+     "question": "How much electricity did wind generate across the NEM over the last 7 days?",
+     "replay": "wind_nem_week"
+    },
+    {
+     "question": "How much did rooftop solar generate in each region over the last 30 days?",
+     "replay": "rooftop_solar_by_region"
+    },
+    {
+     "question": "What share of NEM generation came from coal over the last 30 days?",
+     "replay": "coal_share_nem"
     }
    ],
    "path": {
@@ -123,10 +138,20 @@
    "limits": [],
    "examples": [
     {
-     "question": "Which region had the highest emissions over the last 7 days?"
+     "question": "Which region had the highest emissions over the last 7 days?",
+     "replay": "emissions_by_region_week"
     },
     {
-     "question": "Which fuel types emitted the most in Victoria last month?"
+     "question": "Which fuel types emitted the most in Victoria over the last 30 days?",
+     "replay": "emissions_vic_by_fuel"
+    },
+    {
+     "question": "Which region had the lowest emissions per MWh generated over the last 30 days?",
+     "replay": "emissions_intensity"
+    },
+    {
+     "question": "Which operating generating units have the highest emissions factor?",
+     "replay": "dirtiest_units"
     }
    ],
    "path": {
@@ -190,6 +215,14 @@
     {
      "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
      "replay": "wa_vs_nem"
+    },
+    {
+     "question": "How did South Australia's daily renewable share change over the last 30 days?",
+     "replay": "renewable_trend_sa"
+    },
+    {
+     "question": "On which day in the last 90 days was the NEM's renewable share highest?",
+     "replay": "most_renewable_day"
     }
    ],
    "path": {
@@ -266,7 +299,12 @@
      "replay": "largest_wind_solar"
     },
     {
-     "question": "How much new capacity is committed or commissioning, by fuel group?"
+     "question": "How much new capacity is committed or commissioning, by fuel group?",
+     "replay": "pipeline_capacity"
+    },
+    {
+     "question": "Which are the 10 largest operating batteries by storage capacity?",
+     "replay": "biggest_batteries"
     }
    ],
    "path": {

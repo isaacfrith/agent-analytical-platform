@@ -111,3 +111,54 @@ As built: the tab fills the viewport — a pan/zoom canvas (fit on load,
 are vendored in `ui/vendor/` and the diagram draws before anything that
 needs a library, so a slow or blocked CDN can't blank it. Opening
 `ui/index.html` from disk shows how to serve it instead (`make demo-serve`).
+
+## Always-on live questions and a cleaner UI (agreed 2026-10-20)
+
+**UI.** The question buttons go. The answer pane becomes chat-style with the
+question box at its bottom ("Ask your own (2 left today)"). A pool of ~24
+curated questions across the five topics plus refusal examples, all
+pre-recorded, lives in one file; recording checks each still gets the
+expected kind of answer. Empty state: 3 suggestion cards auto-rotating one at
+a time (~6 s, soft fade; pause on hover/focus; still for reduced motion; no
+repeats until the pool is exhausted). After an answer: 3 still "Ask next"
+cards from the same topic, unseen first.
+
+**Hosting.** Website stays on GitHub Pages. Live questions run the same stack
+(Trino, Iceberg, Lakekeeper, Postgres, Valkey, WrenAI, agent) on one
+fixed-size ARM EC2 instance in ap-southeast-2, with its own warehouse prefix
+so it never touches the laptop's tables. Asleep → "Start it (about 2
+minutes)": bot check, then a Lambda starts the instance; waking doesn't use a
+visitor's questions; at most 6 wakes a day. On wake: pull `main`, start the
+stack, health-check before accepting questions, refresh data in the
+background if older than 3 days.
+
+**Cost ceiling: $20/month.** Idle stop after 20 min; at most 3 h running a
+day; 20 live questions a day globally, 2 per visitor; an AWS Budgets action
+stops the instance at $20/month (email alerts at 50% and 80%).
+
+**Security.** No inbound ports (outbound Cloudflare tunnel only; no SSH,
+Session Manager for emergencies). IAM instance role, no stored keys: hosted
+warehouse prefix, the one Bedrock model, registering its address. Every live
+question is checked server-side: Turnstile token, per-visitor limit, global
+cap, 500 characters, one at a time, turn/token budgets, CORS to the Pages
+origin. Read-only WrenAI. The Lambda can only start/stop/describe that one
+instance. Secrets (Turnstile secret, kill switch) in SSM Parameter Store.
+Encrypted disk, IMDSv2 required, automatic security updates. The passcode is
+removed; `demo_live.py --local` stays for laptop testing.
+
+**Owner tasks:** Cloudflare Turnstile widget (site key; secret into SSM),
+budget alert email, `terraform apply` with admin credentials.
+
+**Build order:** 1 UI (pool, layout, rotation) · 2 live API (Turnstile,
+per-visitor limit, cap, counter, kill switch) · 3 Terraform · 4 instance
+startup (pull, stack, refresh, tunnel, register, idle stop) · 5 wake/status UI
+and README.
+
+As built (2026-10-20): steps 1-5 are implemented. UI: `ui/suggest.js` +
+`demos/energy-questions.yml` (24 recorded). Live API: `src/api/server.py`
+(Turnstile, per-visitor + daily limits, kill switch, activity marker).
+Hosted server: `terraform/live.tf`, `live_control.tf` (+ `lambda/live_control.py`),
+`budget.tf`, `templates/live_user_data.sh.tftpl`; boot and watchdog in
+`scripts/hosted/` (start.sh, live_watchdog.py); Docker overrides in `docker/compose.hosted.yaml`; Lakekeeper
+uses `aws-system-identity` with an external ID (no stored keys). Deployment
+runbook: README, "Live questions: hosted and local".

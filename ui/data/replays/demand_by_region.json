@@ -1,0 +1,206 @@
+{
+ "id": "demand_by_region",
+ "topic": "prices",
+ "question": "Which region used the most electricity over the last 30 days?",
+ "recorded_at": "2026-10-19T21:39:56Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Which region used the most electricity over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.333,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.333,
+   "text": "I'll help you find which region used the most electricity over the last 30 days. Let me start by checking the business rules and then query the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.334,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.335,
+   "step": 2,
+   "tool": "list_cubes",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.356,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 21
+  },
+  {
+   "type": "step_end",
+   "t": 1.356,
+   "step": 2,
+   "tool": "list_cubes",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 21
+  },
+  {
+   "type": "usage",
+   "t": 2.836,
+   "turns": 2,
+   "tokens": 5168
+  },
+  {
+   "type": "reasoning",
+   "t": 2.836,
+   "text": "Now I'll query the daily_price cube to get electricity demand (demand_energy_total) by region over the last 30 days:"
+  },
+  {
+   "type": "step_start",
+   "t": 2.837,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_price",
+    "measures": [
+     "demand_energy_total"
+    ],
+    "dimensions": [
+     "network_region"
+    ],
+    "filters": [
+     "day:gte:-30d"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 3.16,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 286,
+   "row_count": 6,
+   "columns": [
+    "network_region",
+    "demand_energy_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT network_region AS network_region, SUM(demand_energy_mwh) AS demand_energy_total FROM market_daily WHERE day >= CAST('2026-09-19' AS TIMESTAMP) GROUP BY 1"
+  },
+  {
+   "type": "usage",
+   "t": 4.547,
+   "turns": 3,
+   "tokens": 12317
+  },
+  {
+   "type": "reasoning",
+   "t": 4.547,
+   "text": "Perfect! Now let me visualize this data:"
+  },
+  {
+   "type": "step_start",
+   "t": 4.548,
+   "step": 4,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Electricity demand by region (last 30 days, MWh)",
+    "x": "network_region",
+    "y": [
+     "demand_energy_total"
+    ],
+    "map_key": "network_region"
+   }
+  },
+  {
+   "type": "chart",
+   "t": 4.548,
+   "step": 3,
+   "spec": {
+    "kind": "bar",
+    "title": "Electricity demand by region (last 30 days, MWh)",
+    "x": "network_region",
+    "y": [
+     "demand_energy_total"
+    ],
+    "series": null,
+    "map": {
+     "key": "network_region",
+     "metric": "demand_energy_total"
+    }
+   },
+   "columns": [
+    "network_region",
+    "demand_energy_total"
+   ],
+   "rows": [
+    {
+     "network_region": "WEM",
+     "demand_energy_total": 1433335.8077000005
+    },
+    {
+     "network_region": "NSW1",
+     "demand_energy_total": 4869886.366
+    },
+    {
+     "network_region": "SA1",
+     "demand_energy_total": 772879.3478000001
+    },
+    {
+     "network_region": "QLD1",
+     "demand_energy_total": 4100166.8318000003
+    },
+    {
+     "network_region": "TAS1",
+     "demand_energy_total": 715249.5361
+    },
+    {
+     "network_region": "VIC1",
+     "demand_energy_total": 3437112.8415
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 4.548,
+   "step": 4,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 6.593,
+   "turns": 4,
+   "tokens": 19892
+  },
+  {
+   "type": "answer",
+   "t": 6.695,
+   "text": "**NSW1 (New South Wales) used the most electricity over the last 30 days with 4,869,886 MWh.**\n\nHere's the full ranking:\n1. **NSW1**: 4,869,886 MWh\n2. **QLD1** (Queensland): 4,100,167 MWh\n3. **VIC1** (Victoria): 3,437,113 MWh\n4. **WEM** (Western Australia): 1,433,336 MWh\n5. **SA1** (South Australia): 772,879 MWh\n6. **TAS1** (Tasmania): 715,250 MWh\n\n**Tool used:** `query_cube` on the `daily_price` cube, filtering for the last 30 days and grouping by `network_region`, measuring `demand_energy_total` (the additive electricity demand in MWh).",
+   "turns": 4,
+   "tokens": 27722,
+   "over_budget": false,
+   "path": "cube"
+  }
+ ]
+}

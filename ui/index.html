@@ -27,14 +27,6 @@
       </div>
       <p class="sub">An AI agent answering through a governed semantic layer. It never sees raw tables and never writes the numbers.</p>
     </div>
-    <div class="ask">
-      <div class="chips" id="chips" role="list"></div>
-      <form id="ask-form" class="ask-row">
-        <input id="question" type="text" autocomplete="off" placeholder="Live mode offline — try a demo question above" disabled>
-        <button id="ask-btn" type="submit" disabled>Ask</button>
-      </form>
-      <p class="live-status" id="live-status"></p>
-    </div>
   </header>
 
   <main class="panes" id="tab-ask" role="tabpanel" aria-labelledby="tab-btn-ask">
@@ -48,14 +40,24 @@
     </section>
 
     <section class="pane answer-pane" aria-label="Answer">
-      <div class="pane-head">
-        <h2 id="answer-question">Answer</h2>
-        <span class="path-badge" id="path-badge" hidden></span>
+      <div class="answer-scroll" id="answer-scroll">
+        <div class="pane-head">
+          <h2 id="answer-question">Answer</h2>
+          <span class="path-badge" id="path-badge" hidden></span>
+        </div>
+        <p class="recorded" id="recorded"></p>
+        <div id="charts"></div>
+        <div class="answer-text" id="answer-text"></div>
+        <button class="skip" id="skip" type="button" hidden>Skip replay ▸▸</button>
+        <div class="suggestions" id="suggestions" aria-live="polite"></div>
       </div>
-      <p class="recorded" id="recorded"></p>
-      <div id="charts"></div>
-      <div class="answer-text" id="answer-text"></div>
-      <button class="skip" id="skip" type="button" hidden>Skip replay ▸▸</button>
+      <form id="ask-form" class="composer">
+        <input id="question" type="text" autocomplete="off" maxlength="500" placeholder="Live questions are offline right now — pick a suggestion" disabled aria-label="Ask your own question">
+        <button id="ask-btn" type="submit" disabled>Ask</button>
+        <button id="wake-btn" class="wake-btn" type="button" hidden>Start live questions (about 2 minutes)</button>
+        <p class="live-status" id="live-status"></p>
+        <div id="bot-check" class="bot-check"></div>
+      </form>
     </section>
 
     <section class="pane map-pane" aria-label="Map of Australia's electricity markets">
@@ -118,6 +120,7 @@
   <script src="core.js"></script>
   <script src="charts.js"></script>
   <script src="map.js"></script>
+  <script src="suggest.js"></script>
   <script src="app.js"></script>
   <script src="catalog.js"></script>
 </body>

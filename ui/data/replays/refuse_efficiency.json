@@ -1,8 +1,8 @@
 {
  "id": "refuse_efficiency",
- "label": "Generation by efficiency",
+ "topic": "limits",
  "question": "Show me generation by unit efficiency.",
- "recorded_at": "2026-10-19T05:08:19Z",
+ "recorded_at": "2026-10-19T21:33:12Z",
  "data_window": {
   "first_day": "2026-07-21 00:00:00.000000",
   "last_day": "2026-10-18 00:00:00.000000"
@@ -18,59 +18,88 @@
   },
   {
    "type": "usage",
-   "t": 1.327,
+   "t": 1.411,
    "turns": 1,
    "tokens": 0
   },
   {
    "type": "reasoning",
-   "t": 1.327,
-   "text": "I'll help you show generation by unit efficiency. Let me start by checking the business rules and exploring the schema to understand what data is available."
+   "t": 1.411,
+   "text": "I'll help you show generation by unit efficiency. Let me first check the business rules and then explore the schema to understand what data is available."
   },
   {
    "type": "step_start",
-   "t": 1.328,
+   "t": 1.411,
    "step": 1,
    "tool": "get_instructions",
    "input": {}
   },
   {
    "type": "step_start",
-   "t": 1.329,
+   "t": 1.412,
    "step": 2,
    "tool": "describe_schema",
    "input": {}
   },
   {
    "type": "step_end",
-   "t": 1.371,
+   "t": 1.446,
    "step": 1,
    "tool": "get_instructions",
    "status": "success",
    "path": "context",
-   "duration_ms": 43
+   "duration_ms": 35
   },
   {
    "type": "step_end",
-   "t": 1.371,
+   "t": 1.447,
    "step": 2,
    "tool": "describe_schema",
    "status": "success",
    "path": "context",
-   "duration_ms": 43
+   "duration_ms": 35
   },
   {
    "type": "usage",
-   "t": 5.968,
+   "t": 3.711,
    "turns": 2,
-   "tokens": 5089
+   "tokens": 5156
+  },
+  {
+   "type": "reasoning",
+   "t": 3.712,
+   "text": "I can see the schema now. The question asks for \"generation by unit efficiency,\" but I notice that the `facilities` table (which holds unit-level data) does not have an explicit \"efficiency\" column. \n\nLet me check what columns are available on the facilities model to see if there's an efficiency metric or if I need to clarify what you mean:"
+  },
+  {
+   "type": "step_start",
+   "t": 3.713,
+   "step": 3,
+   "tool": "describe_model",
+   "input": {
+    "name": "facilities"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 3.748,
+   "step": 3,
+   "tool": "describe_model",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 36
+  },
+  {
+   "type": "usage",
+   "t": 7.484,
+   "turns": 3,
+   "tokens": 15887
   },
   {
    "type": "answer",
-   "t": 6.058,
-   "text": "I can see the schema includes energy generation data, but I notice there is **no `efficiency` column** in the `facilities` table or any other model. The available columns on `facilities` are:\n- `capacity_registered_mw`, `capacity_maximum_mw`, `capacity_storage_mwh`\n- `emissions_factor_tco2e_mwh` (emissions intensity, not efficiency)\n- `fueltech`, `status`, `network_region`, etc.\n\nThere is also no efficiency metric in the `generation_daily` table or cubes.\n\n**What I can offer instead:**\n\n1. **Generation by fuel technology** \u2014 show which fuels generate the most energy\n2. **Emissions intensity by fuel** \u2014 show emissions per MWh (which is a proxy for efficiency in some contexts)\n3. **Capacity utilization** \u2014 compare registered capacity to actual generation (a form of efficiency)\n4. **Generation by region** \u2014 show output across NEM regions and WEM\n\nWhich of these would be most useful, or did you mean something specific by \"unit efficiency\"? If you have a definition of efficiency (e.g., a ratio of output to capacity, or a specific metric), I can build a query for it.",
-   "turns": 2,
-   "tokens": 15709,
+   "t": 7.569,
+   "text": "I need to clarify your question. The `facilities` table (unit registry) does not have an explicit \"efficiency\" column. \n\n**What I can offer:**\n\n1. **Generation by fuel tech** \u2014 total MWh output by technology type (coal, gas, wind, solar, etc.) from the `generation_daily` cube.\n\n2. **Emissions intensity** \u2014 if you mean efficiency as emissions per MWh, I can calculate that from `emissions_factor_tco2e_mwh` on the facilities table, or from actual generation data.\n\n3. **Capacity utilization** \u2014 if you mean how hard units are running relative to their registered capacity, I'd need to join `generation_daily` (actual output) with `facilities` (registered capacity) and calculate a utilization ratio.\n\n4. **Generation by unit** \u2014 a breakdown of actual MWh output per individual unit (unit_code) over the 90-day window.\n\n**Which would you like to see?** Or did you mean something else by \"unit efficiency\"?",
+   "turns": 3,
+   "tokens": 27785,
    "over_budget": false,
    "path": "refused"
   }

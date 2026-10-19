@@ -1,0 +1,102 @@
+# The demo's suggested questions. Every one is recorded by `make demo-record`
+# and plays instantly and free; the UI rotates through them and offers
+# related ones after each answer.
+#
+# id:       file name of the recording in ui/data/replays/ (keep stable).
+# topic:    a topic id from demos/energy-topics.yml, or "limits" for questions
+#           the data can't answer (they show the agent refusing).
+# expect:   answer (default) or refused. Recording fails a question whose run
+#           doesn't match, and the UI hides it until it records cleanly.
+# seed:     optional file in wren/knowledge/sql/ whose SQL the data tab shows.
+
+questions:
+  # Prices & demand
+  - id: price_by_region
+    topic: prices
+    question: What was the average spot price by region over the last 30 days?
+  - id: cheapest_region_week
+    topic: prices
+    question: Which region had the cheapest average spot price over the last 7 days?
+  - id: price_spike_fuel_mix
+    topic: prices
+    question: On the highest-price day in the last 30 days, which fuel types generated the most?
+    seed: price_spike_fuel_mix
+  - id: demand_by_region
+    topic: prices
+    question: Which region used the most electricity over the last 30 days?
+
+  # Generation & fuel mix
+  - id: fuel_mix_qld_week
+    topic: generation
+    question: Which fuel types generated the most in Queensland over the last 7 days?
+  - id: wind_nem_week
+    topic: generation
+    question: How much electricity did wind generate across the NEM over the last 7 days?
+  - id: rooftop_solar_by_region
+    topic: generation
+    question: How much did rooftop solar generate in each region over the last 30 days?
+  - id: coal_share_nem
+    topic: generation
+    question: What share of NEM generation came from coal over the last 30 days?
+
+  # Emissions
+  - id: emissions_by_region_week
+    topic: emissions
+    question: Which region had the highest emissions over the last 7 days?
+  - id: emissions_vic_by_fuel
+    topic: emissions
+    question: Which fuel types emitted the most in Victoria over the last 30 days?
+  - id: emissions_intensity
+    topic: emissions
+    question: Which region had the lowest emissions per MWh generated over the last 30 days?
+  - id: dirtiest_units
+    topic: emissions
+    question: Which operating generating units have the highest emissions factor?
+
+  # Renewables
+  - id: renewable_share_nsw
+    topic: renewables
+    question: What share of NSW generation was renewable over the last 30 days?
+    seed: renewable_share_nsw
+  - id: wa_vs_nem
+    topic: renewables
+    question: How does WA's renewable share compare with each NEM region over the last 30 days?
+  - id: renewable_trend_sa
+    topic: renewables
+    question: How did South Australia's daily renewable share change over the last 30 days?
+  - id: most_renewable_day
+    topic: renewables
+    question: On which day in the last 90 days was the NEM's renewable share highest?
+
+  # Power stations & capacity
+  - id: coal_capacity
+    topic: stations
+    question: Show me operating coal capacity by state.
+    seed: operating_coal_capacity
+  - id: largest_wind_solar
+    topic: stations
+    question: Which are the 15 largest operating wind and solar facilities by registered capacity?
+  - id: pipeline_capacity
+    topic: stations
+    question: How much new capacity is committed or commissioning, by fuel group?
+  - id: biggest_batteries
+    topic: stations
+    question: Which are the 10 largest operating batteries by storage capacity?
+
+  # What the data can't answer: the agent should refuse, not guess
+  - id: refuse_efficiency
+    topic: limits
+    question: Show me generation by unit efficiency.
+    expect: refused
+  - id: refuse_nt
+    topic: limits
+    question: What was the renewable share in the Northern Territory over the last 30 days?
+    expect: refused
+  - id: refuse_hourly
+    topic: limits
+    question: What was the spot price in NSW at 6pm yesterday?
+    expect: refused
+  - id: refuse_forecast
+    topic: limits
+    question: What will the spot price be in Victoria next week?
+    expect: refused

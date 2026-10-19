@@ -1,0 +1,9 @@
+# WrenAI connection profile for the local Trino. Installed by `make profile`
+# (and by the hosted server at startup) into ~/.wren/profiles.yml. No secrets:
+# Trino runs locally without authentication.
+datasource: trino
+host: localhost
+port: "8080"
+catalog: iceberg
+trino_schema: ecommerce
+user: trino

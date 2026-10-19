@@ -1,0 +1,25 @@
+# Overrides for the hosted live-questions server (on top of compose.yaml):
+#   docker compose -f docker/compose.yaml -f docker/compose.hosted.yaml up -d --wait
+#
+# - Lakekeeper reaches S3 with the server's IAM role (aws-system-identity)
+#   instead of stored access keys; scripts/bootstrap_catalog.py creates the
+#   warehouse that way when LAKEKEEPER_SYSTEM_IDENTITY=true. The containers
+#   reach the role through IMDSv2, which Terraform allows at hop limit 2.
+# - Every published port binds to localhost only. The firewall already blocks
+#   all inbound traffic; this is a second wall.
+
+services:
+  lakekeeper:
+    environment:
+      LAKEKEEPER__ENABLE_AWS_SYSTEM_CREDENTIALS: "true"
+      AWS_REGION: ${AWS_REGION:?set AWS_REGION}
+    ports: !override
+      - "127.0.0.1:8181:8181"
+
+  trino:
+    ports: !override
+      - "127.0.0.1:8080:8080"
+
+  valkey:
+    ports: !override
+      - "127.0.0.1:6379:6379"

@@ -295,7 +295,6 @@ def to_arrow(rows: list[dict], schema: Schema) -> pa.Table:
 
 def main() -> int:
     require_env(
-        "AWS_PROFILE",
         "AWS_REGION",
         "AWS_S3_BUCKET",
         "LAKEKEEPER_URI",
@@ -303,6 +302,8 @@ def main() -> int:
         "OPENELECTRICITY_API_KEY",
     )
     bucket = os.environ["AWS_S3_BUCKET"]
+    # S3 prefix for raw Parquet; the hosted server sets its own (hosted/landing).
+    landing_prefix = os.environ.get("LANDING_PREFIX", "landing").strip("/")
     s3 = pa_fs.S3FileSystem(region=os.environ["AWS_REGION"])
 
     fetched = fetch_all()
@@ -333,7 +334,7 @@ def main() -> int:
         ),
     }
     for name, table in tables.items():
-        key = f"{bucket}/landing/{name}/part-0.parquet"
+        key = f"{bucket}/{landing_prefix}/{name}/part-0.parquet"
         pq.write_table(table, key, filesystem=s3)
         print(f"[PASS] {name}: {table.num_rows} rows → s3://{key}")
 
@@ -351,7 +352,9 @@ def main() -> int:
 
     # Full reload every run (agreed): purge + recreate, never append.
     for landing, table_name in TABLES.items():
-        arrow_table = pq.read_table(f"{bucket}/landing/{landing}/part-0.parquet", filesystem=s3)
+        arrow_table = pq.read_table(
+            f"{bucket}/{landing_prefix}/{landing}/part-0.parquet", filesystem=s3
+        )
         try:
             catalog.purge_table(f"energy.{table_name}")
         except NoSuchTableError:

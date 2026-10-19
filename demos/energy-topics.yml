@@ -1,15 +1,15 @@
 # Topics for the demo UI's "What's in the data" tab.
 #
-# The only hand-written input to that tab: everything else (columns, types,
-# descriptions, joins, values, ranges) comes from the compiled MDL and the
-# data at record time. scripts/demo_record.py fails if anything named here
-# (cube, measure, model, column, seed) is missing from the model.
+# Hand-written, with demos/energy-questions.yml. Everything else on the tab
+# (columns, types, descriptions, joins, values, ranges) comes from the compiled
+# MDL and the data at record time. scripts/demo_record.py fails if anything
+# named here (cube, measure, model, column) is missing from the model.
 #
 # uses:     cubes (optionally narrowed to some measures) or models (with the
 #           columns the topic reads). Columns a cube touches are derived from
 #           its expressions, through the view, down to model columns.
-# examples: question text; a question identical to a demo chip plays that
-#           replay. seed: names a file in wren/knowledge/sql/ whose SQL is shown.
+#
+# Example questions come from demos/energy-questions.yml (by topic id).
 
 limits:
   - Daily figures only, no hourly or 5-minute data.
@@ -25,11 +25,6 @@ topics:
     summary: Daily wholesale spot prices and electricity demand, per region.
     uses:
       - cube: daily_price
-    examples:
-      - question: What was the average spot price by region over the last 30 days?
-      - question: On the highest-price day in the last 30 days, which fuel types generated the most?
-        seed: price_spike_fuel_mix
-      - question: Which region had the most demand over the last 7 days?
     limits:
       - Prices are averaged, never summed. NEM and WA prices come from different market designs, so they are compared side by side, never averaged together.
 
@@ -39,9 +34,6 @@ topics:
     uses:
       - cube: daily_generation
         measures: [energy_total, market_value_total]
-    examples:
-      - question: Which fuel types generated the most in Queensland over the last 7 days?
-      - question: How much did wind generate across the NEM last week?
     limits:
       - Battery rows go negative when charging. That is correct, not bad data.
 
@@ -53,19 +45,12 @@ topics:
         measures: [emissions_total]
       - model: facilities
         columns: [facility_name, fueltech, network_region, emissions_factor_tco2e_mwh]
-    examples:
-      - question: Which region had the highest emissions over the last 7 days?
-      - question: Which fuel types emitted the most in Victoria last month?
 
   - id: renewables
     name: Renewables
     summary: Renewable share of generation, using the governed definition (wind, solar, hydro and bioenergy; batteries excluded).
     uses:
       - cube: renewable_share
-    examples:
-      - question: What share of NSW generation was renewable over the last 30 days?
-        seed: renewable_share_nsw
-      - question: How does WA's renewable share compare with each NEM region over the last 30 days?
     limits:
       - Renewable follows the governed is_renewable flag. Storage (batteries, pumps) is never counted as generation.
 
@@ -77,10 +62,5 @@ topics:
         columns: [facility_code, facility_name, network, network_region, fueltech, status, capacity_registered_mw, capacity_maximum_mw, capacity_storage_mwh, latitude, longitude]
       - model: fueltech_groups
         columns: [fueltech, fueltech_group, is_renewable]
-    examples:
-      - question: Show me operating coal capacity by state.
-        seed: operating_coal_capacity
-      - question: Which are the 15 largest operating wind and solar facilities by registered capacity?
-      - question: How much new capacity is committed or commissioning, by fuel group?
     limits:
       - Capacity is registered MW, not output. Commissioning units may run below full capacity.

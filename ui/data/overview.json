@@ -1,786 +1,6 @@
 {
- "recorded_at": "2026-10-19T06:52:28Z",
+ "recorded_at": "2026-10-19T21:39:56Z",
  "facilities": [
-  {
-   "facility_code": "BODWF",
-   "facility_name": "Bodangora",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 113.19,
-   "lat": -32.414669,
-   "lng": 149.099633
-  },
-  {
-   "facility_code": "BHB",
-   "facility_name": "Broken Hill Battery",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 198.0,
-   "lat": -31.986306,
-   "lng": 141.422951
-  },
-  {
-   "facility_code": "BDONGHYD",
-   "facility_name": "Burrendong",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 19.0,
-   "lat": -32.664624,
-   "lng": 149.107959
-  },
-  {
-   "facility_code": "CBWWBA",
-   "facility_name": "Christies Beach",
-   "network_region": "SA1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 0.66,
-   "lat": -35.125958,
-   "lng": 138.47135
-  },
-  {
-   "facility_code": "CBWWBA",
-   "facility_name": "Christies Beach",
-   "network_region": "SA1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 3.83,
-   "lat": -35.125958,
-   "lng": 138.47135
-  },
-  {
-   "facility_code": "CLERMSF",
-   "facility_name": "Clermont",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 92.0,
-   "lat": -22.837763,
-   "lng": 147.579322
-  },
-  {
-   "facility_code": "CLUNY",
-   "facility_name": "Cluny",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 19.0,
-   "lat": -42.506442,
-   "lng": 146.68104
-  },
-  {
-   "facility_code": "DRYCGT",
-   "facility_name": "Dry Creek",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 156.0,
-   "lat": -34.847703,
-   "lng": 138.5816
-  },
-  {
-   "facility_code": "GEORGTWN",
-   "facility_name": "George Town",
-   "network_region": "TAS1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 34.0,
-   "lat": -41.091063,
-   "lng": 146.893204
-  },
-  {
-   "facility_code": "GNARWARREBESS",
-   "facility_name": "Gnarwarre",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 750.0,
-   "lat": -38.148311,
-   "lng": 144.139484
-  },
-  {
-   "facility_code": "GRIFSF",
-   "facility_name": "Griffith",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 27.2,
-   "lat": -34.317617,
-   "lng": 146.121416
-  },
-  {
-   "facility_code": "HAMISF",
-   "facility_name": "Hamilton",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 57.5,
-   "lat": -20.496081,
-   "lng": 147.738803
-  },
-  {
-   "facility_code": "HAYMSF",
-   "facility_name": "Hayman",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 57.75,
-   "lat": -20.510097,
-   "lng": 147.755711
-  },
-  {
-   "facility_code": "HUMEV",
-   "facility_name": "Hume",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "commissioning",
-   "capacity_mw": 29.0,
-   "lat": -36.106887,
-   "lng": 147.032572
-  },
-  {
-   "facility_code": "ICSM",
-   "facility_name": "Isis Central Sugar Mill",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 25.0,
-   "lat": -25.197619,
-   "lng": 152.206949
-  },
-  {
-   "facility_code": "LNGS",
-   "facility_name": "Laverton North",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 320.0,
-   "lat": -37.841703,
-   "lng": 144.788796
-  },
-  {
-   "facility_code": "MCINTYR",
-   "facility_name": "MacIntyre",
-   "network_region": "QLD1",
-   "fueltech_group": "wind",
-   "status": "commissioning",
-   "capacity_mw": 923.0,
-   "lat": -28.350769,
-   "lng": 151.635944
-  },
-  {
-   "facility_code": "MM",
-   "facility_name": "Munmorah",
-   "network_region": "NSW1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 600.0,
-   "lat": -33.211781,
-   "lng": 151.542161
-  },
-  {
-   "facility_code": "MBPS2",
-   "facility_name": "Murray Bridge-Onkaparinga",
-   "network_region": "SA1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 13.75,
-   "lat": -35.096848,
-   "lng": 139.209527
-  },
-  {
-   "facility_code": "NORTHP",
-   "facility_name": "Northern",
-   "network_region": "SA1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 530.0,
-   "lat": -32.5429,
-   "lng": 137.7874
-  },
-  {
-   "facility_code": "OSBORNE",
-   "facility_name": "Osborne",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 180.0,
-   "lat": -34.797702,
-   "lng": 138.50779
-  },
-  {
-   "facility_code": "PLWF",
-   "facility_name": "Port Latta",
-   "network_region": "TAS1",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 21.0,
-   "lat": -40.871168,
-   "lng": 145.357293
-  },
-  {
-   "facility_code": "QP",
-   "facility_name": "Quorn Park",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 96.0,
-   "lat": -33.079517,
-   "lng": 148.089521
-  },
-  {
-   "facility_code": "RUBICON",
-   "facility_name": "Rubicon",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "commissioning",
-   "capacity_mw": 13.0,
-   "lat": -37.327154,
-   "lng": 145.860547
-  },
-  {
-   "facility_code": "SVALE",
-   "facility_name": "Springvale",
-   "network_region": "VIC1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 4.2,
-   "lat": -37.973375,
-   "lng": 145.139695
-  },
-  {
-   "facility_code": "STABESS",
-   "facility_name": "Stanwell",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 951.0,
-   "lat": -23.513568,
-   "lng": 150.31811
-  },
-  {
-   "facility_code": "SMFBESS2",
-   "facility_name": "Summerfield 2",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "commissioning",
-   "capacity_mw": 460.95000000000005,
-   "lat": -34.958457,
-   "lng": 139.2099
-  },
-  {
-   "facility_code": "TBBESS3",
-   "facility_name": "Tailem Bend 3",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 1440.0,
-   "lat": -35.271105,
-   "lng": 139.484124
-  },
-  {
-   "facility_code": "TUMUT3",
-   "facility_name": "Tumut 3",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 1500.0,
-   "lat": -35.611138,
-   "lng": 148.29175
-  },
-  {
-   "facility_code": "WANDSF",
-   "facility_name": "Wandoan",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 320.0,
-   "lat": -26.248848,
-   "lng": 149.765988
-  },
-  {
-   "facility_code": "WOOLNTH1",
-   "facility_name": "Woolnorth",
-   "network_region": "TAS1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 140.0,
-   "lat": -40.786606,
-   "lng": 144.738536
-  },
-  {
-   "facility_code": "HENDERSON_RENEWABLE",
-   "facility_name": "Henderson",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 3.0,
-   "lat": -32.202137,
-   "lng": 115.77391
-  },
-  {
-   "facility_code": "KONDININWF1",
-   "facility_name": "Kondinin",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 130.0,
-   "lat": -32.47762,
-   "lng": 118.391403
-  },
-  {
-   "facility_code": "KWINANA_ESR2",
-   "facility_name": "Kwinana Battery 2",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 675.0,
-   "lat": -32.202465,
-   "lng": 115.778452
-  },
-  {
-   "facility_code": "RED_HILL",
-   "facility_name": "Red Hill",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 3.64,
-   "lat": -31.830628,
-   "lng": 116.100888
-  },
-  {
-   "facility_code": "TAMALA_PARK",
-   "facility_name": "Tamala Park",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 6.0,
-   "lat": -31.706198,
-   "lng": 115.725734
-  },
-  {
-   "facility_code": "BARANDUDA",
-   "facility_name": "Baranduda",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 1633.1999999999998,
-   "lat": -36.155406,
-   "lng": 146.945807
-  },
-  {
-   "facility_code": "BRAEMARA",
-   "facility_name": "Braemar",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 504.0,
-   "lat": -27.110488,
-   "lng": 150.905683
-  },
-  {
-   "facility_code": "CANUNDA1",
-   "facility_name": "Canunda",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 46.0,
-   "lat": -37.691515,
-   "lng": 140.35514
-  },
-  {
-   "facility_code": "CLEMGPWF",
-   "facility_name": "Clements Gap",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 57.0,
-   "lat": -33.507311,
-   "lng": 138.115629
-  },
-  {
-   "facility_code": "COLWF01",
-   "facility_name": "Collector",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 226.0,
-   "lat": -34.862066,
-   "lng": 149.388245
-  },
-  {
-   "facility_code": "DUNDWF",
-   "facility_name": "Dundonnell",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 335.0,
-   "lat": -37.865682,
-   "lng": 142.951894
-  },
-  {
-   "facility_code": "PMATTAEP",
-   "facility_name": "Earthpower",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 4.0,
-   "lat": -33.857245,
-   "lng": 151.067405
-  },
-  {
-   "facility_code": "EILDONPD",
-   "facility_name": "Eildon",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 4.5,
-   "lat": -37.243123,
-   "lng": 145.89735
-  },
-  {
-   "facility_code": "ENERGYB",
-   "facility_name": "Energy Brix",
-   "network_region": "VIC1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 195.0,
-   "lat": -38.254444,
-   "lng": 146.413611
-  },
-  {
-   "facility_code": "FWF",
-   "facility_name": "Ferguson",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 12.0,
-   "lat": -38.609776,
-   "lng": 143.179314
-  },
-  {
-   "facility_code": "GLENMAGG",
-   "facility_name": "Glenmaggie",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 3.8,
-   "lat": -37.904836,
-   "lng": 146.800388
-  },
-  {
-   "facility_code": "GLENSF",
-   "facility_name": "Glenrowan",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 126.0,
-   "lat": -36.490814,
-   "lng": 146.158762
-  },
-  {
-   "facility_code": "HALLWF2",
-   "facility_name": "Hallett 2",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 71.4,
-   "lat": -33.550778,
-   "lng": 138.863924
-  },
-  {
-   "facility_code": "HORNSDPR",
-   "facility_name": "Hornsdale Power Reserve",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 150.0,
-   "lat": -33.086389,
-   "lng": 138.518659
-  },
-  {
-   "facility_code": "HORSHAMSF",
-   "facility_name": "Horsham",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 467.40000000000003,
-   "lat": -36.71577,
-   "lng": 142.25956
-  },
-  {
-   "facility_code": "HUNTVGT",
-   "facility_name": "Hunter Valley",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 50.0,
-   "lat": -32.389989,
-   "lng": 150.965963
-  },
-  {
-   "facility_code": "JBUTTERS",
-   "facility_name": "John Butters",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 144.0,
-   "lat": -42.154894,
-   "lng": 145.534508
-  },
-  {
-   "facility_code": "KOGANCK",
-   "facility_name": "Kogan Creek",
-   "network_region": "QLD1",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 744.0,
-   "lat": -26.917925,
-   "lng": 150.749127
-  },
-  {
-   "facility_code": "LOTUSCRKWF",
-   "facility_name": "Lotus Creek",
-   "network_region": "QLD1",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 285.2,
-   "lat": -22.366535,
-   "lng": 149.27332
-  },
-  {
-   "facility_code": "MACARTH",
-   "facility_name": "Macarthur",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 420.0,
-   "lat": -38.036376,
-   "lng": 142.181753
-  },
-  {
-   "facility_code": "MEADOWBK",
-   "facility_name": "Meadowbank",
-   "network_region": "TAS1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 24.0,
-   "lat": -42.611178,
-   "lng": 146.845687
-  },
-  {
-   "facility_code": "PINDARI",
-   "facility_name": "Pindari",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 6.7,
-   "lat": -29.388034,
-   "lng": 151.244774
-  },
-  {
-   "facility_code": "QUARANTN",
-   "facility_name": "Quarantine",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 229.0,
-   "lat": -34.779339,
-   "lng": 138.522883
-  },
-  {
-   "facility_code": "REECE",
-   "facility_name": "Reece",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 231.2,
-   "lat": -41.723739,
-   "lng": 145.136012
-  },
-  {
-   "facility_code": "RIVNB",
-   "facility_name": "Riverina 2",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 195.0,
-   "lat": -34.646349,
-   "lng": 146.035015
-  },
-  {
-   "facility_code": "RRSF",
-   "facility_name": "Ross River",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 128.0,
-   "lat": -19.42622,
-   "lng": 146.715299
-  },
-  {
-   "facility_code": "ROYALLA",
-   "facility_name": "Royalla",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 20.0,
-   "lat": -35.489826,
-   "lng": 149.142704
-  },
-  {
-   "facility_code": "RYEPARK",
-   "facility_name": "Rye Park",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 396.0,
-   "lat": -34.550899,
-   "lng": 148.95544
-  },
-  {
-   "facility_code": "SNB3",
-   "facility_name": "Supernode 3",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 780.9000000000001,
-   "lat": -27.31751,
-   "lng": 152.968963
-  },
-  {
-   "facility_code": "TARONGN",
-   "facility_name": "Tarong North",
-   "network_region": "QLD1",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 443.0,
-   "lat": -26.774391,
-   "lng": 151.914007
-  },
-  {
-   "facility_code": "TEEBARBESS",
-   "facility_name": "Teebar",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 1200.0,
-   "lat": -25.696416,
-   "lng": 152.250688
-  },
-  {
-   "facility_code": "SATGS",
-   "facility_name": "Temporary Generation South",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 123.0,
-   "lat": -35.110382,
-   "lng": 138.491225
-  },
-  {
-   "facility_code": "TOORAWF",
-   "facility_name": "Toora",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 21.0,
-   "lat": -38.653258,
-   "lng": 146.340154
-  },
-  {
-   "facility_code": "WESTILLA",
-   "facility_name": "West Illawarra Leagues Club",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 1.0,
-   "lat": -34.451645,
-   "lng": 150.843037
-  },
-  {
-   "facility_code": "WSTWYSF",
-   "facility_name": "West Wyalong",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 105.0,
-   "lat": -33.809655,
-   "lng": 147.325015
-  },
-  {
-   "facility_code": "WHIT1",
-   "facility_name": "Whitwood Road",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 1.0,
-   "lat": -27.654899,
-   "lng": 152.817672
-  },
-  {
-   "facility_code": "WINTSF1",
-   "facility_name": "Winton",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 107.0,
-   "lat": -36.503538,
-   "lng": 146.124102
-  },
-  {
-   "facility_code": "COLLIE_ESR",
-   "facility_name": "Collie 1",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 657.0,
-   "lat": -33.336507,
-   "lng": 116.260662
-  },
-  {
-   "facility_code": "COLLIE_BESS2",
-   "facility_name": "Collie 2",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "commissioning",
-   "capacity_mw": 1023.0,
-   "lat": -33.336507,
-   "lng": 116.260662
-  },
-  {
-   "facility_code": "KALAMUNDA_SG",
-   "facility_name": "Kalamunda",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 1.3,
-   "lat": -32.003292,
-   "lng": 116.074885
-  },
-  {
-   "facility_code": "NAMKKN_MERR",
-   "facility_name": "Merredin",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 92.6,
-   "lat": -31.542681,
-   "lng": 118.22701
-  },
-  {
-   "facility_code": "NORTHAM_SF",
-   "facility_name": "Northam",
-   "network_region": "WEM",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 10.0,
-   "lat": -31.65161,
-   "lng": 116.711541
-  },
   {
    "facility_code": "BAYSW",
    "facility_name": "Bayswater",
@@ -1230,1366 +450,6 @@
    "capacity_mw": 4.16,
    "lat": -32.26642,
    "lng": 116.019263
-  },
-  {
-   "facility_code": "AWABAREF",
-   "facility_name": "Awaba",
-   "network_region": "NSW1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 1.0,
-   "lat": -33.023339,
-   "lng": 151.551228
-  },
-  {
-   "facility_code": "BRNDBES",
-   "facility_name": "Brendale",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 645.0,
-   "lat": -27.329333,
-   "lng": 152.974384
-  },
-  {
-   "facility_code": "BHILLGT",
-   "facility_name": "Broken Hill",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 50.0,
-   "lat": -31.986313,
-   "lng": 141.42062
-  },
-  {
-   "facility_code": "BROKENH",
-   "facility_name": "Broken Hill",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 53.0,
-   "lat": -31.987538,
-   "lng": 141.391994
-  },
-  {
-   "facility_code": "BPLANDF",
-   "facility_name": "Browns Plains",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 2.0,
-   "lat": -27.672038,
-   "lng": 153.066312
-  },
-  {
-   "facility_code": "CHPSTWF",
-   "facility_name": "Chepstowe",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 6.15,
-   "lat": -37.596065,
-   "lng": 143.495467
-  },
-  {
-   "facility_code": "CHYTWF",
-   "facility_name": "Cherry Tree",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 57.6,
-   "lat": -37.10249,
-   "lng": 145.2657
-  },
-  {
-   "facility_code": "COLEASF",
-   "facility_name": "Coleambally",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 180.0,
-   "lat": -34.762456,
-   "lng": 145.928786
-  },
-  {
-   "facility_code": "COLUMSF",
-   "facility_name": "Columboola",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 217.0,
-   "lat": -26.633781,
-   "lng": 150.298894
-  },
-  {
-   "facility_code": "CULCSF",
-   "facility_name": "Culcairn",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 645.0,
-   "lat": -35.702717,
-   "lng": 146.963901
-  },
-  {
-   "facility_code": "DALNTH",
-   "facility_name": "Dalrymple North",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 90.0,
-   "lat": -34.933952,
-   "lng": 137.743532
-  },
-  {
-   "facility_code": "EILDON",
-   "facility_name": "Eildon",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 120.0,
-   "lat": -37.221982,
-   "lng": 145.921476
-  },
-  {
-   "facility_code": "GANYMIRRA",
-   "facility_name": "Ganymirra",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 540.0,
-   "lat": -19.608222,
-   "lng": 146.961712
-  },
-  {
-   "facility_code": "HALAMRD",
-   "facility_name": "Hallam Road",
-   "network_region": "VIC1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 8.98,
-   "lat": -38.052181,
-   "lng": 145.267798
-  },
-  {
-   "facility_code": "HALLWF",
-   "facility_name": "Hallett 1",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 95.0,
-   "lat": -33.349308,
-   "lng": 138.750829
-  },
-  {
-   "facility_code": "HUNTER",
-   "facility_name": "Hunter",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 750.0,
-   "lat": -32.836104,
-   "lng": 151.450523
-  },
-  {
-   "facility_code": "KABANWF",
-   "facility_name": "Kaban",
-   "network_region": "QLD1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 156.0,
-   "lat": -17.560606,
-   "lng": 145.413125
-  },
-  {
-   "facility_code": "KIATAWF",
-   "facility_name": "Kiata",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 31.0,
-   "lat": -36.397288,
-   "lng": 141.747394
-  },
-  {
-   "facility_code": "LUCASHGT",
-   "facility_name": "Lucas Heights",
-   "network_region": "NSW1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 12.65,
-   "lat": -34.04829,
-   "lng": 150.973916
-  },
-  {
-   "facility_code": "MCRK",
-   "facility_name": "Major's Creek",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 180.0,
-   "lat": -19.608036,
-   "lng": 146.961165
-  },
-  {
-   "facility_code": "MSTUART",
-   "facility_name": "Mt Stuart",
-   "network_region": "QLD1",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 419.0,
-   "lat": -19.337807,
-   "lng": 146.850916
-  },
-  {
-   "facility_code": "MULWASF",
-   "facility_name": "Mulwala",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 31.0,
-   "lat": -35.958258,
-   "lng": 146.007893
-  },
-  {
-   "facility_code": "OSBORNE",
-   "facility_name": "Osborne",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 180.0,
-   "lat": -34.797702,
-   "lng": 138.50779
-  },
-  {
-   "facility_code": "REMOUNT",
-   "facility_name": "Remount",
-   "network_region": "TAS1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 2.0,
-   "lat": -41.422608,
-   "lng": 147.111819
-  },
-  {
-   "facility_code": "SMTHBES1",
-   "facility_name": "Smithfield",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 208.20000000000002,
-   "lat": -33.849972,
-   "lng": 150.947448
-  },
-  {
-   "facility_code": "TBSF",
-   "facility_name": "Tailem Bend",
-   "network_region": "SA1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 108.0,
-   "lat": -35.271346,
-   "lng": 139.488379
-  },
-  {
-   "facility_code": "TALLAWAR",
-   "facility_name": "Tallawarra",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 440.0,
-   "lat": -34.522808,
-   "lng": 150.807237
-  },
-  {
-   "facility_code": "TUNGATIN",
-   "facility_name": "Tungatinah",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 125.0,
-   "lat": -42.296802,
-   "lng": 146.456568
-  },
-  {
-   "facility_code": "VBB",
-   "facility_name": "Victorian Big Battery",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 1080.0,
-   "lat": -38.038278,
-   "lng": 144.290383
-  },
-  {
-   "facility_code": "WLWLSF",
-   "facility_name": "Walla Walla",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 403.2,
-   "lat": -35.747397,
-   "lng": 146.96666
-  },
-  {
-   "facility_code": "WATERLWF",
-   "facility_name": "Waterloo",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 130.8,
-   "lat": -34.001298,
-   "lng": 138.91088
-  },
-  {
-   "facility_code": "WAUBRAWF",
-   "facility_name": "Waubra",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 192.0,
-   "lat": -37.357446,
-   "lng": 143.603659
-  },
-  {
-   "facility_code": "WDGPH",
-   "facility_name": "Western Downs",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 501.0,
-   "lat": -26.955534,
-   "lng": 150.67862
-  },
-  {
-   "facility_code": "WILLBES",
-   "facility_name": "Williamsdale",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 786.0,
-   "lat": -35.57458,
-   "lng": 149.131993
-  },
-  {
-   "facility_code": "WINGF1",
-   "facility_name": "Wingfield",
-   "network_region": "SA1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 4.12,
-   "lat": -34.779749,
-   "lng": 138.522379
-  },
-  {
-   "facility_code": "WUNUSF",
-   "facility_name": "Wunghnu",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 93.5,
-   "lat": -36.164639,
-   "lng": 145.394245
-  },
-  {
-   "facility_code": "INVESTEC_COLLGAR",
-   "facility_name": "Collgar",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 222.0,
-   "lat": -31.542533,
-   "lng": 118.456525
-  },
-  {
-   "facility_code": "EDWFMAN",
-   "facility_name": "Emu Downs",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 79.2,
-   "lat": -30.490991,
-   "lng": 115.359843
-  },
-  {
-   "facility_code": "KALBARRI",
-   "facility_name": "Kalbarri",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 1.6,
-   "lat": -27.899626,
-   "lng": 114.194519
-  },
-  {
-   "facility_code": "STHRNCRS",
-   "facility_name": "Kambalda",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 23.0,
-   "lat": -31.191281,
-   "lng": 121.673741
-  },
-  {
-   "facility_code": "PERTHENERGY_KWINANA",
-   "facility_name": "Kwinana Swift",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 116.0,
-   "lat": -32.224368,
-   "lng": 115.778586
-  },
-  {
-   "facility_code": "MUJA",
-   "facility_name": "Muja CD",
-   "network_region": "WEM",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 389.4,
-   "lat": -33.450246,
-   "lng": 116.30482
-  },
-  {
-   "facility_code": "WAROONA",
-   "facility_name": "Waroona",
-   "network_region": "WEM",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 132.0,
-   "lat": -32.913779,
-   "lng": 115.789591
-  },
-  {
-   "facility_code": "WARRADARGE",
-   "facility_name": "Warradarge",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 180.0,
-   "lat": -29.942809,
-   "lng": 115.470459
-  },
-  {
-   "facility_code": "BANNSP",
-   "facility_name": "Bannerton",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 100.0,
-   "lat": -34.687324,
-   "lng": 142.77895
-  },
-  {
-   "facility_code": "BERYLSF",
-   "facility_name": "Beryl",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 98.0,
-   "lat": -32.356446,
-   "lng": 149.470517
-  },
-  {
-   "facility_code": "MCKAY",
-   "facility_name": "Bogong / Mackay",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 300.0,
-   "lat": -36.858282,
-   "lng": 147.234146
-  },
-  {
-   "facility_code": "BROADMDW",
-   "facility_name": "Broadmeadows",
-   "network_region": "VIC1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 5.0,
-   "lat": -37.631417,
-   "lng": 144.953048
-  },
-  {
-   "facility_code": "DAANDINE",
-   "facility_name": "Daandine",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 33.0,
-   "lat": -27.08615,
-   "lng": 150.942623
-  },
-  {
-   "facility_code": "ERB2",
-   "facility_name": "Eraring 2",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "commissioning",
-   "capacity_mw": 720.0,
-   "lat": -33.066837,
-   "lng": 151.515026
-  },
-  {
-   "facility_code": "GBWF1",
-   "facility_name": "Gawara Baya",
-   "network_region": "QLD1",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 408.0,
-   "lat": -18.780152,
-   "lng": 145.742428
-  },
-  {
-   "facility_code": "GLRWNSF",
-   "facility_name": "Glenrowan West",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 132.0,
-   "lat": -36.4907,
-   "lng": 146.157473
-  },
-  {
-   "facility_code": "GOONUMSF",
-   "facility_name": "Goonumbla",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 85.0,
-   "lat": -33.109212,
-   "lng": 148.092982
-  },
-  {
-   "facility_code": "GRIVSF",
-   "facility_name": "Goulburn River",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 588.0,
-   "lat": -32.282141,
-   "lng": 150.102488
-  },
-  {
-   "facility_code": "GNWF",
-   "facility_name": "Goyder North",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 346.0,
-   "lat": -33.553276,
-   "lng": 138.988097
-  },
-  {
-   "facility_code": "AGLHAL",
-   "facility_name": "Hallett",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "commissioning",
-   "capacity_mw": 217.0,
-   "lat": -33.349528,
-   "lng": 138.751607
-  },
-  {
-   "facility_code": "HAMPTON",
-   "facility_name": "Hampton",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 1.32,
-   "lat": -33.638759,
-   "lng": 150.049667
-  },
-  {
-   "facility_code": "HEZ",
-   "facility_name": "Hunter Economic Zone",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 28.0,
-   "lat": -32.835481,
-   "lng": 151.451033
-  },
-  {
-   "facility_code": "KEEPIT",
-   "facility_name": "Keepit",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 6.0,
-   "lat": -30.87868,
-   "lng": 150.491876
-  },
-  {
-   "facility_code": "AGLSITA",
-   "facility_name": "Kemps Creek",
-   "network_region": "NSW1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 1.0,
-   "lat": -33.874591,
-   "lng": 150.761858
-  },
-  {
-   "facility_code": "LKBONNY_2",
-   "facility_name": "Lake Bonney 2",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 159.0,
-   "lat": -37.769885,
-   "lng": 140.406271
-  },
-  {
-   "facility_code": "LONGFORD",
-   "facility_name": "Longford",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 46.4,
-   "lat": -38.223244,
-   "lng": 147.1631
-  },
-  {
-   "facility_code": "MEH",
-   "facility_name": "Mortlake",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 948.3000000000001,
-   "lat": -38.035762,
-   "lng": 142.747637
-  },
-  {
-   "facility_code": "NUMURKSF",
-   "facility_name": "Numurkah",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 112.0,
-   "lat": -36.161038,
-   "lng": 145.476491
-  },
-  {
-   "facility_code": "ORABESS",
-   "facility_name": "Orana",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 1317.0,
-   "lat": -32.530421,
-   "lng": 148.962923
-  },
-  {
-   "facility_code": "PIBESS",
-   "facility_name": "Phillip Island",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 21.0,
-   "lat": -38.484903,
-   "lng": 145.238216
-  },
-  {
-   "facility_code": "ROCHEDAL",
-   "facility_name": "Rochedale",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 7.7,
-   "lat": -27.555798,
-   "lng": 153.123155
-  },
-  {
-   "facility_code": "RPCG",
-   "facility_name": "Rocky Point Cogen",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 30.0,
-   "lat": -27.733342,
-   "lng": 153.327699
-  },
-  {
-   "facility_code": "ROWALLAN",
-   "facility_name": "Rowallan",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 10.5,
-   "lat": -41.729547,
-   "lng": 146.217649
-  },
-  {
-   "facility_code": "RUGBYR",
-   "facility_name": "Rugby Run",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 83.0,
-   "lat": -22.142401,
-   "lng": 147.928736
-  },
-  {
-   "facility_code": "SNAPPER",
-   "facility_name": "Snapper Point",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 154.0,
-   "lat": -34.764433,
-   "lng": 138.508149
-  },
-  {
-   "facility_code": "SMCSF",
-   "facility_name": "Sun Metals",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 143.0,
-   "lat": -19.332335,
-   "lng": 146.875929
-  },
-  {
-   "facility_code": "SUNTPSF",
-   "facility_name": "Suntop",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 175.0,
-   "lat": -32.583514,
-   "lng": 148.826931
-  },
-  {
-   "facility_code": "TAHMOOR",
-   "facility_name": "Tahmoor",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 7.04,
-   "lat": -34.249117,
-   "lng": 150.577718
-  },
-  {
-   "facility_code": "TALWB",
-   "facility_name": "Tallawarra B",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 320.0,
-   "lat": -34.522808,
-   "lng": 150.807237
-  },
-  {
-   "facility_code": "TARBESS",
-   "facility_name": "Tarong",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 1179.0,
-   "lat": -26.780561,
-   "lng": 151.910086
-  },
-  {
-   "facility_code": "SATGN",
-   "facility_name": "Temporary Generation North",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 154.0,
-   "lat": -34.719454,
-   "lng": 138.668269
-  },
-  {
-   "facility_code": "SNOWY2",
-   "facility_name": "Tumut",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 616.0,
-   "lat": -35.952003,
-   "lng": 148.367255
-  },
-  {
-   "facility_code": "WANDBG",
-   "facility_name": "Wandoan South",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 369.0,
-   "lat": -26.261526,
-   "lng": 149.765738
-  },
-  {
-   "facility_code": "WGWF",
-   "facility_name": "Willogoleche",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 119.0,
-   "lat": -33.413128,
-   "lng": 138.845663
-  },
-  {
-   "facility_code": "WIVENHOE",
-   "facility_name": "Wivenhoe",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 480.0,
-   "lat": -27.372417,
-   "lng": 152.63203
-  },
-  {
-   "facility_code": "BADGINGARRA",
-   "facility_name": "Badgingarra",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 130.0,
-   "lat": -30.456742,
-   "lng": 115.343726
-  },
-  {
-   "facility_code": "BLUEWATERS",
-   "facility_name": "Bluewaters",
-   "network_region": "WEM",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 434.0,
-   "lat": -33.330601,
-   "lng": 116.227816
-  },
-  {
-   "facility_code": "KINGS_ROCK_WF",
-   "facility_name": "Kings Rock",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 105.0,
-   "lat": -32.243655,
-   "lng": 119.161497
-  },
-  {
-   "facility_code": "MERREDIN_ESR1",
-   "facility_name": "Merredin",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 200.0,
-   "lat": -31.539455,
-   "lng": 118.227167
-  },
-  {
-   "facility_code": "MERREDIN_ESR1",
-   "facility_name": "Merredin",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "commissioning",
-   "capacity_mw": 100.0,
-   "lat": -31.539455,
-   "lng": 118.227167
-  },
-  {
-   "facility_code": "SKYFRM_MTBARKER",
-   "facility_name": "Mount Barker",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 2.43,
-   "lat": -34.597501,
-   "lng": 117.64351
-  },
-  {
-   "facility_code": "TESLA_NORTHAM",
-   "facility_name": "Northam",
-   "network_region": "WEM",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 10.0,
-   "lat": -31.642906,
-   "lng": 116.847503
-  },
-  {
-   "facility_code": "WADDIWF",
-   "facility_name": "Waddi",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 108.0,
-   "lat": -30.640165,
-   "lng": 115.529743
-  },
-  {
-   "facility_code": "BBASEHOS",
-   "facility_name": "Ballarat Hospital",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 3.0,
-   "lat": -37.558774,
-   "lng": 143.847247
-  },
-  {
-   "facility_code": "BRYB1WF1",
-   "facility_name": "Berrybank",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 289.6,
-   "lat": -37.885519,
-   "lng": 143.453446
-  },
-  {
-   "facility_code": "BOMENSF",
-   "facility_name": "Bomen",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 121.0,
-   "lat": -35.046577,
-   "lng": 147.442585
-  },
-  {
-   "facility_code": "BRDD",
-   "facility_name": "Broadsound",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 368.0,
-   "lat": -22.810001,
-   "lng": 149.36302
-  },
-  {
-   "facility_code": "BUTLERSG",
-   "facility_name": "Butlers Gorge",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 14.4,
-   "lat": -42.266898,
-   "lng": 146.261823
-  },
-  {
-   "facility_code": "CARAG",
-   "facility_name": "Carag",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 16.0,
-   "lat": -34.937138,
-   "lng": 150.589412
-  },
-  {
-   "facility_code": "CETHANA",
-   "facility_name": "Cethana",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 85.0,
-   "lat": -41.480804,
-   "lng": 146.134511
-  },
-  {
-   "facility_code": "CHILDSF",
-   "facility_name": "Childers",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 64.38,
-   "lat": -25.305189,
-   "lng": 152.402663
-  },
-  {
-   "facility_code": "CRWASF1",
-   "facility_name": "Corowa",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 36.0,
-   "lat": -35.979325,
-   "lng": 146.359356
-  },
-  {
-   "facility_code": "CULLERIN",
-   "facility_name": "Cullerin Range",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 30.0,
-   "lat": -34.809208,
-   "lng": 149.399185
-  },
-  {
-   "facility_code": "DARLSF",
-   "facility_name": "Darlington Point",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 324.0,
-   "lat": -34.648971,
-   "lng": 146.061179
-  },
-  {
-   "facility_code": "DAYDSF",
-   "facility_name": "Daydream",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 167.0,
-   "lat": -20.479752,
-   "lng": 147.763711
-  },
-  {
-   "facility_code": "ERGT01",
-   "facility_name": "Eraring",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "commissioning",
-   "capacity_mw": 41.5,
-   "lat": -33.062117,
-   "lng": 151.517224
-  },
-  {
-   "facility_code": "GANGARR",
-   "facility_name": "Gangarri",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 162.0,
-   "lat": -26.270557,
-   "lng": 149.758054
-  },
-  {
-   "facility_code": "GLENNCRK",
-   "facility_name": "Glennies Creek",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 12.78,
-   "lat": -32.459876,
-   "lng": 151.128697
-  },
-  {
-   "facility_code": "SNOWY3",
-   "facility_name": "Guthega",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 60.0,
-   "lat": -36.350097,
-   "lng": 148.413602
-  },
-  {
-   "facility_code": "HD1WF",
-   "facility_name": "Hawkesdale",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 94.6,
-   "lat": -38.148008,
-   "lng": 142.360925
-  },
-  {
-   "facility_code": "JEMALNG1",
-   "facility_name": "Jemalong",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 55.0,
-   "lat": -33.409099,
-   "lng": 147.655008
-  },
-  {
-   "facility_code": "KIAMSF1",
-   "facility_name": "Kiamal",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 239.0,
-   "lat": -35.021508,
-   "lng": 142.297971
-  },
-  {
-   "facility_code": "KINGASF",
-   "facility_name": "Kingaroy",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 47.0,
-   "lat": -26.538639,
-   "lng": 151.881271
-  },
-  {
-   "facility_code": "LIMOSF1",
-   "facility_name": "Limondale",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 275.0,
-   "lat": -34.771747,
-   "lng": 143.500494
-  },
-  {
-   "facility_code": "LUCAS2S2",
-   "facility_name": "Lucas Heights 2",
-   "network_region": "NSW1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 4.6,
-   "lat": -34.044088,
-   "lng": 150.972475
-  },
-  {
-   "facility_code": "MCRK",
-   "facility_name": "Major's Creek",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 540.0,
-   "lat": -19.608036,
-   "lng": 146.961165
-  },
-  {
-   "facility_code": "MANNUMB",
-   "facility_name": "Mannum",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 395.09999999999997,
-   "lat": -34.917537,
-   "lng": 139.262695
-  },
-  {
-   "facility_code": "MARYRSF",
-   "facility_name": "Maryrorough",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 33.0,
-   "lat": -27.708611,
-   "lng": 151.546202
-  },
-  {
-   "facility_code": "MARYVALE",
-   "facility_name": "Maryvale",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 243.0,
-   "lat": -32.515339,
-   "lng": 148.95578
-  },
-  {
-   "facility_code": "MREH",
-   "facility_name": "Melbourne A1",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 647.4000000000001,
-   "lat": -37.669178,
-   "lng": 144.733221
-  },
-  {
-   "facility_code": "MORTLK",
-   "facility_name": "Mortlake",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 566.0,
-   "lat": -38.063237,
-   "lng": 142.668677
-  },
-  {
-   "facility_code": "MOUSF",
-   "facility_name": "Moura",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 99.0,
-   "lat": -24.515007,
-   "lng": 150.087256
-  },
-  {
-   "facility_code": "MEWF",
-   "facility_name": "Mt Emerald",
-   "network_region": "QLD1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 180.0,
-   "lat": -17.170847,
-   "lng": 145.38046
-  },
-  {
-   "facility_code": "MUSSELRO",
-   "facility_name": "Musselroe",
-   "network_region": "TAS1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 168.0,
-   "lat": -40.780012,
-   "lng": 148.010283
-  },
-  {
-   "facility_code": "PORTWF",
-   "facility_name": "Portland",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 148.0,
-   "lat": -38.372199,
-   "lng": 141.37945
-  },
-  {
-   "facility_code": "QBYNB",
-   "facility_name": "Queanbeyan",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 30.0,
-   "lat": -35.338148,
-   "lng": 149.215613
-  },
-  {
-   "facility_code": "SNUG",
-   "facility_name": "Snuggery",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 42.0,
-   "lat": -37.664996,
-   "lng": 140.414686
-  },
-  {
-   "facility_code": "STGEORGE",
-   "facility_name": "St George Leagues Club",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 1.0,
-   "lat": -33.974819,
-   "lng": 151.129354
-  },
-  {
-   "facility_code": "TARALGA",
-   "facility_name": "Taralga",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 106.8,
-   "lat": -34.431428,
-   "lng": 149.865258
-  },
-  {
-   "facility_code": "TERALBA",
-   "facility_name": "Teralba",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 3.0,
-   "lat": -32.945557,
-   "lng": 151.612042
-  },
-  {
-   "facility_code": "WALGRV",
-   "facility_name": "Wallgrove",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 150.0,
-   "lat": -33.813917,
-   "lng": 150.830827
-  },
-  {
-   "facility_code": "WG",
-   "facility_name": "Warragamba",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "retired",
-   "capacity_mw": 50.0,
-   "lat": -33.882862,
-   "lng": 150.596954
-  },
-  {
-   "facility_code": "WOLLERT",
-   "facility_name": "Wollert",
-   "network_region": "VIC1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 7.0,
-   "lat": -37.583073,
-   "lng": 145.048357
-  },
-  {
-   "facility_code": "WONWP",
-   "facility_name": "Wonthaggi",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 12.0,
-   "lat": -38.604079,
-   "lng": 145.545379
-  },
-  {
-   "facility_code": "WYANGALB",
-   "facility_name": "Wyangala B",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 4.0,
-   "lat": -33.968824,
-   "lng": 148.948823
-  },
-  {
-   "facility_code": "ALBANY",
-   "facility_name": "Albany",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 21.6,
-   "lat": -35.055759,
-   "lng": 117.777048
-  },
-  {
-   "facility_code": "BREMER_BAY",
-   "facility_name": "Bremer Bay",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 0.6,
-   "lat": -34.399033,
-   "lng": 119.389377
-  },
-  {
-   "facility_code": "ALCOA_WGP",
-   "facility_name": "Wagerup",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 418.0,
-   "lat": -32.91546,
-   "lng": 115.917892
-  },
-  {
-   "facility_code": "ALINTA_WWF",
-   "facility_name": "Walkaway",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 89.1,
-   "lat": -28.916734,
-   "lng": 114.914165
-  },
-  {
-   "facility_code": "WARRADARGE",
-   "facility_name": "Warradarge",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 103.0,
-   "lat": -29.942809,
-   "lng": 115.470459
   },
   {
    "facility_code": "APPIN",
@@ -3082,6 +942,1416 @@
    "lng": 121.424464
   },
   {
+   "facility_code": "BANNSP",
+   "facility_name": "Bannerton",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 100.0,
+   "lat": -34.687324,
+   "lng": 142.77895
+  },
+  {
+   "facility_code": "BERYLSF",
+   "facility_name": "Beryl",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 98.0,
+   "lat": -32.356446,
+   "lng": 149.470517
+  },
+  {
+   "facility_code": "MCKAY",
+   "facility_name": "Bogong / Mackay",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 300.0,
+   "lat": -36.858282,
+   "lng": 147.234146
+  },
+  {
+   "facility_code": "BROADMDW",
+   "facility_name": "Broadmeadows",
+   "network_region": "VIC1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 5.0,
+   "lat": -37.631417,
+   "lng": 144.953048
+  },
+  {
+   "facility_code": "DAANDINE",
+   "facility_name": "Daandine",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 33.0,
+   "lat": -27.08615,
+   "lng": 150.942623
+  },
+  {
+   "facility_code": "ERB2",
+   "facility_name": "Eraring 2",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "commissioning",
+   "capacity_mw": 720.0,
+   "lat": -33.066837,
+   "lng": 151.515026
+  },
+  {
+   "facility_code": "GBWF1",
+   "facility_name": "Gawara Baya",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 408.0,
+   "lat": -18.780152,
+   "lng": 145.742428
+  },
+  {
+   "facility_code": "GLRWNSF",
+   "facility_name": "Glenrowan West",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 132.0,
+   "lat": -36.4907,
+   "lng": 146.157473
+  },
+  {
+   "facility_code": "GOONUMSF",
+   "facility_name": "Goonumbla",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 85.0,
+   "lat": -33.109212,
+   "lng": 148.092982
+  },
+  {
+   "facility_code": "GRIVSF",
+   "facility_name": "Goulburn River",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 588.0,
+   "lat": -32.282141,
+   "lng": 150.102488
+  },
+  {
+   "facility_code": "GNWF",
+   "facility_name": "Goyder North",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 346.0,
+   "lat": -33.553276,
+   "lng": 138.988097
+  },
+  {
+   "facility_code": "AGLHAL",
+   "facility_name": "Hallett",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "commissioning",
+   "capacity_mw": 217.0,
+   "lat": -33.349528,
+   "lng": 138.751607
+  },
+  {
+   "facility_code": "HAMPTON",
+   "facility_name": "Hampton",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 1.32,
+   "lat": -33.638759,
+   "lng": 150.049667
+  },
+  {
+   "facility_code": "HEZ",
+   "facility_name": "Hunter Economic Zone",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 28.0,
+   "lat": -32.835481,
+   "lng": 151.451033
+  },
+  {
+   "facility_code": "KEEPIT",
+   "facility_name": "Keepit",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 6.0,
+   "lat": -30.87868,
+   "lng": 150.491876
+  },
+  {
+   "facility_code": "AGLSITA",
+   "facility_name": "Kemps Creek",
+   "network_region": "NSW1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 1.0,
+   "lat": -33.874591,
+   "lng": 150.761858
+  },
+  {
+   "facility_code": "LKBONNY_2",
+   "facility_name": "Lake Bonney 2",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 159.0,
+   "lat": -37.769885,
+   "lng": 140.406271
+  },
+  {
+   "facility_code": "LONGFORD",
+   "facility_name": "Longford",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 46.4,
+   "lat": -38.223244,
+   "lng": 147.1631
+  },
+  {
+   "facility_code": "MEH",
+   "facility_name": "Mortlake",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 948.3000000000001,
+   "lat": -38.035762,
+   "lng": 142.747637
+  },
+  {
+   "facility_code": "NUMURKSF",
+   "facility_name": "Numurkah",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 112.0,
+   "lat": -36.161038,
+   "lng": 145.476491
+  },
+  {
+   "facility_code": "ORABESS",
+   "facility_name": "Orana",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 1317.0,
+   "lat": -32.530421,
+   "lng": 148.962923
+  },
+  {
+   "facility_code": "PIBESS",
+   "facility_name": "Phillip Island",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 21.0,
+   "lat": -38.484903,
+   "lng": 145.238216
+  },
+  {
+   "facility_code": "ROCHEDAL",
+   "facility_name": "Rochedale",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 7.7,
+   "lat": -27.555798,
+   "lng": 153.123155
+  },
+  {
+   "facility_code": "RPCG",
+   "facility_name": "Rocky Point Cogen",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 30.0,
+   "lat": -27.733342,
+   "lng": 153.327699
+  },
+  {
+   "facility_code": "ROWALLAN",
+   "facility_name": "Rowallan",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 10.5,
+   "lat": -41.729547,
+   "lng": 146.217649
+  },
+  {
+   "facility_code": "RUGBYR",
+   "facility_name": "Rugby Run",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 83.0,
+   "lat": -22.142401,
+   "lng": 147.928736
+  },
+  {
+   "facility_code": "SNAPPER",
+   "facility_name": "Snapper Point",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 154.0,
+   "lat": -34.764433,
+   "lng": 138.508149
+  },
+  {
+   "facility_code": "SMCSF",
+   "facility_name": "Sun Metals",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 143.0,
+   "lat": -19.332335,
+   "lng": 146.875929
+  },
+  {
+   "facility_code": "SUNTPSF",
+   "facility_name": "Suntop",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 175.0,
+   "lat": -32.583514,
+   "lng": 148.826931
+  },
+  {
+   "facility_code": "TAHMOOR",
+   "facility_name": "Tahmoor",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 7.04,
+   "lat": -34.249117,
+   "lng": 150.577718
+  },
+  {
+   "facility_code": "TALWB",
+   "facility_name": "Tallawarra B",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 320.0,
+   "lat": -34.522808,
+   "lng": 150.807237
+  },
+  {
+   "facility_code": "TARBESS",
+   "facility_name": "Tarong",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 1179.0,
+   "lat": -26.780561,
+   "lng": 151.910086
+  },
+  {
+   "facility_code": "SATGN",
+   "facility_name": "Temporary Generation North",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 154.0,
+   "lat": -34.719454,
+   "lng": 138.668269
+  },
+  {
+   "facility_code": "SNOWY2",
+   "facility_name": "Tumut",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 616.0,
+   "lat": -35.952003,
+   "lng": 148.367255
+  },
+  {
+   "facility_code": "WANDBG",
+   "facility_name": "Wandoan South",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 369.0,
+   "lat": -26.261526,
+   "lng": 149.765738
+  },
+  {
+   "facility_code": "WGWF",
+   "facility_name": "Willogoleche",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 119.0,
+   "lat": -33.413128,
+   "lng": 138.845663
+  },
+  {
+   "facility_code": "WIVENHOE",
+   "facility_name": "Wivenhoe",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 480.0,
+   "lat": -27.372417,
+   "lng": 152.63203
+  },
+  {
+   "facility_code": "BADGINGARRA",
+   "facility_name": "Badgingarra",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 130.0,
+   "lat": -30.456742,
+   "lng": 115.343726
+  },
+  {
+   "facility_code": "BLUEWATERS",
+   "facility_name": "Bluewaters",
+   "network_region": "WEM",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 434.0,
+   "lat": -33.330601,
+   "lng": 116.227816
+  },
+  {
+   "facility_code": "KINGS_ROCK_WF",
+   "facility_name": "Kings Rock",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 105.0,
+   "lat": -32.243655,
+   "lng": 119.161497
+  },
+  {
+   "facility_code": "MERREDIN_ESR1",
+   "facility_name": "Merredin",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 200.0,
+   "lat": -31.539455,
+   "lng": 118.227167
+  },
+  {
+   "facility_code": "MERREDIN_ESR1",
+   "facility_name": "Merredin",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "commissioning",
+   "capacity_mw": 100.0,
+   "lat": -31.539455,
+   "lng": 118.227167
+  },
+  {
+   "facility_code": "SKYFRM_MTBARKER",
+   "facility_name": "Mount Barker",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 2.43,
+   "lat": -34.597501,
+   "lng": 117.64351
+  },
+  {
+   "facility_code": "TESLA_NORTHAM",
+   "facility_name": "Northam",
+   "network_region": "WEM",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 10.0,
+   "lat": -31.642906,
+   "lng": 116.847503
+  },
+  {
+   "facility_code": "WADDIWF",
+   "facility_name": "Waddi",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 108.0,
+   "lat": -30.640165,
+   "lng": 115.529743
+  },
+  {
+   "facility_code": "ALDGASF",
+   "facility_name": "Aldoga",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 535.21,
+   "lat": -23.815177,
+   "lng": 151.05811
+  },
+  {
+   "facility_code": "ANGASTON",
+   "facility_name": "Angaston",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 50.0,
+   "lat": -34.503389,
+   "lng": 139.02458
+  },
+  {
+   "facility_code": "BAKING",
+   "facility_name": "Baking Board",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 17.5,
+   "lat": -26.720639,
+   "lng": 150.553781
+  },
+  {
+   "facility_code": "BANGOWF",
+   "facility_name": "Bango",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 243.8,
+   "lat": -34.767208,
+   "lng": 148.921499
+  },
+  {
+   "facility_code": "BLUEGSF",
+   "facility_name": "Blue Grass",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 183.0,
+   "lat": -26.682643,
+   "lng": 150.504537
+  },
+  {
+   "facility_code": "BOLIVAR",
+   "facility_name": "Bolivar",
+   "network_region": "SA1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 8.25,
+   "lat": -34.772402,
+   "lng": 138.579432
+  },
+  {
+   "facility_code": "BOLIVPS",
+   "facility_name": "Bolivar",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 128.0,
+   "lat": -34.7772,
+   "lng": 138.5826
+  },
+  {
+   "facility_code": "BROWNMT",
+   "facility_name": "Brown Mountain",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 5.0,
+   "lat": -36.594993,
+   "lng": 149.473997
+  },
+  {
+   "facility_code": "CALL_A",
+   "facility_name": "Callide A",
+   "network_region": "QLD1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 120.0,
+   "lat": -24.346817,
+   "lng": 150.6188
+  },
+  {
+   "facility_code": "CRWARP",
+   "facility_name": "Carwarp",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 186.0,
+   "lat": -34.399542,
+   "lng": 142.172804
+  },
+  {
+   "facility_code": "LI_WY_CA",
+   "facility_name": "Catagunya / Liapootah / Wayatinah",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 173.7,
+   "lat": -42.376279,
+   "lng": 146.510051
+  },
+  {
+   "facility_code": "COOPGWF",
+   "facility_name": "Coopers Gap",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 452.0,
+   "lat": -26.733659,
+   "lng": 151.474795
+  },
+  {
+   "facility_code": "EMERASF",
+   "facility_name": "Emerald",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 88.0,
+   "lat": -23.507996,
+   "lng": 148.126404
+  },
+  {
+   "facility_code": "FGLEN",
+   "facility_name": "Forest Glen",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 113.2,
+   "lat": -32.267032,
+   "lng": 148.473123
+  },
+  {
+   "facility_code": "GANNSF",
+   "facility_name": "Gannawarra",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 55.0,
+   "lat": -35.729012,
+   "lng": 143.783189
+  },
+  {
+   "facility_code": "GRANWF",
+   "facility_name": "Granville Harbour",
+   "network_region": "TAS1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 110.0,
+   "lat": -41.778439,
+   "lng": 145.065517
+  },
+  {
+   "facility_code": "GULLRGWF",
+   "facility_name": "Gullen Range",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 165.0,
+   "lat": -34.615245,
+   "lng": 149.45808
+  },
+  {
+   "facility_code": "HEZ",
+   "facility_name": "Hunter Economic Zone",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 29.0,
+   "lat": -32.835481,
+   "lng": 151.451033
+  },
+  {
+   "facility_code": "KOOLUNGA",
+   "facility_name": "Koolunga",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 600.0,
+   "lat": -33.601986,
+   "lng": 138.358214
+  },
+  {
+   "facility_code": "KRCCOGEN",
+   "facility_name": "KRC Cogen",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 5.0,
+   "lat": -27.57359,
+   "lng": 151.926883
+  },
+  {
+   "facility_code": "LW",
+   "facility_name": "Lower Wonga",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 1264.5,
+   "lat": -26.07749,
+   "lng": 152.4334
+  },
+  {
+   "facility_code": "MAPS2",
+   "facility_name": "Mannum Pumping Station",
+   "network_region": "SA1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 33.0,
+   "lat": -34.854044,
+   "lng": 139.189749
+  },
+  {
+   "facility_code": "METZSF",
+   "facility_name": "Metz N",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 135.0,
+   "lat": -30.515484,
+   "lng": 151.859815
+  },
+  {
+   "facility_code": "MINTARO",
+   "facility_name": "Mintaro",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 115.0,
+   "lat": -33.903056,
+   "lng": 138.738162
+  },
+  {
+   "facility_code": "MOLNGSF1",
+   "facility_name": "Molong",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 36.0,
+   "lat": -33.08981,
+   "lng": 148.912255
+  },
+  {
+   "facility_code": "MEH",
+   "facility_name": "Mortlake",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 435.0,
+   "lat": -38.035762,
+   "lng": 142.747637
+  },
+  {
+   "facility_code": "MP",
+   "facility_name": "Mt Piper",
+   "network_region": "NSW1",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 1400.0,
+   "lat": -33.358121,
+   "lng": 150.032642
+  },
+  {
+   "facility_code": "MUSWELLBROOK",
+   "facility_name": "Muswellbrook",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 135.0,
+   "lat": -32.251183,
+   "lng": 150.946782
+  },
+  {
+   "facility_code": "OAKEY",
+   "facility_name": "Oakey",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 282.0,
+   "lat": -27.418268,
+   "lng": 151.680205
+  },
+  {
+   "facility_code": "PSF",
+   "facility_name": "Parkes",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 55.0,
+   "lat": -33.117567,
+   "lng": 148.078825
+  },
+  {
+   "facility_code": "EDLRGNRD",
+   "facility_name": "Roghan Road",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 2.0,
+   "lat": -27.342062,
+   "lng": 153.049494
+  },
+  {
+   "facility_code": "SHEP1",
+   "facility_name": "Shepparton",
+   "network_region": "VIC1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 1.1,
+   "lat": -36.322223,
+   "lng": 145.379291
+  },
+  {
+   "facility_code": "SHOALHAV",
+   "facility_name": "Shoalhaven",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 240.0,
+   "lat": -34.723141,
+   "lng": 150.479632
+  },
+  {
+   "facility_code": "SLDCBLK",
+   "facility_name": "St Leonards Data Centre",
+   "network_region": "TAS1",
+   "fueltech_group": "battery",
+   "status": "retired",
+   "capacity_mw": 20.0,
+   "lat": -41.440151,
+   "lng": 147.174429
+  },
+  {
+   "facility_code": "STANWELL",
+   "facility_name": "Stanwell",
+   "network_region": "QLD1",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 1460.0,
+   "lat": -23.507452,
+   "lng": 150.313355
+  },
+  {
+   "facility_code": "SNB02",
+   "facility_name": "Supernode 2",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 1012.1999999999999,
+   "lat": -27.318697,
+   "lng": 152.968579
+  },
+  {
+   "facility_code": "SRSF",
+   "facility_name": "Susan River",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 85.0,
+   "lat": -25.419331,
+   "lng": 152.741687
+  },
+  {
+   "facility_code": "SWANBBF",
+   "facility_name": "Swanbank",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 993.5999999999999,
+   "lat": -27.65619,
+   "lng": 152.817139
+  },
+  {
+   "facility_code": "TRGBESS",
+   "facility_name": "Terang",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 300.0,
+   "lat": -38.231839,
+   "lng": 142.933262
+  },
+  {
+   "facility_code": "TULLYSM",
+   "facility_name": "Tully Sugar Mill",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 32.0,
+   "lat": -17.937329,
+   "lng": 145.92739
+  },
+  {
+   "facility_code": "WKIEWA",
+   "facility_name": "West Kiewa",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 62.0,
+   "lat": -36.759974,
+   "lng": 147.185812
+  },
+  {
+   "facility_code": "WILGAPK",
+   "facility_name": "Wilga Park",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 10.0,
+   "lat": -30.363284,
+   "lng": 149.677422
+  },
+  {
+   "facility_code": "BLAIRFOX_BEROSRD_WF",
+   "facility_name": "Beros Road",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 9.5,
+   "lat": -29.957885,
+   "lng": 115.362947
+  },
+  {
+   "facility_code": "COLLIE",
+   "facility_name": "Collie",
+   "network_region": "WEM",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 318.3,
+   "lat": -33.342097,
+   "lng": 116.261439
+  },
+  {
+   "facility_code": "COLLIE_ESR5",
+   "facility_name": "Collie 2",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 750.0,
+   "lat": -33.336691,
+   "lng": 116.261109
+  },
+  {
+   "facility_code": "GOSNELLS",
+   "facility_name": "Gosnells",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 1.0,
+   "lat": -32.079514,
+   "lng": 115.895088
+  },
+  {
+   "facility_code": "GRASMERE",
+   "facility_name": "Grasmere",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 13.8,
+   "lat": -35.055759,
+   "lng": 117.777048
+  },
+  {
+   "facility_code": "KWINANA_ESR",
+   "facility_name": "Kwinana Battery",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 300.0,
+   "lat": -32.19855,
+   "lng": 115.778521
+  },
+  {
+   "facility_code": "BRIDGETOWN_BIOMASS_PLANT",
+   "facility_name": "Manjimup",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 40.0,
+   "lat": -34.333151,
+   "lng": 116.108521
+  },
+  {
+   "facility_code": "NARROGINWF",
+   "facility_name": "Narrogin",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 179.0,
+   "lat": -32.969084,
+   "lng": 117.018784
+  },
+  {
+   "facility_code": "PHOENIX_KWINANA_WTE",
+   "facility_name": "Phoenix",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 38.0,
+   "lat": -32.202137,
+   "lng": 115.77391
+  },
+  {
+   "facility_code": "BLAIRFOX_WESTHILLS",
+   "facility_name": "West Hills",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 5.0,
+   "lat": -30.868556,
+   "lng": 115.392136
+  },
+  {
+   "facility_code": "YANDIN",
+   "facility_name": "Yandin",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 214.0,
+   "lat": -30.680971,
+   "lng": 115.694249
+  },
+  {
+   "facility_code": "APS",
+   "facility_name": "Anglesea",
+   "network_region": "VIC1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 165.0,
+   "lat": -38.389031,
+   "lng": 144.180589
+  },
+  {
+   "facility_code": "BARRON",
+   "facility_name": "Barron Gorge",
+   "network_region": "QLD1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 60.0,
+   "lat": -16.850852,
+   "lng": 145.646758
+  },
+  {
+   "facility_code": "BCBESS",
+   "facility_name": "Bennetts Creek",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 300.0,
+   "lat": -38.259575,
+   "lng": 146.425208
+  },
+  {
+   "facility_code": "BLINDCREEK",
+   "facility_name": "Blind Creek",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 729.0,
+   "lat": -35.180765,
+   "lng": 149.547461
+  },
+  {
+   "facility_code": "CTHLWF",
+   "facility_name": "Cattle Hill",
+   "network_region": "TAS1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 148.0,
+   "lat": -42.149661,
+   "lng": 146.724045
+  },
+  {
+   "facility_code": "CODRGTON",
+   "facility_name": "Codrington",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 18.2,
+   "lat": -38.284935,
+   "lng": 141.961499
+  },
+  {
+   "facility_code": "CBWF",
+   "facility_name": "Coonoer Bridge",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 19.8,
+   "lat": -36.415237,
+   "lng": 143.380189
+  },
+  {
+   "facility_code": "EDENVSF",
+   "facility_name": "Edenvale",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 180.0,
+   "lat": -26.931732,
+   "lng": 150.582727
+  },
+  {
+   "facility_code": "GOESF1",
+   "facility_name": "Goorambat East",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 348.6,
+   "lat": -36.434304,
+   "lng": 145.923113
+  },
+  {
+   "facility_code": "GORDON",
+   "facility_name": "Gordon",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 457.0,
+   "lat": -42.740519,
+   "lng": 145.982796
+  },
+  {
+   "facility_code": "GBESS",
+   "facility_name": "Goyder",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 681.0,
+   "lat": -33.576364,
+   "lng": 138.945737
+  },
+  {
+   "facility_code": "GULLRGWF",
+   "facility_name": "Gullen Range",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 10.0,
+   "lat": -34.615245,
+   "lng": 149.45808
+  },
+  {
+   "facility_code": "HAZEL",
+   "facility_name": "Hazelwood",
+   "network_region": "VIC1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 1640.0,
+   "lat": -38.270575,
+   "lng": 146.389794
+  },
+  {
+   "facility_code": "HORNSDAL3",
+   "facility_name": "Hornsdale 3",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 112.0,
+   "lat": -33.05982,
+   "lng": 138.537673
+  },
+  {
+   "facility_code": "JUNEESF",
+   "facility_name": "Junee",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 36.0,
+   "lat": -34.814929,
+   "lng": 147.572334
+  },
+  {
+   "facility_code": "KAREEYA",
+   "facility_name": "Kareeya",
+   "network_region": "QLD1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 91.0,
+   "lat": -17.767013,
+   "lng": 145.577993
+  },
+  {
+   "facility_code": "LKBONNY3",
+   "facility_name": "Lake Bonney 3",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 39.0,
+   "lat": -37.769885,
+   "lng": 140.406271
+  },
+  {
+   "facility_code": "MRTLSWF",
+   "facility_name": "Mortlake South",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 157.5,
+   "lat": -38.146832,
+   "lng": 142.853134
+  },
+  {
+   "facility_code": "MLWF",
+   "facility_name": "Mortons Lane",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 19.5,
+   "lat": -37.839273,
+   "lng": 142.464343
+  },
+  {
+   "facility_code": "MTMERCER",
+   "facility_name": "Mt Mercer",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 131.2,
+   "lat": -37.831791,
+   "lng": 143.888681
+  },
+  {
+   "facility_code": "MURRAY",
+   "facility_name": "Murray",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 1500.0,
+   "lat": -36.24683,
+   "lng": 148.1902
+  },
+  {
+   "facility_code": "NASF",
+   "facility_name": "Narromine",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 10.0,
+   "lat": -32.220895,
+   "lng": 148.255308
+  },
+  {
+   "facility_code": "NEWPORT",
+   "facility_name": "Newport",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 500.0,
+   "lat": -37.841423,
+   "lng": 144.894923
+  },
+  {
+   "facility_code": "PALOONA",
+   "facility_name": "Paloona",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 28.0,
+   "lat": -41.282674,
+   "lng": 146.249036
+  },
+  {
+   "facility_code": "NPPPPS",
+   "facility_name": "Pelican Point",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 478.0,
+   "lat": -34.765325,
+   "lng": 138.505402
+  },
+  {
+   "facility_code": "PTINA",
+   "facility_name": "Poatina",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 325.0,
+   "lat": -41.811531,
+   "lng": 146.919117
+  },
+  {
+   "facility_code": "PORTLCN",
+   "facility_name": "Port Lincoln",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "commissioning",
+   "capacity_mw": 50.0,
+   "lat": -34.700389,
+   "lng": 135.804384
+  },
+  {
+   "facility_code": "STANVAC",
+   "facility_name": "Port Stanvac",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 57.6,
+   "lat": -35.110332,
+   "lng": 138.49135
+  },
+  {
+   "facility_code": "QUERIVER",
+   "facility_name": "Que River",
+   "network_region": "TAS1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 24.0,
+   "lat": -41.610502,
+   "lng": 145.544305
+  },
+  {
+   "facility_code": "RANGEB",
+   "facility_name": "Rangebank",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 780.8,
+   "lat": -38.085056,
+   "lng": 145.259936
+  },
+  {
+   "facility_code": "RPBESS",
+   "facility_name": "Reeves Plains",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 750.0,
+   "lat": -34.502918,
+   "lng": 138.614457
+  },
+  {
+   "facility_code": "SMOKY",
+   "facility_name": "Smoky Creek",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 900.0,
+   "lat": -24.120592,
+   "lng": 150.504411
+  },
+  {
+   "facility_code": "SNOWNTH",
+   "facility_name": "Snowtown North",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 144.0,
+   "lat": -33.728666,
+   "lng": 138.148351
+  },
+  {
+   "facility_code": "ULBESS",
+   "facility_name": "Ulinda Park",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 591.0,
+   "lat": -26.918598,
+   "lng": 150.745396
+  },
+  {
+   "facility_code": "WANDSF",
+   "facility_name": "Wandoan",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 159.0,
+   "lat": -26.248848,
+   "lng": 149.765988
+  },
+  {
+   "facility_code": "WPWF",
+   "facility_name": "Wattle Point",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 91.0,
+   "lat": -35.110379,
+   "lng": 137.705789
+  },
+  {
+   "facility_code": "WOODLWN",
+   "facility_name": "Woodlawn",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 48.3,
+   "lat": -35.091982,
+   "lng": 149.572021
+  },
+  {
+   "facility_code": "WYASF",
+   "facility_name": "Wyalong",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 62.32,
+   "lat": -33.887269,
+   "lng": 147.315314
+  },
+  {
+   "facility_code": "YARANSF",
+   "facility_name": "Yarranlea",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 121.0,
+   "lat": -27.709261,
+   "lng": 151.533038
+  },
+  {
+   "facility_code": "KEMERTON",
+   "facility_name": "Kemerton",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 309.4,
+   "lat": -33.163352,
+   "lng": 115.780966
+  },
+  {
+   "facility_code": "MUJA",
+   "facility_name": "Muja CD",
+   "network_region": "WEM",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 425.2,
+   "lat": -33.450246,
+   "lng": 116.30482
+  },
+  {
+   "facility_code": "MUNGARRA",
+   "facility_name": "Mungarra",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 117.0,
+   "lat": -28.889524,
+   "lng": 115.117946
+  },
+  {
+   "facility_code": "WAROONA",
+   "facility_name": "Waroona",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 244.5,
+   "lat": -32.913779,
+   "lng": 115.789591
+  },
+  {
    "facility_code": "AMCORGR",
    "facility_name": "Amcor Glass",
    "network_region": "SA1",
@@ -3512,496 +2782,6 @@
    "lng": 115.820469
   },
   {
-   "facility_code": "ADP",
-   "facility_name": "Adelaide Desalination",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 23.28,
-   "lat": -35.096948,
-   "lng": 138.484061
-  },
-  {
-   "facility_code": "ARWF",
-   "facility_name": "Ararat",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 241.59,
-   "lat": -37.238714,
-   "lng": 143.079243
-  },
-  {
-   "facility_code": "BAPS",
-   "facility_name": "Banimboola",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 12.85,
-   "lat": -36.534342,
-   "lng": 147.45934
-  },
-  {
-   "facility_code": "BLAYNEY",
-   "facility_name": "Blayney",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 9.9,
-   "lat": -33.622867,
-   "lng": 149.200983
-  },
-  {
-   "facility_code": "BLYTHB",
-   "facility_name": "Blyth",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 843.0,
-   "lat": -33.848475,
-   "lng": 138.403204
-  },
-  {
-   "facility_code": "BROOKLYN",
-   "facility_name": "Brooklyn",
-   "network_region": "VIC1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 2.83,
-   "lat": -37.819005,
-   "lng": 144.831257
-  },
-  {
-   "facility_code": "CAPBES",
-   "facility_name": "Capital",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 375.0,
-   "lat": -35.338251,
-   "lng": 149.215529
-  },
-  {
-   "facility_code": "CSPVPS",
-   "facility_name": "Collinsville",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 42.0,
-   "lat": -20.541215,
-   "lng": 147.807432
-  },
-  {
-   "facility_code": "ERARING",
-   "facility_name": "Eraring",
-   "network_region": "NSW1",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 2880.0,
-   "lat": -33.061039,
-   "lng": 151.51984
-  },
-  {
-   "facility_code": "GLBWNHYD",
-   "facility_name": "Glenbawn",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 5.5,
-   "lat": -32.107937,
-   "lng": 150.999481
-  },
-  {
-   "facility_code": "GPWFWST",
-   "facility_name": "Golden Plains West",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 310.0,
-   "lat": -37.896786,
-   "lng": 143.648042
-  },
-  {
-   "facility_code": "GRIVSF",
-   "facility_name": "Goulburn River",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 147.0,
-   "lat": -32.282141,
-   "lng": 150.102488
-  },
-  {
-   "facility_code": "GUNNING",
-   "facility_name": "Gunning",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 46.5,
-   "lat": -34.691531,
-   "lng": 149.373013
-  },
-  {
-   "facility_code": "HLMSEW01",
-   "facility_name": "Hallam",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 0.25,
-   "lat": -38.143332,
-   "lng": 145.119964
-  },
-  {
-   "facility_code": "HAUGHT1",
-   "facility_name": "Haughton",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 132.0,
-   "lat": -19.750134,
-   "lng": 147.048103
-  },
-  {
-   "facility_code": "JNDSHPS",
-   "facility_name": "Jindabyne",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 1.1,
-   "lat": -36.434918,
-   "lng": 148.63057
-  },
-  {
-   "facility_code": "SNWYGJP2",
-   "facility_name": "Jindabyne Pump At Guthega",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "retired",
-   "capacity_mw": 70.0,
-   "lat": -36.434918,
-   "lng": 148.63057
-  },
-  {
-   "facility_code": "LGAPWF1",
-   "facility_name": "Lincoln Gap",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "commissioning",
-   "capacity_mw": 10.8,
-   "lat": -32.564612,
-   "lng": 137.557203
-  },
-  {
-   "facility_code": "LOCKHART",
-   "facility_name": "Lockhart",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 10.0,
-   "lat": -35.217506,
-   "lng": 146.70322
-  },
-  {
-   "facility_code": "LRSF",
-   "facility_name": "Longreach",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 17.0,
-   "lat": -23.446178,
-   "lng": 144.35918
-  },
-  {
-   "facility_code": "MARYVALE",
-   "facility_name": "Maryvale",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 516.0,
-   "lat": -32.515339,
-   "lng": 148.95578
-  },
-  {
-   "facility_code": "MEADOWBK",
-   "facility_name": "Meadowbank",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 40.0,
-   "lat": -42.611178,
-   "lng": 146.845687
-  },
-  {
-   "facility_code": "MREHA2",
-   "facility_name": "Melbourne A2",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 647.4000000000001,
-   "lat": -37.669178,
-   "lng": 144.733221
-  },
-  {
-   "facility_code": "MTGELWF",
-   "facility_name": "Mt Gellibrand",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "commissioning",
-   "capacity_mw": 138.0,
-   "lat": -38.258519,
-   "lng": 143.802037
-  },
-  {
-   "facility_code": "OCPS",
-   "facility_name": "Oaky Creek",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 20.0,
-   "lat": -23.048717,
-   "lng": 148.484462
-  },
-  {
-   "facility_code": "PEDLER",
-   "facility_name": "Pedler Creek",
-   "network_region": "SA1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 3.0,
-   "lat": -35.202388,
-   "lng": 138.501214
-  },
-  {
-   "facility_code": "SHOALHAV",
-   "facility_name": "Shoalhaven",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 240.0,
-   "lat": -34.723141,
-   "lng": 150.479632
-  },
-  {
-   "facility_code": "SHOAL",
-   "facility_name": "Shoalhaven Starches",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 54.0,
-   "lat": -34.8547,
-   "lng": 150.6138
-  },
-  {
-   "facility_code": "STWF",
-   "facility_name": "Silverton",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 198.94,
-   "lat": -31.86095,
-   "lng": 141.296349
-  },
-  {
-   "facility_code": "STUBSF",
-   "facility_name": "Stubbo",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 503.0,
-   "lat": -32.248099,
-   "lng": 149.580548
-  },
-  {
-   "facility_code": "SNB1",
-   "facility_name": "Supernode",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 967.5999999999999,
-   "lat": -27.318111,
-   "lng": 152.969309
-  },
-  {
-   "facility_code": "SWAN_B",
-   "facility_name": "Swanbank B",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 517.0,
-   "lat": -27.654899,
-   "lng": 152.817672
-  },
-  {
-   "facility_code": "SWAN_E",
-   "facility_name": "Swanbank E",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 385.0,
-   "lat": -27.655138,
-   "lng": 152.817933
-  },
-  {
-   "facility_code": "TARRALEA",
-   "facility_name": "Tarraleah",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 90.0,
-   "lat": -42.301224,
-   "lng": 146.457294
-  },
-  {
-   "facility_code": "YABULU",
-   "facility_name": "Townsville",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 242.0,
-   "lat": -19.20127,
-   "lng": 146.618573
-  },
-  {
-   "facility_code": "TGNSS",
-   "facility_name": "Traralgon Network Support",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 10.0,
-   "lat": -37.841113,
-   "lng": 144.895001
-  },
-  {
-   "facility_code": "TREVALLN",
-   "facility_name": "Trevallyn",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 93.0,
-   "lat": -41.42262,
-   "lng": 147.111785
-  },
-  {
-   "facility_code": "TRIBUTE",
-   "facility_name": "Tribute",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 107.8,
-   "lat": -41.815832,
-   "lng": 145.650178
-  },
-  {
-   "facility_code": "VPGS",
-   "facility_name": "Valley Power Peaking",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": null,
-   "lat": -38.253709,
-   "lng": 146.588886
-  },
-  {
-   "facility_code": "WW",
-   "facility_name": "Wallerawang",
-   "network_region": "NSW1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 1000.0,
-   "lat": -33.356917,
-   "lng": 150.03348
-  },
-  {
-   "facility_code": "WDBESS3",
-   "facility_name": "Western Downs 3",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 915.0,
-   "lat": -26.952139,
-   "lng": 150.690787
-  },
-  {
-   "facility_code": "WRSF1",
-   "facility_name": "White Rock Solar Farm",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 22.0,
-   "lat": -29.764429,
-   "lng": 151.553007
-  },
-  {
-   "facility_code": "YALLOURN",
-   "facility_name": "Yallourn W",
-   "network_region": "VIC1",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 1480.0,
-   "lat": -38.177589,
-   "lng": 146.342556
-  },
-  {
-   "facility_code": "YAMBUK",
-   "facility_name": "Yambuk",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 30.0,
-   "lat": -38.310953,
-   "lng": 142.014788
-  },
-  {
-   "facility_code": "KWINANA",
-   "facility_name": "Kwinana",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 206.4,
-   "lat": -32.198281,
-   "lng": 115.77559
-  },
-  {
-   "facility_code": "TIWEST_COG1",
-   "facility_name": "Kwinana Cogen",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 120.0,
-   "lat": -32.22762,
-   "lng": 115.773435
-  },
-  {
-   "facility_code": "ATLAS",
-   "facility_name": "Mirrabooka",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 1.23,
-   "lat": -31.864457,
-   "lng": 115.818295
-  },
-  {
-   "facility_code": "MUCHEABESS",
-   "facility_name": "Muchea",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 492.0,
-   "lat": -31.557553,
-   "lng": 115.963146
-  },
-  {
-   "facility_code": "ALINTA_WGP_ESR",
-   "facility_name": "Wagerup",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 300.0,
-   "lat": -32.918167,
-   "lng": 115.916584
-  },
-  {
    "facility_code": "ANGASTON",
    "facility_name": "Angaston",
    "network_region": "SA1",
@@ -4430,6 +3210,1306 @@
    "capacity_mw": 327.8,
    "lat": -32.202009,
    "lng": 115.773434
+  },
+  {
+   "facility_code": "AWABAREF",
+   "facility_name": "Awaba",
+   "network_region": "NSW1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 1.0,
+   "lat": -33.023339,
+   "lng": 151.551228
+  },
+  {
+   "facility_code": "BRNDBES",
+   "facility_name": "Brendale",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 645.0,
+   "lat": -27.329333,
+   "lng": 152.974384
+  },
+  {
+   "facility_code": "BHILLGT",
+   "facility_name": "Broken Hill",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 50.0,
+   "lat": -31.986313,
+   "lng": 141.42062
+  },
+  {
+   "facility_code": "BROKENH",
+   "facility_name": "Broken Hill",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 53.0,
+   "lat": -31.987538,
+   "lng": 141.391994
+  },
+  {
+   "facility_code": "BPLANDF",
+   "facility_name": "Browns Plains",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 2.0,
+   "lat": -27.672038,
+   "lng": 153.066312
+  },
+  {
+   "facility_code": "CHPSTWF",
+   "facility_name": "Chepstowe",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 6.15,
+   "lat": -37.596065,
+   "lng": 143.495467
+  },
+  {
+   "facility_code": "CHYTWF",
+   "facility_name": "Cherry Tree",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 57.6,
+   "lat": -37.10249,
+   "lng": 145.2657
+  },
+  {
+   "facility_code": "COLEASF",
+   "facility_name": "Coleambally",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 180.0,
+   "lat": -34.762456,
+   "lng": 145.928786
+  },
+  {
+   "facility_code": "COLUMSF",
+   "facility_name": "Columboola",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 217.0,
+   "lat": -26.633781,
+   "lng": 150.298894
+  },
+  {
+   "facility_code": "CULCSF",
+   "facility_name": "Culcairn",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 645.0,
+   "lat": -35.702717,
+   "lng": 146.963901
+  },
+  {
+   "facility_code": "DALNTH",
+   "facility_name": "Dalrymple North",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 90.0,
+   "lat": -34.933952,
+   "lng": 137.743532
+  },
+  {
+   "facility_code": "EILDON",
+   "facility_name": "Eildon",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 120.0,
+   "lat": -37.221982,
+   "lng": 145.921476
+  },
+  {
+   "facility_code": "GANYMIRRA",
+   "facility_name": "Ganymirra",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 540.0,
+   "lat": -19.608222,
+   "lng": 146.961712
+  },
+  {
+   "facility_code": "HALAMRD",
+   "facility_name": "Hallam Road",
+   "network_region": "VIC1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 8.98,
+   "lat": -38.052181,
+   "lng": 145.267798
+  },
+  {
+   "facility_code": "HALLWF",
+   "facility_name": "Hallett 1",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 95.0,
+   "lat": -33.349308,
+   "lng": 138.750829
+  },
+  {
+   "facility_code": "HUNTER",
+   "facility_name": "Hunter",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 750.0,
+   "lat": -32.836104,
+   "lng": 151.450523
+  },
+  {
+   "facility_code": "KABANWF",
+   "facility_name": "Kaban",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 156.0,
+   "lat": -17.560606,
+   "lng": 145.413125
+  },
+  {
+   "facility_code": "KIATAWF",
+   "facility_name": "Kiata",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 31.0,
+   "lat": -36.397288,
+   "lng": 141.747394
+  },
+  {
+   "facility_code": "LUCASHGT",
+   "facility_name": "Lucas Heights",
+   "network_region": "NSW1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 12.65,
+   "lat": -34.04829,
+   "lng": 150.973916
+  },
+  {
+   "facility_code": "MCRK",
+   "facility_name": "Major's Creek",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 180.0,
+   "lat": -19.608036,
+   "lng": 146.961165
+  },
+  {
+   "facility_code": "MSTUART",
+   "facility_name": "Mt Stuart",
+   "network_region": "QLD1",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 419.0,
+   "lat": -19.337807,
+   "lng": 146.850916
+  },
+  {
+   "facility_code": "MULWASF",
+   "facility_name": "Mulwala",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 31.0,
+   "lat": -35.958258,
+   "lng": 146.007893
+  },
+  {
+   "facility_code": "OSBORNE",
+   "facility_name": "Osborne",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 180.0,
+   "lat": -34.797702,
+   "lng": 138.50779
+  },
+  {
+   "facility_code": "REMOUNT",
+   "facility_name": "Remount",
+   "network_region": "TAS1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 2.0,
+   "lat": -41.422608,
+   "lng": 147.111819
+  },
+  {
+   "facility_code": "SMTHBES1",
+   "facility_name": "Smithfield",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 208.20000000000002,
+   "lat": -33.849972,
+   "lng": 150.947448
+  },
+  {
+   "facility_code": "TBSF",
+   "facility_name": "Tailem Bend",
+   "network_region": "SA1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 108.0,
+   "lat": -35.271346,
+   "lng": 139.488379
+  },
+  {
+   "facility_code": "TALLAWAR",
+   "facility_name": "Tallawarra",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 440.0,
+   "lat": -34.522808,
+   "lng": 150.807237
+  },
+  {
+   "facility_code": "TUNGATIN",
+   "facility_name": "Tungatinah",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 125.0,
+   "lat": -42.296802,
+   "lng": 146.456568
+  },
+  {
+   "facility_code": "VBB",
+   "facility_name": "Victorian Big Battery",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 1080.0,
+   "lat": -38.038278,
+   "lng": 144.290383
+  },
+  {
+   "facility_code": "WLWLSF",
+   "facility_name": "Walla Walla",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 403.2,
+   "lat": -35.747397,
+   "lng": 146.96666
+  },
+  {
+   "facility_code": "WATERLWF",
+   "facility_name": "Waterloo",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 130.8,
+   "lat": -34.001298,
+   "lng": 138.91088
+  },
+  {
+   "facility_code": "WAUBRAWF",
+   "facility_name": "Waubra",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 192.0,
+   "lat": -37.357446,
+   "lng": 143.603659
+  },
+  {
+   "facility_code": "WDGPH",
+   "facility_name": "Western Downs",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 501.0,
+   "lat": -26.955534,
+   "lng": 150.67862
+  },
+  {
+   "facility_code": "WILLBES",
+   "facility_name": "Williamsdale",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 786.0,
+   "lat": -35.57458,
+   "lng": 149.131993
+  },
+  {
+   "facility_code": "WINGF1",
+   "facility_name": "Wingfield",
+   "network_region": "SA1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 4.12,
+   "lat": -34.779749,
+   "lng": 138.522379
+  },
+  {
+   "facility_code": "WUNUSF",
+   "facility_name": "Wunghnu",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 93.5,
+   "lat": -36.164639,
+   "lng": 145.394245
+  },
+  {
+   "facility_code": "INVESTEC_COLLGAR",
+   "facility_name": "Collgar",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 222.0,
+   "lat": -31.542533,
+   "lng": 118.456525
+  },
+  {
+   "facility_code": "EDWFMAN",
+   "facility_name": "Emu Downs",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 79.2,
+   "lat": -30.490991,
+   "lng": 115.359843
+  },
+  {
+   "facility_code": "KALBARRI",
+   "facility_name": "Kalbarri",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 1.6,
+   "lat": -27.899626,
+   "lng": 114.194519
+  },
+  {
+   "facility_code": "STHRNCRS",
+   "facility_name": "Kambalda",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 23.0,
+   "lat": -31.191281,
+   "lng": 121.673741
+  },
+  {
+   "facility_code": "PERTHENERGY_KWINANA",
+   "facility_name": "Kwinana Swift",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 116.0,
+   "lat": -32.224368,
+   "lng": 115.778586
+  },
+  {
+   "facility_code": "MUJA",
+   "facility_name": "Muja CD",
+   "network_region": "WEM",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 389.4,
+   "lat": -33.450246,
+   "lng": 116.30482
+  },
+  {
+   "facility_code": "WAROONA",
+   "facility_name": "Waroona",
+   "network_region": "WEM",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 132.0,
+   "lat": -32.913779,
+   "lng": 115.789591
+  },
+  {
+   "facility_code": "WARRADARGE",
+   "facility_name": "Warradarge",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 180.0,
+   "lat": -29.942809,
+   "lng": 115.470459
+  },
+  {
+   "facility_code": "BIALAWF",
+   "facility_name": "Biala",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 110.0,
+   "lat": -34.584149,
+   "lng": 149.347019
+  },
+  {
+   "facility_code": "BLINDCREEK",
+   "facility_name": "Blind Creek",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 300.0,
+   "lat": -35.180765,
+   "lng": 149.547461
+  },
+  {
+   "facility_code": "BOCOROCK",
+   "facility_name": "Boco Rock",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 113.18,
+   "lat": -36.593627,
+   "lng": 149.101512
+  },
+  {
+   "facility_code": "BRIGALOWGT",
+   "facility_name": "Brigalow",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "committed",
+   "capacity_mw": 400.0,
+   "lat": -26.918701,
+   "lng": 150.741928
+  },
+  {
+   "facility_code": "CALBESS2",
+   "facility_name": "Calala 2",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 300.0,
+   "lat": -31.141287,
+   "lng": 150.963101
+  },
+  {
+   "facility_code": "CBWWBA",
+   "facility_name": "Christies Beach",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 2.7199999999999998,
+   "lat": -35.125958,
+   "lng": 138.47135
+  },
+  {
+   "facility_code": "COPTNHYD",
+   "facility_name": "Copeton",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 22.5,
+   "lat": -29.910174,
+   "lng": 150.92348
+  },
+  {
+   "facility_code": "DPNTB",
+   "facility_name": "Darlington Point",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 75.0,
+   "lat": -34.647016,
+   "lng": 146.035236
+  },
+  {
+   "facility_code": "EASTCRK",
+   "facility_name": "Eastern Creek",
+   "network_region": "NSW1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 5.06,
+   "lat": -33.815468,
+   "lng": 150.854307
+  },
+  {
+   "facility_code": "ELAINEBESS",
+   "facility_name": "Elaine",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 932.94,
+   "lat": -37.755901,
+   "lng": 143.995852
+  },
+  {
+   "facility_code": "FGLEN",
+   "facility_name": "Forest Glen",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 270.0,
+   "lat": -32.267032,
+   "lng": 148.473123
+  },
+  {
+   "facility_code": "GBWF1",
+   "facility_name": "Gawara Baya",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 312.0,
+   "lat": -18.780152,
+   "lng": 145.742428
+  },
+  {
+   "facility_code": "GPWFWST",
+   "facility_name": "Golden Plains West",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 266.0,
+   "lat": -37.896786,
+   "lng": 143.648042
+  },
+  {
+   "facility_code": "GROSV1",
+   "facility_name": "Grosvenor 1",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 21.0,
+   "lat": -21.929194,
+   "lng": 148.032416
+  },
+  {
+   "facility_code": "HALLETTB",
+   "facility_name": "Hallett",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 150.0,
+   "lat": -33.349308,
+   "lng": 138.750829
+  },
+  {
+   "facility_code": "HVWW",
+   "facility_name": "Happy Valley",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 15.0,
+   "lat": -35.056156,
+   "lng": 138.564957
+  },
+  {
+   "facility_code": "HBESS",
+   "facility_name": "Hazelwood BESS",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 600.0,
+   "lat": -38.267845,
+   "lng": 146.390293
+  },
+  {
+   "facility_code": "KARSF",
+   "facility_name": "Karadoc",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 104.0,
+   "lat": -34.411851,
+   "lng": 142.250443
+  },
+  {
+   "facility_code": "KENNEDY",
+   "facility_name": "Kennedy Energy Park",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 43.2,
+   "lat": -20.873828,
+   "lng": 144.412727
+  },
+  {
+   "facility_code": "KIDSTON",
+   "facility_name": "Kidston",
+   "network_region": "QLD1",
+   "fueltech_group": "hydro",
+   "status": "committed",
+   "capacity_mw": 250.0,
+   "lat": -18.865892,
+   "lng": 144.15955
+  },
+  {
+   "facility_code": "LADBROKE",
+   "facility_name": "Ladbroke Grove",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 80.0,
+   "lat": -37.456341,
+   "lng": 140.782163
+  },
+  {
+   "facility_code": "LNGS",
+   "facility_name": "Laverton North",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 312.0,
+   "lat": -37.841703,
+   "lng": 144.788796
+  },
+  {
+   "facility_code": "LIMBESS",
+   "facility_name": "Limondale",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 423.0,
+   "lat": -34.769354,
+   "lng": 143.559464
+  },
+  {
+   "facility_code": "LOCKHART",
+   "facility_name": "Lockhart",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 30.0,
+   "lat": -35.217506,
+   "lng": 146.70322
+  },
+  {
+   "facility_code": "LOYYB",
+   "facility_name": "Loy Yang B",
+   "network_region": "VIC1",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 1000.0,
+   "lat": -38.256446,
+   "lng": 146.584982
+  },
+  {
+   "facility_code": "MOKOSF",
+   "facility_name": "Mokoan",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 120.0,
+   "lat": -36.489246,
+   "lng": 146.128325
+  },
+  {
+   "facility_code": "MTMILLAR",
+   "facility_name": "Mt Millar",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 70.0,
+   "lat": -33.62534,
+   "lng": 136.703771
+  },
+  {
+   "facility_code": "MLSP",
+   "facility_name": "Mugga Lane",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 12.0,
+   "lat": -35.399485,
+   "lng": 149.1454
+  },
+  {
+   "facility_code": "NBHWF",
+   "facility_name": "North Brown Hill",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 132.3,
+   "lat": -33.291159,
+   "lng": 138.715508
+  },
+  {
+   "facility_code": "OAKLAND",
+   "facility_name": "Oaklands Hill",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 67.0,
+   "lat": -37.681514,
+   "lng": 142.552322
+  },
+  {
+   "facility_code": "PALMERWF",
+   "facility_name": "Palmer",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 288.0,
+   "lat": -34.815865,
+   "lng": 139.118654
+  },
+  {
+   "facility_code": "PLAYF",
+   "facility_name": "Playford B",
+   "network_region": "SA1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 480.0,
+   "lat": -32.538886,
+   "lng": 137.781822
+  },
+  {
+   "facility_code": "SRBESS",
+   "facility_name": "Steel River",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 600.0,
+   "lat": -32.8829,
+   "lng": 151.73057
+  },
+  {
+   "facility_code": "TATURA",
+   "facility_name": "Tatura",
+   "network_region": "VIC1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 1.1,
+   "lat": -36.47915,
+   "lng": 145.235037
+  },
+  {
+   "facility_code": "TIMWEST",
+   "facility_name": "Timboon West",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 7.2,
+   "lat": -38.532667,
+   "lng": 142.915224
+  },
+  {
+   "facility_code": "TORRIS",
+   "facility_name": "Torrens Island",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 800.0,
+   "lat": -34.80651,
+   "lng": 138.523127
+  },
+  {
+   "facility_code": "TOWER",
+   "facility_name": "Tower",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 41.2,
+   "lat": -34.219461,
+   "lng": 150.718012
+  },
+  {
+   "facility_code": "WAGGNSF",
+   "facility_name": "Wagga North",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 55.0,
+   "lat": -35.070575,
+   "lng": 147.438807
+  },
+  {
+   "facility_code": "0WNSF",
+   "facility_name": "Winton North",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 131.0,
+   "lat": -36.502154,
+   "lng": 146.125175
+  },
+  {
+   "facility_code": "WDLNGN",
+   "facility_name": "Woodlawn",
+   "network_region": "NSW1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 7.0,
+   "lat": -35.06298,
+   "lng": 149.570198
+  },
+  {
+   "facility_code": "WOOLGSF",
+   "facility_name": "Woolooga",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "commissioning",
+   "capacity_mw": 840.0,
+   "lat": -26.075843,
+   "lng": 152.437448
+  },
+  {
+   "facility_code": "TIWEST_COG1",
+   "facility_name": "Kwinana Cogen",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 42.1,
+   "lat": -32.22762,
+   "lng": 115.773435
+  },
+  {
+   "facility_code": "MWF_MUMBIDA",
+   "facility_name": "Mumbida",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 55.0,
+   "lat": -28.98915,
+   "lng": 114.958725
+  },
+  {
+   "facility_code": "PMMWF",
+   "facility_name": "Parron Maam Marang",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 489.0,
+   "lat": -30.345919,
+   "lng": 115.33433
+  },
+  {
+   "facility_code": "BARANDUDA",
+   "facility_name": "Baranduda",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 1633.1999999999998,
+   "lat": -36.155406,
+   "lng": 146.945807
+  },
+  {
+   "facility_code": "BRAEMARA",
+   "facility_name": "Braemar",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 504.0,
+   "lat": -27.110488,
+   "lng": 150.905683
+  },
+  {
+   "facility_code": "CANUNDA1",
+   "facility_name": "Canunda",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 46.0,
+   "lat": -37.691515,
+   "lng": 140.35514
+  },
+  {
+   "facility_code": "CLEMGPWF",
+   "facility_name": "Clements Gap",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 57.0,
+   "lat": -33.507311,
+   "lng": 138.115629
+  },
+  {
+   "facility_code": "COLWF01",
+   "facility_name": "Collector",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 226.0,
+   "lat": -34.862066,
+   "lng": 149.388245
+  },
+  {
+   "facility_code": "DUNDWF",
+   "facility_name": "Dundonnell",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 335.0,
+   "lat": -37.865682,
+   "lng": 142.951894
+  },
+  {
+   "facility_code": "PMATTAEP",
+   "facility_name": "Earthpower",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 4.0,
+   "lat": -33.857245,
+   "lng": 151.067405
+  },
+  {
+   "facility_code": "EILDONPD",
+   "facility_name": "Eildon",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 4.5,
+   "lat": -37.243123,
+   "lng": 145.89735
+  },
+  {
+   "facility_code": "ENERGYB",
+   "facility_name": "Energy Brix",
+   "network_region": "VIC1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 195.0,
+   "lat": -38.254444,
+   "lng": 146.413611
+  },
+  {
+   "facility_code": "FWF",
+   "facility_name": "Ferguson",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 12.0,
+   "lat": -38.609776,
+   "lng": 143.179314
+  },
+  {
+   "facility_code": "GLENMAGG",
+   "facility_name": "Glenmaggie",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 3.8,
+   "lat": -37.904836,
+   "lng": 146.800388
+  },
+  {
+   "facility_code": "GLENSF",
+   "facility_name": "Glenrowan",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 126.0,
+   "lat": -36.490814,
+   "lng": 146.158762
+  },
+  {
+   "facility_code": "HALLWF2",
+   "facility_name": "Hallett 2",
+   "network_region": "SA1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 71.4,
+   "lat": -33.550778,
+   "lng": 138.863924
+  },
+  {
+   "facility_code": "HORNSDPR",
+   "facility_name": "Hornsdale Power Reserve",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 150.0,
+   "lat": -33.086389,
+   "lng": 138.518659
+  },
+  {
+   "facility_code": "HORSHAMSF",
+   "facility_name": "Horsham",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 467.40000000000003,
+   "lat": -36.71577,
+   "lng": 142.25956
+  },
+  {
+   "facility_code": "HUNTVGT",
+   "facility_name": "Hunter Valley",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 50.0,
+   "lat": -32.389989,
+   "lng": 150.965963
+  },
+  {
+   "facility_code": "JBUTTERS",
+   "facility_name": "John Butters",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 144.0,
+   "lat": -42.154894,
+   "lng": 145.534508
+  },
+  {
+   "facility_code": "KOGANCK",
+   "facility_name": "Kogan Creek",
+   "network_region": "QLD1",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 744.0,
+   "lat": -26.917925,
+   "lng": 150.749127
+  },
+  {
+   "facility_code": "LOTUSCRKWF",
+   "facility_name": "Lotus Creek",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 285.2,
+   "lat": -22.366535,
+   "lng": 149.27332
+  },
+  {
+   "facility_code": "MACARTH",
+   "facility_name": "Macarthur",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 420.0,
+   "lat": -38.036376,
+   "lng": 142.181753
+  },
+  {
+   "facility_code": "MEADOWBK",
+   "facility_name": "Meadowbank",
+   "network_region": "TAS1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 24.0,
+   "lat": -42.611178,
+   "lng": 146.845687
+  },
+  {
+   "facility_code": "PINDARI",
+   "facility_name": "Pindari",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 6.7,
+   "lat": -29.388034,
+   "lng": 151.244774
+  },
+  {
+   "facility_code": "QUARANTN",
+   "facility_name": "Quarantine",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 229.0,
+   "lat": -34.779339,
+   "lng": 138.522883
+  },
+  {
+   "facility_code": "REECE",
+   "facility_name": "Reece",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 231.2,
+   "lat": -41.723739,
+   "lng": 145.136012
+  },
+  {
+   "facility_code": "RIVNB",
+   "facility_name": "Riverina 2",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 195.0,
+   "lat": -34.646349,
+   "lng": 146.035015
+  },
+  {
+   "facility_code": "RRSF",
+   "facility_name": "Ross River",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 128.0,
+   "lat": -19.42622,
+   "lng": 146.715299
+  },
+  {
+   "facility_code": "ROYALLA",
+   "facility_name": "Royalla",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 20.0,
+   "lat": -35.489826,
+   "lng": 149.142704
+  },
+  {
+   "facility_code": "RYEPARK",
+   "facility_name": "Rye Park",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 396.0,
+   "lat": -34.550899,
+   "lng": 148.95544
+  },
+  {
+   "facility_code": "SNB3",
+   "facility_name": "Supernode 3",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 780.9000000000001,
+   "lat": -27.31751,
+   "lng": 152.968963
+  },
+  {
+   "facility_code": "TARONGN",
+   "facility_name": "Tarong North",
+   "network_region": "QLD1",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 443.0,
+   "lat": -26.774391,
+   "lng": 151.914007
+  },
+  {
+   "facility_code": "TEEBARBESS",
+   "facility_name": "Teebar",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 1200.0,
+   "lat": -25.696416,
+   "lng": 152.250688
+  },
+  {
+   "facility_code": "SATGS",
+   "facility_name": "Temporary Generation South",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 123.0,
+   "lat": -35.110382,
+   "lng": 138.491225
+  },
+  {
+   "facility_code": "TOORAWF",
+   "facility_name": "Toora",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 21.0,
+   "lat": -38.653258,
+   "lng": 146.340154
+  },
+  {
+   "facility_code": "WESTILLA",
+   "facility_name": "West Illawarra Leagues Club",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "operating",
+   "capacity_mw": 1.0,
+   "lat": -34.451645,
+   "lng": 150.843037
+  },
+  {
+   "facility_code": "WSTWYSF",
+   "facility_name": "West Wyalong",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 105.0,
+   "lat": -33.809655,
+   "lng": 147.325015
+  },
+  {
+   "facility_code": "WHIT1",
+   "facility_name": "Whitwood Road",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 1.0,
+   "lat": -27.654899,
+   "lng": 152.817672
+  },
+  {
+   "facility_code": "WINTSF1",
+   "facility_name": "Winton",
+   "network_region": "VIC1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 107.0,
+   "lat": -36.503538,
+   "lng": 146.124102
+  },
+  {
+   "facility_code": "COLLIE_ESR",
+   "facility_name": "Collie 1",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 657.0,
+   "lat": -33.336507,
+   "lng": 116.260662
+  },
+  {
+   "facility_code": "COLLIE_BESS2",
+   "facility_name": "Collie 2",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "commissioning",
+   "capacity_mw": 1023.0,
+   "lat": -33.336507,
+   "lng": 116.260662
+  },
+  {
+   "facility_code": "KALAMUNDA_SG",
+   "facility_name": "Kalamunda",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 1.3,
+   "lat": -32.003292,
+   "lng": 116.074885
+  },
+  {
+   "facility_code": "NAMKKN_MERR",
+   "facility_name": "Merredin",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 92.6,
+   "lat": -31.542681,
+   "lng": 118.22701
+  },
+  {
+   "facility_code": "NORTHAM_SF",
+   "facility_name": "Northam",
+   "network_region": "WEM",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 10.0,
+   "lat": -31.65161,
+   "lng": 116.711541
   },
   {
    "facility_code": "BHWF",
@@ -5172,444 +5252,474 @@
    "lng": 116.82121
   },
   {
-   "facility_code": "BIALAWF",
-   "facility_name": "Biala",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 110.0,
-   "lat": -34.584149,
-   "lng": 149.347019
+   "facility_code": "BBASEHOS",
+   "facility_name": "Ballarat Hospital",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 3.0,
+   "lat": -37.558774,
+   "lng": 143.847247
   },
   {
-   "facility_code": "BLINDCREEK",
-   "facility_name": "Blind Creek",
+   "facility_code": "BRYB1WF1",
+   "facility_name": "Berrybank",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 289.6,
+   "lat": -37.885519,
+   "lng": 143.453446
+  },
+  {
+   "facility_code": "BOMENSF",
+   "facility_name": "Bomen",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 121.0,
+   "lat": -35.046577,
+   "lng": 147.442585
+  },
+  {
+   "facility_code": "BRDD",
+   "facility_name": "Broadsound",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 368.0,
+   "lat": -22.810001,
+   "lng": 149.36302
+  },
+  {
+   "facility_code": "BUTLERSG",
+   "facility_name": "Butlers Gorge",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 14.4,
+   "lat": -42.266898,
+   "lng": 146.261823
+  },
+  {
+   "facility_code": "CARAG",
+   "facility_name": "Carag",
    "network_region": "NSW1",
    "fueltech_group": "solar",
    "status": "committed",
-   "capacity_mw": 300.0,
-   "lat": -35.180765,
-   "lng": 149.547461
+   "capacity_mw": 16.0,
+   "lat": -34.937138,
+   "lng": 150.589412
   },
   {
-   "facility_code": "BOCOROCK",
-   "facility_name": "Boco Rock",
+   "facility_code": "CETHANA",
+   "facility_name": "Cethana",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 85.0,
+   "lat": -41.480804,
+   "lng": 146.134511
+  },
+  {
+   "facility_code": "CHILDSF",
+   "facility_name": "Childers",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 64.38,
+   "lat": -25.305189,
+   "lng": 152.402663
+  },
+  {
+   "facility_code": "CRWASF1",
+   "facility_name": "Corowa",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 36.0,
+   "lat": -35.979325,
+   "lng": 146.359356
+  },
+  {
+   "facility_code": "CULLERIN",
+   "facility_name": "Cullerin Range",
    "network_region": "NSW1",
    "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 113.18,
-   "lat": -36.593627,
-   "lng": 149.101512
+   "capacity_mw": 30.0,
+   "lat": -34.809208,
+   "lng": 149.399185
   },
   {
-   "facility_code": "BRIGALOWGT",
-   "facility_name": "Brigalow",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "committed",
-   "capacity_mw": 400.0,
-   "lat": -26.918701,
-   "lng": 150.741928
-  },
-  {
-   "facility_code": "CALBESS2",
-   "facility_name": "Calala 2",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 300.0,
-   "lat": -31.141287,
-   "lng": 150.963101
-  },
-  {
-   "facility_code": "CBWWBA",
-   "facility_name": "Christies Beach",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 2.7199999999999998,
-   "lat": -35.125958,
-   "lng": 138.47135
-  },
-  {
-   "facility_code": "COPTNHYD",
-   "facility_name": "Copeton",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 22.5,
-   "lat": -29.910174,
-   "lng": 150.92348
-  },
-  {
-   "facility_code": "DPNTB",
+   "facility_code": "DARLSF",
    "facility_name": "Darlington Point",
    "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 75.0,
-   "lat": -34.647016,
-   "lng": 146.035236
-  },
-  {
-   "facility_code": "EASTCRK",
-   "facility_name": "Eastern Creek",
-   "network_region": "NSW1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 5.06,
-   "lat": -33.815468,
-   "lng": 150.854307
-  },
-  {
-   "facility_code": "ELAINEBESS",
-   "facility_name": "Elaine",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 932.94,
-   "lat": -37.755901,
-   "lng": 143.995852
-  },
-  {
-   "facility_code": "FGLEN",
-   "facility_name": "Forest Glen",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 270.0,
-   "lat": -32.267032,
-   "lng": 148.473123
-  },
-  {
-   "facility_code": "GBWF1",
-   "facility_name": "Gawara Baya",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 312.0,
-   "lat": -18.780152,
-   "lng": 145.742428
-  },
-  {
-   "facility_code": "GPWFWST",
-   "facility_name": "Golden Plains West",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 266.0,
-   "lat": -37.896786,
-   "lng": 143.648042
-  },
-  {
-   "facility_code": "GROSV1",
-   "facility_name": "Grosvenor 1",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 21.0,
-   "lat": -21.929194,
-   "lng": 148.032416
-  },
-  {
-   "facility_code": "HALLETTB",
-   "facility_name": "Hallett",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 150.0,
-   "lat": -33.349308,
-   "lng": 138.750829
-  },
-  {
-   "facility_code": "HVWW",
-   "facility_name": "Happy Valley",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 15.0,
-   "lat": -35.056156,
-   "lng": 138.564957
-  },
-  {
-   "facility_code": "HBESS",
-   "facility_name": "Hazelwood BESS",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 600.0,
-   "lat": -38.267845,
-   "lng": 146.390293
-  },
-  {
-   "facility_code": "KARSF",
-   "facility_name": "Karadoc",
-   "network_region": "VIC1",
    "fueltech_group": "solar",
    "status": "operating",
-   "capacity_mw": 104.0,
-   "lat": -34.411851,
-   "lng": 142.250443
+   "capacity_mw": 324.0,
+   "lat": -34.648971,
+   "lng": 146.061179
   },
   {
-   "facility_code": "KENNEDY",
-   "facility_name": "Kennedy Energy Park",
+   "facility_code": "DAYDSF",
+   "facility_name": "Daydream",
    "network_region": "QLD1",
-   "fueltech_group": "wind",
+   "fueltech_group": "solar",
    "status": "operating",
-   "capacity_mw": 43.2,
-   "lat": -20.873828,
-   "lng": 144.412727
+   "capacity_mw": 167.0,
+   "lat": -20.479752,
+   "lng": 147.763711
   },
   {
-   "facility_code": "KIDSTON",
-   "facility_name": "Kidston",
+   "facility_code": "ERGT01",
+   "facility_name": "Eraring",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "commissioning",
+   "capacity_mw": 41.5,
+   "lat": -33.062117,
+   "lng": 151.517224
+  },
+  {
+   "facility_code": "GANGARR",
+   "facility_name": "Gangarri",
    "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 162.0,
+   "lat": -26.270557,
+   "lng": 149.758054
+  },
+  {
+   "facility_code": "GLENNCRK",
+   "facility_name": "Glennies Creek",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 12.78,
+   "lat": -32.459876,
+   "lng": 151.128697
+  },
+  {
+   "facility_code": "SNOWY3",
+   "facility_name": "Guthega",
+   "network_region": "NSW1",
    "fueltech_group": "hydro",
-   "status": "committed",
-   "capacity_mw": 250.0,
-   "lat": -18.865892,
-   "lng": 144.15955
-  },
-  {
-   "facility_code": "LADBROKE",
-   "facility_name": "Ladbroke Grove",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
    "status": "operating",
-   "capacity_mw": 80.0,
-   "lat": -37.456341,
-   "lng": 140.782163
+   "capacity_mw": 60.0,
+   "lat": -36.350097,
+   "lng": 148.413602
   },
   {
-   "facility_code": "LNGS",
-   "facility_name": "Laverton North",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 312.0,
-   "lat": -37.841703,
-   "lng": 144.788796
-  },
-  {
-   "facility_code": "LIMBESS",
-   "facility_name": "Limondale",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 423.0,
-   "lat": -34.769354,
-   "lng": 143.559464
-  },
-  {
-   "facility_code": "LOCKHART",
-   "facility_name": "Lockhart",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 30.0,
-   "lat": -35.217506,
-   "lng": 146.70322
-  },
-  {
-   "facility_code": "LOYYB",
-   "facility_name": "Loy Yang B",
-   "network_region": "VIC1",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 1000.0,
-   "lat": -38.256446,
-   "lng": 146.584982
-  },
-  {
-   "facility_code": "MOKOSF",
-   "facility_name": "Mokoan",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 120.0,
-   "lat": -36.489246,
-   "lng": 146.128325
-  },
-  {
-   "facility_code": "MTMILLAR",
-   "facility_name": "Mt Millar",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 70.0,
-   "lat": -33.62534,
-   "lng": 136.703771
-  },
-  {
-   "facility_code": "MLSP",
-   "facility_name": "Mugga Lane",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 12.0,
-   "lat": -35.399485,
-   "lng": 149.1454
-  },
-  {
-   "facility_code": "NBHWF",
-   "facility_name": "North Brown Hill",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 132.3,
-   "lat": -33.291159,
-   "lng": 138.715508
-  },
-  {
-   "facility_code": "OAKLAND",
-   "facility_name": "Oaklands Hill",
+   "facility_code": "HD1WF",
+   "facility_name": "Hawkesdale",
    "network_region": "VIC1",
    "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 67.0,
-   "lat": -37.681514,
-   "lng": 142.552322
+   "capacity_mw": 94.6,
+   "lat": -38.148008,
+   "lng": 142.360925
   },
   {
-   "facility_code": "PALMERWF",
-   "facility_name": "Palmer",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 288.0,
-   "lat": -34.815865,
-   "lng": 139.118654
-  },
-  {
-   "facility_code": "PLAYF",
-   "facility_name": "Playford B",
-   "network_region": "SA1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 480.0,
-   "lat": -32.538886,
-   "lng": 137.781822
-  },
-  {
-   "facility_code": "SRBESS",
-   "facility_name": "Steel River",
-   "network_region": "NSW1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 600.0,
-   "lat": -32.8829,
-   "lng": 151.73057
-  },
-  {
-   "facility_code": "TATURA",
-   "facility_name": "Tatura",
-   "network_region": "VIC1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 1.1,
-   "lat": -36.47915,
-   "lng": 145.235037
-  },
-  {
-   "facility_code": "TIMWEST",
-   "facility_name": "Timboon West",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 7.2,
-   "lat": -38.532667,
-   "lng": 142.915224
-  },
-  {
-   "facility_code": "TORRIS",
-   "facility_name": "Torrens Island",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 800.0,
-   "lat": -34.80651,
-   "lng": 138.523127
-  },
-  {
-   "facility_code": "TOWER",
-   "facility_name": "Tower",
-   "network_region": "NSW1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 41.2,
-   "lat": -34.219461,
-   "lng": 150.718012
-  },
-  {
-   "facility_code": "WAGGNSF",
-   "facility_name": "Wagga North",
+   "facility_code": "JEMALNG1",
+   "facility_name": "Jemalong",
    "network_region": "NSW1",
    "fueltech_group": "solar",
    "status": "operating",
    "capacity_mw": 55.0,
-   "lat": -35.070575,
-   "lng": 147.438807
+   "lat": -33.409099,
+   "lng": 147.655008
   },
   {
-   "facility_code": "0WNSF",
-   "facility_name": "Winton North",
+   "facility_code": "KIAMSF1",
+   "facility_name": "Kiamal",
    "network_region": "VIC1",
    "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 131.0,
-   "lat": -36.502154,
-   "lng": 146.125175
+   "status": "operating",
+   "capacity_mw": 239.0,
+   "lat": -35.021508,
+   "lng": 142.297971
   },
   {
-   "facility_code": "WDLNGN",
-   "facility_name": "Woodlawn",
+   "facility_code": "KINGASF",
+   "facility_name": "Kingaroy",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 47.0,
+   "lat": -26.538639,
+   "lng": 151.881271
+  },
+  {
+   "facility_code": "LIMOSF1",
+   "facility_name": "Limondale",
    "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 275.0,
+   "lat": -34.771747,
+   "lng": 143.500494
+  },
+  {
+   "facility_code": "LUCAS2S2",
+   "facility_name": "Lucas Heights 2",
+   "network_region": "NSW1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 4.6,
+   "lat": -34.044088,
+   "lng": 150.972475
+  },
+  {
+   "facility_code": "MCRK",
+   "facility_name": "Major's Creek",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 540.0,
+   "lat": -19.608036,
+   "lng": 146.961165
+  },
+  {
+   "facility_code": "MANNUMB",
+   "facility_name": "Mannum",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 395.09999999999997,
+   "lat": -34.917537,
+   "lng": 139.262695
+  },
+  {
+   "facility_code": "MARYRSF",
+   "facility_name": "Maryrorough",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 33.0,
+   "lat": -27.708611,
+   "lng": 151.546202
+  },
+  {
+   "facility_code": "MARYVALE",
+   "facility_name": "Maryvale",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 243.0,
+   "lat": -32.515339,
+   "lng": 148.95578
+  },
+  {
+   "facility_code": "MREH",
+   "facility_name": "Melbourne A1",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 647.4000000000001,
+   "lat": -37.669178,
+   "lng": 144.733221
+  },
+  {
+   "facility_code": "MORTLK",
+   "facility_name": "Mortlake",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 566.0,
+   "lat": -38.063237,
+   "lng": 142.668677
+  },
+  {
+   "facility_code": "MOUSF",
+   "facility_name": "Moura",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 99.0,
+   "lat": -24.515007,
+   "lng": 150.087256
+  },
+  {
+   "facility_code": "MEWF",
+   "facility_name": "Mt Emerald",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 180.0,
+   "lat": -17.170847,
+   "lng": 145.38046
+  },
+  {
+   "facility_code": "MUSSELRO",
+   "facility_name": "Musselroe",
+   "network_region": "TAS1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 168.0,
+   "lat": -40.780012,
+   "lng": 148.010283
+  },
+  {
+   "facility_code": "PORTWF",
+   "facility_name": "Portland",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 148.0,
+   "lat": -38.372199,
+   "lng": 141.37945
+  },
+  {
+   "facility_code": "QBYNB",
+   "facility_name": "Queanbeyan",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 30.0,
+   "lat": -35.338148,
+   "lng": 149.215613
+  },
+  {
+   "facility_code": "SNUG",
+   "facility_name": "Snuggery",
+   "network_region": "SA1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 42.0,
+   "lat": -37.664996,
+   "lng": 140.414686
+  },
+  {
+   "facility_code": "STGEORGE",
+   "facility_name": "St George Leagues Club",
+   "network_region": "NSW1",
+   "fueltech_group": "fossil",
+   "status": "retired",
+   "capacity_mw": 1.0,
+   "lat": -33.974819,
+   "lng": 151.129354
+  },
+  {
+   "facility_code": "TARALGA",
+   "facility_name": "Taralga",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 106.8,
+   "lat": -34.431428,
+   "lng": 149.865258
+  },
+  {
+   "facility_code": "TERALBA",
+   "facility_name": "Teralba",
+   "network_region": "NSW1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 3.0,
+   "lat": -32.945557,
+   "lng": 151.612042
+  },
+  {
+   "facility_code": "WALGRV",
+   "facility_name": "Wallgrove",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 150.0,
+   "lat": -33.813917,
+   "lng": 150.830827
+  },
+  {
+   "facility_code": "WG",
+   "facility_name": "Warragamba",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "retired",
+   "capacity_mw": 50.0,
+   "lat": -33.882862,
+   "lng": 150.596954
+  },
+  {
+   "facility_code": "WOLLERT",
+   "facility_name": "Wollert",
+   "network_region": "VIC1",
    "fueltech_group": "renewable",
    "status": "operating",
    "capacity_mw": 7.0,
-   "lat": -35.06298,
-   "lng": 149.570198
+   "lat": -37.583073,
+   "lng": 145.048357
   },
   {
-   "facility_code": "WOOLGSF",
-   "facility_name": "Woolooga",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "commissioning",
-   "capacity_mw": 840.0,
-   "lat": -26.075843,
-   "lng": 152.437448
+   "facility_code": "WONWP",
+   "facility_name": "Wonthaggi",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 12.0,
+   "lat": -38.604079,
+   "lng": 145.545379
   },
   {
-   "facility_code": "TIWEST_COG1",
-   "facility_name": "Kwinana Cogen",
+   "facility_code": "WYANGALB",
+   "facility_name": "Wyangala B",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 4.0,
+   "lat": -33.968824,
+   "lng": 148.948823
+  },
+  {
+   "facility_code": "ALBANY",
+   "facility_name": "Albany",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 21.6,
+   "lat": -35.055759,
+   "lng": 117.777048
+  },
+  {
+   "facility_code": "BREMER_BAY",
+   "facility_name": "Bremer Bay",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 0.6,
+   "lat": -34.399033,
+   "lng": 119.389377
+  },
+  {
+   "facility_code": "ALCOA_WGP",
+   "facility_name": "Wagerup",
    "network_region": "WEM",
    "fueltech_group": "gas",
    "status": "operating",
-   "capacity_mw": 42.1,
-   "lat": -32.22762,
-   "lng": 115.773435
+   "capacity_mw": 418.0,
+   "lat": -32.91546,
+   "lng": 115.917892
   },
   {
-   "facility_code": "MWF_MUMBIDA",
-   "facility_name": "Mumbida",
+   "facility_code": "ALINTA_WWF",
+   "facility_name": "Walkaway",
    "network_region": "WEM",
    "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 55.0,
-   "lat": -28.98915,
-   "lng": 114.958725
+   "capacity_mw": 89.1,
+   "lat": -28.916734,
+   "lng": 114.914165
   },
   {
-   "facility_code": "PMMWF",
-   "facility_name": "Parron Maam Marang",
+   "facility_code": "WARRADARGE",
+   "facility_name": "Warradarge",
    "network_region": "WEM",
    "fueltech_group": "wind",
    "status": "committed",
-   "capacity_mw": 489.0,
-   "lat": -30.345919,
-   "lng": 115.33433
+   "capacity_mw": 103.0,
+   "lat": -29.942809,
+   "lng": 115.470459
   },
   {
    "facility_code": "ADP",
@@ -5992,991 +6102,857 @@
    "lng": 115.10937
   },
   {
-   "facility_code": "APS",
-   "facility_name": "Anglesea",
-   "network_region": "VIC1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 165.0,
-   "lat": -38.389031,
-   "lng": 144.180589
-  },
-  {
-   "facility_code": "BARRON",
-   "facility_name": "Barron Gorge",
-   "network_region": "QLD1",
-   "fueltech_group": "hydro",
+   "facility_code": "BODWF",
+   "facility_name": "Bodangora",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 60.0,
-   "lat": -16.850852,
-   "lng": 145.646758
+   "capacity_mw": 113.19,
+   "lat": -32.414669,
+   "lng": 149.099633
   },
   {
-   "facility_code": "BCBESS",
-   "facility_name": "Bennetts Creek",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 300.0,
-   "lat": -38.259575,
-   "lng": 146.425208
-  },
-  {
-   "facility_code": "BLINDCREEK",
-   "facility_name": "Blind Creek",
+   "facility_code": "BHB",
+   "facility_name": "Broken Hill Battery",
    "network_region": "NSW1",
    "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 729.0,
-   "lat": -35.180765,
-   "lng": 149.547461
-  },
-  {
-   "facility_code": "CTHLWF",
-   "facility_name": "Cattle Hill",
-   "network_region": "TAS1",
-   "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 148.0,
-   "lat": -42.149661,
-   "lng": 146.724045
+   "capacity_mw": 198.0,
+   "lat": -31.986306,
+   "lng": 141.422951
   },
   {
-   "facility_code": "CODRGTON",
-   "facility_name": "Codrington",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
+   "facility_code": "BDONGHYD",
+   "facility_name": "Burrendong",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
    "status": "operating",
-   "capacity_mw": 18.2,
-   "lat": -38.284935,
-   "lng": 141.961499
+   "capacity_mw": 19.0,
+   "lat": -32.664624,
+   "lng": 149.107959
   },
   {
-   "facility_code": "CBWF",
-   "facility_name": "Coonoer Bridge",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
+   "facility_code": "CBWWBA",
+   "facility_name": "Christies Beach",
+   "network_region": "SA1",
+   "fueltech_group": "renewable",
    "status": "operating",
-   "capacity_mw": 19.8,
-   "lat": -36.415237,
-   "lng": 143.380189
+   "capacity_mw": 0.66,
+   "lat": -35.125958,
+   "lng": 138.47135
   },
   {
-   "facility_code": "EDENVSF",
-   "facility_name": "Edenvale",
+   "facility_code": "CBWWBA",
+   "facility_name": "Christies Beach",
+   "network_region": "SA1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 3.83,
+   "lat": -35.125958,
+   "lng": 138.47135
+  },
+  {
+   "facility_code": "CLERMSF",
+   "facility_name": "Clermont",
    "network_region": "QLD1",
    "fueltech_group": "solar",
    "status": "operating",
-   "capacity_mw": 180.0,
-   "lat": -26.931732,
-   "lng": 150.582727
+   "capacity_mw": 92.0,
+   "lat": -22.837763,
+   "lng": 147.579322
   },
   {
-   "facility_code": "GOESF1",
-   "facility_name": "Goorambat East",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 348.6,
-   "lat": -36.434304,
-   "lng": 145.923113
-  },
-  {
-   "facility_code": "GORDON",
-   "facility_name": "Gordon",
+   "facility_code": "CLUNY",
+   "facility_name": "Cluny",
    "network_region": "TAS1",
    "fueltech_group": "hydro",
    "status": "operating",
-   "capacity_mw": 457.0,
-   "lat": -42.740519,
-   "lng": 145.982796
+   "capacity_mw": 19.0,
+   "lat": -42.506442,
+   "lng": 146.68104
   },
   {
-   "facility_code": "GBESS",
-   "facility_name": "Goyder",
-   "network_region": "SA1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 681.0,
-   "lat": -33.576364,
-   "lng": 138.945737
-  },
-  {
-   "facility_code": "GULLRGWF",
-   "facility_name": "Gullen Range",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 10.0,
-   "lat": -34.615245,
-   "lng": 149.45808
-  },
-  {
-   "facility_code": "HAZEL",
-   "facility_name": "Hazelwood",
-   "network_region": "VIC1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 1640.0,
-   "lat": -38.270575,
-   "lng": 146.389794
-  },
-  {
-   "facility_code": "HORNSDAL3",
-   "facility_name": "Hornsdale 3",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 112.0,
-   "lat": -33.05982,
-   "lng": 138.537673
-  },
-  {
-   "facility_code": "JUNEESF",
-   "facility_name": "Junee",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 36.0,
-   "lat": -34.814929,
-   "lng": 147.572334
-  },
-  {
-   "facility_code": "KAREEYA",
-   "facility_name": "Kareeya",
-   "network_region": "QLD1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 91.0,
-   "lat": -17.767013,
-   "lng": 145.577993
-  },
-  {
-   "facility_code": "LKBONNY3",
-   "facility_name": "Lake Bonney 3",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 39.0,
-   "lat": -37.769885,
-   "lng": 140.406271
-  },
-  {
-   "facility_code": "MRTLSWF",
-   "facility_name": "Mortlake South",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 157.5,
-   "lat": -38.146832,
-   "lng": 142.853134
-  },
-  {
-   "facility_code": "MLWF",
-   "facility_name": "Mortons Lane",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 19.5,
-   "lat": -37.839273,
-   "lng": 142.464343
-  },
-  {
-   "facility_code": "MTMERCER",
-   "facility_name": "Mt Mercer",
-   "network_region": "VIC1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 131.2,
-   "lat": -37.831791,
-   "lng": 143.888681
-  },
-  {
-   "facility_code": "MURRAY",
-   "facility_name": "Murray",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 1500.0,
-   "lat": -36.24683,
-   "lng": 148.1902
-  },
-  {
-   "facility_code": "NASF",
-   "facility_name": "Narromine",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 10.0,
-   "lat": -32.220895,
-   "lng": 148.255308
-  },
-  {
-   "facility_code": "NEWPORT",
-   "facility_name": "Newport",
-   "network_region": "VIC1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 500.0,
-   "lat": -37.841423,
-   "lng": 144.894923
-  },
-  {
-   "facility_code": "PALOONA",
-   "facility_name": "Paloona",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 28.0,
-   "lat": -41.282674,
-   "lng": 146.249036
-  },
-  {
-   "facility_code": "NPPPPS",
-   "facility_name": "Pelican Point",
+   "facility_code": "DRYCGT",
+   "facility_name": "Dry Creek",
    "network_region": "SA1",
    "fueltech_group": "gas",
    "status": "operating",
-   "capacity_mw": 478.0,
-   "lat": -34.765325,
-   "lng": 138.505402
+   "capacity_mw": 156.0,
+   "lat": -34.847703,
+   "lng": 138.5816
   },
   {
-   "facility_code": "PTINA",
-   "facility_name": "Poatina",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 325.0,
-   "lat": -41.811531,
-   "lng": 146.919117
-  },
-  {
-   "facility_code": "PORTLCN",
-   "facility_name": "Port Lincoln",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "commissioning",
-   "capacity_mw": 50.0,
-   "lat": -34.700389,
-   "lng": 135.804384
-  },
-  {
-   "facility_code": "STANVAC",
-   "facility_name": "Port Stanvac",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "operating",
-   "capacity_mw": 57.6,
-   "lat": -35.110332,
-   "lng": 138.49135
-  },
-  {
-   "facility_code": "QUERIVER",
-   "facility_name": "Que River",
+   "facility_code": "GEORGTWN",
+   "facility_name": "George Town",
    "network_region": "TAS1",
    "fueltech_group": "fossil",
    "status": "retired",
-   "capacity_mw": 24.0,
-   "lat": -41.610502,
-   "lng": 145.544305
+   "capacity_mw": 34.0,
+   "lat": -41.091063,
+   "lng": 146.893204
   },
   {
-   "facility_code": "RANGEB",
-   "facility_name": "Rangebank",
+   "facility_code": "GNARWARREBESS",
+   "facility_name": "Gnarwarre",
    "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 780.8,
-   "lat": -38.085056,
-   "lng": 145.259936
-  },
-  {
-   "facility_code": "RPBESS",
-   "facility_name": "Reeves Plains",
-   "network_region": "SA1",
    "fueltech_group": "battery",
    "status": "committed",
    "capacity_mw": 750.0,
-   "lat": -34.502918,
-   "lng": 138.614457
+   "lat": -38.148311,
+   "lng": 144.139484
   },
   {
-   "facility_code": "SMOKY",
-   "facility_name": "Smoky Creek",
+   "facility_code": "GRIFSF",
+   "facility_name": "Griffith",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 27.2,
+   "lat": -34.317617,
+   "lng": 146.121416
+  },
+  {
+   "facility_code": "HAMISF",
+   "facility_name": "Hamilton",
    "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 57.5,
+   "lat": -20.496081,
+   "lng": 147.738803
+  },
+  {
+   "facility_code": "HAYMSF",
+   "facility_name": "Hayman",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 57.75,
+   "lat": -20.510097,
+   "lng": 147.755711
+  },
+  {
+   "facility_code": "HUMEV",
+   "facility_name": "Hume",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "commissioning",
+   "capacity_mw": 29.0,
+   "lat": -36.106887,
+   "lng": 147.032572
+  },
+  {
+   "facility_code": "ICSM",
+   "facility_name": "Isis Central Sugar Mill",
+   "network_region": "QLD1",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 25.0,
+   "lat": -25.197619,
+   "lng": 152.206949
+  },
+  {
+   "facility_code": "LNGS",
+   "facility_name": "Laverton North",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 320.0,
+   "lat": -37.841703,
+   "lng": 144.788796
+  },
+  {
+   "facility_code": "MCINTYR",
+   "facility_name": "MacIntyre",
+   "network_region": "QLD1",
+   "fueltech_group": "wind",
+   "status": "commissioning",
+   "capacity_mw": 923.0,
+   "lat": -28.350769,
+   "lng": 151.635944
+  },
+  {
+   "facility_code": "MM",
+   "facility_name": "Munmorah",
+   "network_region": "NSW1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 600.0,
+   "lat": -33.211781,
+   "lng": 151.542161
+  },
+  {
+   "facility_code": "MBPS2",
+   "facility_name": "Murray Bridge-Onkaparinga",
+   "network_region": "SA1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 13.75,
+   "lat": -35.096848,
+   "lng": 139.209527
+  },
+  {
+   "facility_code": "NORTHP",
+   "facility_name": "Northern",
+   "network_region": "SA1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 530.0,
+   "lat": -32.5429,
+   "lng": 137.7874
+  },
+  {
+   "facility_code": "OSBORNE",
+   "facility_name": "Osborne",
+   "network_region": "SA1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 180.0,
+   "lat": -34.797702,
+   "lng": 138.50779
+  },
+  {
+   "facility_code": "PLWF",
+   "facility_name": "Port Latta",
+   "network_region": "TAS1",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 21.0,
+   "lat": -40.871168,
+   "lng": 145.357293
+  },
+  {
+   "facility_code": "QP",
+   "facility_name": "Quorn Park",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 96.0,
+   "lat": -33.079517,
+   "lng": 148.089521
+  },
+  {
+   "facility_code": "RUBICON",
+   "facility_name": "Rubicon",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "commissioning",
+   "capacity_mw": 13.0,
+   "lat": -37.327154,
+   "lng": 145.860547
+  },
+  {
+   "facility_code": "SVALE",
+   "facility_name": "Springvale",
+   "network_region": "VIC1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 4.2,
+   "lat": -37.973375,
+   "lng": 145.139695
+  },
+  {
+   "facility_code": "STABESS",
+   "facility_name": "Stanwell",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 951.0,
+   "lat": -23.513568,
+   "lng": 150.31811
+  },
+  {
+   "facility_code": "SMFBESS2",
+   "facility_name": "Summerfield 2",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "commissioning",
+   "capacity_mw": 460.95000000000005,
+   "lat": -34.958457,
+   "lng": 139.2099
+  },
+  {
+   "facility_code": "TBBESS3",
+   "facility_name": "Tailem Bend 3",
+   "network_region": "SA1",
    "fueltech_group": "battery",
    "status": "committed",
-   "capacity_mw": 900.0,
-   "lat": -24.120592,
-   "lng": 150.504411
+   "capacity_mw": 1440.0,
+   "lat": -35.271105,
+   "lng": 139.484124
   },
   {
-   "facility_code": "SNOWNTH",
-   "facility_name": "Snowtown North",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
+   "facility_code": "TUMUT3",
+   "facility_name": "Tumut 3",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
    "status": "operating",
-   "capacity_mw": 144.0,
-   "lat": -33.728666,
-   "lng": 138.148351
-  },
-  {
-   "facility_code": "ULBESS",
-   "facility_name": "Ulinda Park",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 591.0,
-   "lat": -26.918598,
-   "lng": 150.745396
+   "capacity_mw": 1500.0,
+   "lat": -35.611138,
+   "lng": 148.29175
   },
   {
    "facility_code": "WANDSF",
    "facility_name": "Wandoan",
    "network_region": "QLD1",
    "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 159.0,
+   "status": "committed",
+   "capacity_mw": 320.0,
    "lat": -26.248848,
    "lng": 149.765988
   },
   {
-   "facility_code": "WPWF",
-   "facility_name": "Wattle Point",
-   "network_region": "SA1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 91.0,
-   "lat": -35.110379,
-   "lng": 137.705789
-  },
-  {
-   "facility_code": "WOODLWN",
-   "facility_name": "Woodlawn",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 48.3,
-   "lat": -35.091982,
-   "lng": 149.572021
-  },
-  {
-   "facility_code": "WYASF",
-   "facility_name": "Wyalong",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 62.32,
-   "lat": -33.887269,
-   "lng": 147.315314
-  },
-  {
-   "facility_code": "YARANSF",
-   "facility_name": "Yarranlea",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 121.0,
-   "lat": -27.709261,
-   "lng": 151.533038
-  },
-  {
-   "facility_code": "KEMERTON",
-   "facility_name": "Kemerton",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 309.4,
-   "lat": -33.163352,
-   "lng": 115.780966
-  },
-  {
-   "facility_code": "MUJA",
-   "facility_name": "Muja CD",
-   "network_region": "WEM",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 425.2,
-   "lat": -33.450246,
-   "lng": 116.30482
-  },
-  {
-   "facility_code": "MUNGARRA",
-   "facility_name": "Mungarra",
-   "network_region": "WEM",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 117.0,
-   "lat": -28.889524,
-   "lng": 115.117946
-  },
-  {
-   "facility_code": "WAROONA",
-   "facility_name": "Waroona",
-   "network_region": "WEM",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 244.5,
-   "lat": -32.913779,
-   "lng": 115.789591
-  },
-  {
-   "facility_code": "ALDGASF",
-   "facility_name": "Aldoga",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 535.21,
-   "lat": -23.815177,
-   "lng": 151.05811
-  },
-  {
-   "facility_code": "ANGASTON",
-   "facility_name": "Angaston",
-   "network_region": "SA1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 50.0,
-   "lat": -34.503389,
-   "lng": 139.02458
-  },
-  {
-   "facility_code": "BAKING",
-   "facility_name": "Baking Board",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 17.5,
-   "lat": -26.720639,
-   "lng": 150.553781
-  },
-  {
-   "facility_code": "BANGOWF",
-   "facility_name": "Bango",
-   "network_region": "NSW1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 243.8,
-   "lat": -34.767208,
-   "lng": 148.921499
-  },
-  {
-   "facility_code": "BLUEGSF",
-   "facility_name": "Blue Grass",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 183.0,
-   "lat": -26.682643,
-   "lng": 150.504537
-  },
-  {
-   "facility_code": "BOLIVAR",
-   "facility_name": "Bolivar",
-   "network_region": "SA1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 8.25,
-   "lat": -34.772402,
-   "lng": 138.579432
-  },
-  {
-   "facility_code": "BOLIVPS",
-   "facility_name": "Bolivar",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 128.0,
-   "lat": -34.7772,
-   "lng": 138.5826
-  },
-  {
-   "facility_code": "BROWNMT",
-   "facility_name": "Brown Mountain",
-   "network_region": "NSW1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 5.0,
-   "lat": -36.594993,
-   "lng": 149.473997
-  },
-  {
-   "facility_code": "CALL_A",
-   "facility_name": "Callide A",
-   "network_region": "QLD1",
-   "fueltech_group": "coal",
-   "status": "retired",
-   "capacity_mw": 120.0,
-   "lat": -24.346817,
-   "lng": 150.6188
-  },
-  {
-   "facility_code": "CRWARP",
-   "facility_name": "Carwarp",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 186.0,
-   "lat": -34.399542,
-   "lng": 142.172804
-  },
-  {
-   "facility_code": "LI_WY_CA",
-   "facility_name": "Catagunya / Liapootah / Wayatinah",
-   "network_region": "TAS1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 173.7,
-   "lat": -42.376279,
-   "lng": 146.510051
-  },
-  {
-   "facility_code": "COOPGWF",
-   "facility_name": "Coopers Gap",
-   "network_region": "QLD1",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 452.0,
-   "lat": -26.733659,
-   "lng": 151.474795
-  },
-  {
-   "facility_code": "EMERASF",
-   "facility_name": "Emerald",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 88.0,
-   "lat": -23.507996,
-   "lng": 148.126404
-  },
-  {
-   "facility_code": "FGLEN",
-   "facility_name": "Forest Glen",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 113.2,
-   "lat": -32.267032,
-   "lng": 148.473123
-  },
-  {
-   "facility_code": "GANNSF",
-   "facility_name": "Gannawarra",
-   "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 55.0,
-   "lat": -35.729012,
-   "lng": 143.783189
-  },
-  {
-   "facility_code": "GRANWF",
-   "facility_name": "Granville Harbour",
+   "facility_code": "WOOLNTH1",
+   "facility_name": "Woolnorth",
    "network_region": "TAS1",
    "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 110.0,
-   "lat": -41.778439,
-   "lng": 145.065517
+   "capacity_mw": 140.0,
+   "lat": -40.786606,
+   "lng": 144.738536
   },
   {
-   "facility_code": "GULLRGWF",
-   "facility_name": "Gullen Range",
+   "facility_code": "HENDERSON_RENEWABLE",
+   "facility_name": "Henderson",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 3.0,
+   "lat": -32.202137,
+   "lng": 115.77391
+  },
+  {
+   "facility_code": "KONDININWF1",
+   "facility_name": "Kondinin",
+   "network_region": "WEM",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 130.0,
+   "lat": -32.47762,
+   "lng": 118.391403
+  },
+  {
+   "facility_code": "KWINANA_ESR2",
+   "facility_name": "Kwinana Battery 2",
+   "network_region": "WEM",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 675.0,
+   "lat": -32.202465,
+   "lng": 115.778452
+  },
+  {
+   "facility_code": "RED_HILL",
+   "facility_name": "Red Hill",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 3.64,
+   "lat": -31.830628,
+   "lng": 116.100888
+  },
+  {
+   "facility_code": "TAMALA_PARK",
+   "facility_name": "Tamala Park",
+   "network_region": "WEM",
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 6.0,
+   "lat": -31.706198,
+   "lng": 115.725734
+  },
+  {
+   "facility_code": "ADP",
+   "facility_name": "Adelaide Desalination",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 23.28,
+   "lat": -35.096948,
+   "lng": 138.484061
+  },
+  {
+   "facility_code": "ARWF",
+   "facility_name": "Ararat",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 241.59,
+   "lat": -37.238714,
+   "lng": 143.079243
+  },
+  {
+   "facility_code": "BAPS",
+   "facility_name": "Banimboola",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 12.85,
+   "lat": -36.534342,
+   "lng": 147.45934
+  },
+  {
+   "facility_code": "BLAYNEY",
+   "facility_name": "Blayney",
    "network_region": "NSW1",
    "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 165.0,
-   "lat": -34.615245,
-   "lng": 149.45808
+   "capacity_mw": 9.9,
+   "lat": -33.622867,
+   "lng": 149.200983
   },
   {
-   "facility_code": "HEZ",
-   "facility_name": "Hunter Economic Zone",
-   "network_region": "NSW1",
-   "fueltech_group": "fossil",
-   "status": "retired",
-   "capacity_mw": 29.0,
-   "lat": -32.835481,
-   "lng": 151.451033
-  },
-  {
-   "facility_code": "KOOLUNGA",
-   "facility_name": "Koolunga",
+   "facility_code": "BLYTHB",
+   "facility_name": "Blyth",
    "network_region": "SA1",
    "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 600.0,
-   "lat": -33.601986,
-   "lng": 138.358214
-  },
-  {
-   "facility_code": "KRCCOGEN",
-   "facility_name": "KRC Cogen",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
-   "status": "retired",
-   "capacity_mw": 5.0,
-   "lat": -27.57359,
-   "lng": 151.926883
-  },
-  {
-   "facility_code": "LW",
-   "facility_name": "Lower Wonga",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "committed",
-   "capacity_mw": 1264.5,
-   "lat": -26.07749,
-   "lng": 152.4334
-  },
-  {
-   "facility_code": "MAPS2",
-   "facility_name": "Mannum Pumping Station",
-   "network_region": "SA1",
-   "fueltech_group": "solar",
    "status": "operating",
-   "capacity_mw": 33.0,
-   "lat": -34.854044,
-   "lng": 139.189749
+   "capacity_mw": 843.0,
+   "lat": -33.848475,
+   "lng": 138.403204
   },
   {
-   "facility_code": "METZSF",
-   "facility_name": "Metz N",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 135.0,
-   "lat": -30.515484,
-   "lng": 151.859815
-  },
-  {
-   "facility_code": "MINTARO",
-   "facility_name": "Mintaro",
-   "network_region": "SA1",
-   "fueltech_group": "gas",
-   "status": "operating",
-   "capacity_mw": 115.0,
-   "lat": -33.903056,
-   "lng": 138.738162
-  },
-  {
-   "facility_code": "MOLNGSF1",
-   "facility_name": "Molong",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 36.0,
-   "lat": -33.08981,
-   "lng": 148.912255
-  },
-  {
-   "facility_code": "MEH",
-   "facility_name": "Mortlake",
+   "facility_code": "BROOKLYN",
+   "facility_name": "Brooklyn",
    "network_region": "VIC1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 435.0,
-   "lat": -38.035762,
-   "lng": 142.747637
+   "fueltech_group": "renewable",
+   "status": "operating",
+   "capacity_mw": 2.83,
+   "lat": -37.819005,
+   "lng": 144.831257
   },
   {
-   "facility_code": "MP",
-   "facility_name": "Mt Piper",
+   "facility_code": "CAPBES",
+   "facility_name": "Capital",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 375.0,
+   "lat": -35.338251,
+   "lng": 149.215529
+  },
+  {
+   "facility_code": "CSPVPS",
+   "facility_name": "Collinsville",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 42.0,
+   "lat": -20.541215,
+   "lng": 147.807432
+  },
+  {
+   "facility_code": "ERARING",
+   "facility_name": "Eraring",
    "network_region": "NSW1",
    "fueltech_group": "coal",
    "status": "operating",
-   "capacity_mw": 1400.0,
-   "lat": -33.358121,
-   "lng": 150.032642
+   "capacity_mw": 2880.0,
+   "lat": -33.061039,
+   "lng": 151.51984
   },
   {
-   "facility_code": "MUSWELLBROOK",
-   "facility_name": "Muswellbrook",
+   "facility_code": "GLBWNHYD",
+   "facility_name": "Glenbawn",
    "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "committed",
-   "capacity_mw": 135.0,
-   "lat": -32.251183,
-   "lng": 150.946782
-  },
-  {
-   "facility_code": "OAKEY",
-   "facility_name": "Oakey",
-   "network_region": "QLD1",
-   "fueltech_group": "gas",
+   "fueltech_group": "hydro",
    "status": "operating",
-   "capacity_mw": 282.0,
-   "lat": -27.418268,
-   "lng": 151.680205
+   "capacity_mw": 5.5,
+   "lat": -32.107937,
+   "lng": 150.999481
   },
   {
-   "facility_code": "PSF",
-   "facility_name": "Parkes",
-   "network_region": "NSW1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 55.0,
-   "lat": -33.117567,
-   "lng": 148.078825
-  },
-  {
-   "facility_code": "EDLRGNRD",
-   "facility_name": "Roghan Road",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "retired",
-   "capacity_mw": 2.0,
-   "lat": -27.342062,
-   "lng": 153.049494
-  },
-  {
-   "facility_code": "SHEP1",
-   "facility_name": "Shepparton",
+   "facility_code": "GPWFWST",
+   "facility_name": "Golden Plains West",
    "network_region": "VIC1",
-   "fueltech_group": "renewable",
+   "fueltech_group": "wind",
+   "status": "committed",
+   "capacity_mw": 310.0,
+   "lat": -37.896786,
+   "lng": 143.648042
+  },
+  {
+   "facility_code": "GRIVSF",
+   "facility_name": "Goulburn River",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 147.0,
+   "lat": -32.282141,
+   "lng": 150.102488
+  },
+  {
+   "facility_code": "GUNNING",
+   "facility_name": "Gunning",
+   "network_region": "NSW1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 46.5,
+   "lat": -34.691531,
+   "lng": 149.373013
+  },
+  {
+   "facility_code": "HLMSEW01",
+   "facility_name": "Hallam",
+   "network_region": "VIC1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 0.25,
+   "lat": -38.143332,
+   "lng": 145.119964
+  },
+  {
+   "facility_code": "HAUGHT1",
+   "facility_name": "Haughton",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 132.0,
+   "lat": -19.750134,
+   "lng": 147.048103
+  },
+  {
+   "facility_code": "JNDSHPS",
+   "facility_name": "Jindabyne",
+   "network_region": "NSW1",
+   "fueltech_group": "hydro",
    "status": "operating",
    "capacity_mw": 1.1,
-   "lat": -36.322223,
-   "lng": 145.379291
+   "lat": -36.434918,
+   "lng": 148.63057
+  },
+  {
+   "facility_code": "SNWYGJP2",
+   "facility_name": "Jindabyne Pump At Guthega",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "retired",
+   "capacity_mw": 70.0,
+   "lat": -36.434918,
+   "lng": 148.63057
+  },
+  {
+   "facility_code": "LGAPWF1",
+   "facility_name": "Lincoln Gap",
+   "network_region": "SA1",
+   "fueltech_group": "battery",
+   "status": "commissioning",
+   "capacity_mw": 10.8,
+   "lat": -32.564612,
+   "lng": 137.557203
+  },
+  {
+   "facility_code": "LOCKHART",
+   "facility_name": "Lockhart",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "committed",
+   "capacity_mw": 10.0,
+   "lat": -35.217506,
+   "lng": 146.70322
+  },
+  {
+   "facility_code": "LRSF",
+   "facility_name": "Longreach",
+   "network_region": "QLD1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 17.0,
+   "lat": -23.446178,
+   "lng": 144.35918
+  },
+  {
+   "facility_code": "MARYVALE",
+   "facility_name": "Maryvale",
+   "network_region": "NSW1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 516.0,
+   "lat": -32.515339,
+   "lng": 148.95578
+  },
+  {
+   "facility_code": "MEADOWBK",
+   "facility_name": "Meadowbank",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 40.0,
+   "lat": -42.611178,
+   "lng": 146.845687
+  },
+  {
+   "facility_code": "MREHA2",
+   "facility_name": "Melbourne A2",
+   "network_region": "VIC1",
+   "fueltech_group": "battery",
+   "status": "operating",
+   "capacity_mw": 647.4000000000001,
+   "lat": -37.669178,
+   "lng": 144.733221
+  },
+  {
+   "facility_code": "MTGELWF",
+   "facility_name": "Mt Gellibrand",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "commissioning",
+   "capacity_mw": 138.0,
+   "lat": -38.258519,
+   "lng": 143.802037
+  },
+  {
+   "facility_code": "OCPS",
+   "facility_name": "Oaky Creek",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 20.0,
+   "lat": -23.048717,
+   "lng": 148.484462
+  },
+  {
+   "facility_code": "PEDLER",
+   "facility_name": "Pedler Creek",
+   "network_region": "SA1",
+   "fueltech_group": "renewable",
+   "status": "retired",
+   "capacity_mw": 3.0,
+   "lat": -35.202388,
+   "lng": 138.501214
   },
   {
    "facility_code": "SHOALHAV",
    "facility_name": "Shoalhaven",
    "network_region": "NSW1",
-   "fueltech_group": "hydro",
+   "fueltech_group": "battery",
    "status": "operating",
    "capacity_mw": 240.0,
    "lat": -34.723141,
    "lng": 150.479632
   },
   {
-   "facility_code": "SLDCBLK",
-   "facility_name": "St Leonards Data Centre",
-   "network_region": "TAS1",
-   "fueltech_group": "battery",
-   "status": "retired",
-   "capacity_mw": 20.0,
-   "lat": -41.440151,
-   "lng": 147.174429
-  },
-  {
-   "facility_code": "STANWELL",
-   "facility_name": "Stanwell",
-   "network_region": "QLD1",
-   "fueltech_group": "coal",
-   "status": "operating",
-   "capacity_mw": 1460.0,
-   "lat": -23.507452,
-   "lng": 150.313355
-  },
-  {
-   "facility_code": "SNB02",
-   "facility_name": "Supernode 2",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 1012.1999999999999,
-   "lat": -27.318697,
-   "lng": 152.968579
-  },
-  {
-   "facility_code": "SRSF",
-   "facility_name": "Susan River",
-   "network_region": "QLD1",
-   "fueltech_group": "solar",
-   "status": "operating",
-   "capacity_mw": 85.0,
-   "lat": -25.419331,
-   "lng": 152.741687
-  },
-  {
-   "facility_code": "SWANBBF",
-   "facility_name": "Swanbank",
-   "network_region": "QLD1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 993.5999999999999,
-   "lat": -27.65619,
-   "lng": 152.817139
-  },
-  {
-   "facility_code": "TRGBESS",
-   "facility_name": "Terang",
-   "network_region": "VIC1",
-   "fueltech_group": "battery",
-   "status": "operating",
-   "capacity_mw": 300.0,
-   "lat": -38.231839,
-   "lng": 142.933262
-  },
-  {
-   "facility_code": "TULLYSM",
-   "facility_name": "Tully Sugar Mill",
-   "network_region": "QLD1",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 32.0,
-   "lat": -17.937329,
-   "lng": 145.92739
-  },
-  {
-   "facility_code": "WKIEWA",
-   "facility_name": "West Kiewa",
-   "network_region": "VIC1",
-   "fueltech_group": "hydro",
-   "status": "operating",
-   "capacity_mw": 62.0,
-   "lat": -36.759974,
-   "lng": 147.185812
-  },
-  {
-   "facility_code": "WILGAPK",
-   "facility_name": "Wilga Park",
+   "facility_code": "SHOAL",
+   "facility_name": "Shoalhaven Starches",
    "network_region": "NSW1",
    "fueltech_group": "gas",
    "status": "operating",
-   "capacity_mw": 10.0,
-   "lat": -30.363284,
-   "lng": 149.677422
+   "capacity_mw": 54.0,
+   "lat": -34.8547,
+   "lng": 150.6138
   },
   {
-   "facility_code": "BLAIRFOX_BEROSRD_WF",
-   "facility_name": "Beros Road",
-   "network_region": "WEM",
+   "facility_code": "STWF",
+   "facility_name": "Silverton",
+   "network_region": "NSW1",
    "fueltech_group": "wind",
    "status": "operating",
-   "capacity_mw": 9.5,
-   "lat": -29.957885,
-   "lng": 115.362947
+   "capacity_mw": 198.94,
+   "lat": -31.86095,
+   "lng": 141.296349
   },
   {
-   "facility_code": "COLLIE",
-   "facility_name": "Collie",
-   "network_region": "WEM",
-   "fueltech_group": "coal",
+   "facility_code": "STUBSF",
+   "facility_name": "Stubbo",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
    "status": "operating",
-   "capacity_mw": 318.3,
-   "lat": -33.342097,
-   "lng": 116.261439
+   "capacity_mw": 503.0,
+   "lat": -32.248099,
+   "lng": 149.580548
   },
   {
-   "facility_code": "COLLIE_ESR5",
-   "facility_name": "Collie 2",
-   "network_region": "WEM",
+   "facility_code": "SNB1",
+   "facility_name": "Supernode",
+   "network_region": "QLD1",
    "fueltech_group": "battery",
    "status": "operating",
-   "capacity_mw": 750.0,
-   "lat": -33.336691,
-   "lng": 116.261109
+   "capacity_mw": 967.5999999999999,
+   "lat": -27.318111,
+   "lng": 152.969309
   },
   {
-   "facility_code": "GOSNELLS",
-   "facility_name": "Gosnells",
+   "facility_code": "SWAN_B",
+   "facility_name": "Swanbank B",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 517.0,
+   "lat": -27.654899,
+   "lng": 152.817672
+  },
+  {
+   "facility_code": "SWAN_E",
+   "facility_name": "Swanbank E",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 385.0,
+   "lat": -27.655138,
+   "lng": 152.817933
+  },
+  {
+   "facility_code": "TARRALEA",
+   "facility_name": "Tarraleah",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 90.0,
+   "lat": -42.301224,
+   "lng": 146.457294
+  },
+  {
+   "facility_code": "YABULU",
+   "facility_name": "Townsville",
+   "network_region": "QLD1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 242.0,
+   "lat": -19.20127,
+   "lng": 146.618573
+  },
+  {
+   "facility_code": "TGNSS",
+   "facility_name": "Traralgon Network Support",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 10.0,
+   "lat": -37.841113,
+   "lng": 144.895001
+  },
+  {
+   "facility_code": "TREVALLN",
+   "facility_name": "Trevallyn",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 93.0,
+   "lat": -41.42262,
+   "lng": 147.111785
+  },
+  {
+   "facility_code": "TRIBUTE",
+   "facility_name": "Tribute",
+   "network_region": "TAS1",
+   "fueltech_group": "hydro",
+   "status": "operating",
+   "capacity_mw": 107.8,
+   "lat": -41.815832,
+   "lng": 145.650178
+  },
+  {
+   "facility_code": "VPGS",
+   "facility_name": "Valley Power Peaking",
+   "network_region": "VIC1",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": null,
+   "lat": -38.253709,
+   "lng": 146.588886
+  },
+  {
+   "facility_code": "WW",
+   "facility_name": "Wallerawang",
+   "network_region": "NSW1",
+   "fueltech_group": "coal",
+   "status": "retired",
+   "capacity_mw": 1000.0,
+   "lat": -33.356917,
+   "lng": 150.03348
+  },
+  {
+   "facility_code": "WDBESS3",
+   "facility_name": "Western Downs 3",
+   "network_region": "QLD1",
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 915.0,
+   "lat": -26.952139,
+   "lng": 150.690787
+  },
+  {
+   "facility_code": "WRSF1",
+   "facility_name": "White Rock Solar Farm",
+   "network_region": "NSW1",
+   "fueltech_group": "solar",
+   "status": "operating",
+   "capacity_mw": 22.0,
+   "lat": -29.764429,
+   "lng": 151.553007
+  },
+  {
+   "facility_code": "YALLOURN",
+   "facility_name": "Yallourn W",
+   "network_region": "VIC1",
+   "fueltech_group": "coal",
+   "status": "operating",
+   "capacity_mw": 1480.0,
+   "lat": -38.177589,
+   "lng": 146.342556
+  },
+  {
+   "facility_code": "YAMBUK",
+   "facility_name": "Yambuk",
+   "network_region": "VIC1",
+   "fueltech_group": "wind",
+   "status": "operating",
+   "capacity_mw": 30.0,
+   "lat": -38.310953,
+   "lng": 142.014788
+  },
+  {
+   "facility_code": "KWINANA",
+   "facility_name": "Kwinana",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "operating",
+   "capacity_mw": 206.4,
+   "lat": -32.198281,
+   "lng": 115.77559
+  },
+  {
+   "facility_code": "TIWEST_COG1",
+   "facility_name": "Kwinana Cogen",
+   "network_region": "WEM",
+   "fueltech_group": "gas",
+   "status": "retired",
+   "capacity_mw": 120.0,
+   "lat": -32.22762,
+   "lng": 115.773435
+  },
+  {
+   "facility_code": "ATLAS",
+   "facility_name": "Mirrabooka",
    "network_region": "WEM",
    "fueltech_group": "renewable",
    "status": "retired",
-   "capacity_mw": 1.0,
-   "lat": -32.079514,
-   "lng": 115.895088
+   "capacity_mw": 1.23,
+   "lat": -31.864457,
+   "lng": 115.818295
   },
   {
-   "facility_code": "GRASMERE",
-   "facility_name": "Grasmere",
+   "facility_code": "MUCHEABESS",
+   "facility_name": "Muchea",
    "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 13.8,
-   "lat": -35.055759,
-   "lng": 117.777048
+   "fueltech_group": "battery",
+   "status": "committed",
+   "capacity_mw": 492.0,
+   "lat": -31.557553,
+   "lng": 115.963146
   },
   {
-   "facility_code": "KWINANA_ESR",
-   "facility_name": "Kwinana Battery",
+   "facility_code": "ALINTA_WGP_ESR",
+   "facility_name": "Wagerup",
    "network_region": "WEM",
    "fueltech_group": "battery",
    "status": "operating",
    "capacity_mw": 300.0,
-   "lat": -32.19855,
-   "lng": 115.778521
-  },
-  {
-   "facility_code": "BRIDGETOWN_BIOMASS_PLANT",
-   "facility_name": "Manjimup",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 40.0,
-   "lat": -34.333151,
-   "lng": 116.108521
-  },
-  {
-   "facility_code": "NARROGINWF",
-   "facility_name": "Narrogin",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "committed",
-   "capacity_mw": 179.0,
-   "lat": -32.969084,
-   "lng": 117.018784
-  },
-  {
-   "facility_code": "PHOENIX_KWINANA_WTE",
-   "facility_name": "Phoenix",
-   "network_region": "WEM",
-   "fueltech_group": "renewable",
-   "status": "operating",
-   "capacity_mw": 38.0,
-   "lat": -32.202137,
-   "lng": 115.77391
-  },
-  {
-   "facility_code": "BLAIRFOX_WESTHILLS",
-   "facility_name": "West Hills",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 5.0,
-   "lat": -30.868556,
-   "lng": 115.392136
-  },
-  {
-   "facility_code": "YANDIN",
-   "facility_name": "Yandin",
-   "network_region": "WEM",
-   "fueltech_group": "wind",
-   "status": "operating",
-   "capacity_mw": 214.0,
-   "lat": -30.680971,
-   "lng": 115.694249
+   "lat": -32.918167,
+   "lng": 115.916584
   }
  ],
  "regions": [
-  {
-   "network_region": "WEM",
-   "renewable_pct": 43.182653979220795,
-   "energy_mwh": 1890278.1230000004,
-   "emissions_tco2e": 558357.1959999996
-  },
-  {
-   "network_region": "QLD1",
-   "renewable_pct": 37.85082115136601,
-   "energy_mwh": 5994351.0583999995,
-   "emissions_tco2e": 2979307.7645000047
-  },
-  {
-   "network_region": "SA1",
-   "renewable_pct": 78.62652369580282,
-   "energy_mwh": 1191842.4082000004,
-   "emissions_tco2e": 79462.0533
-  },
-  {
-   "network_region": "TAS1",
-   "renewable_pct": 95.7258344543287,
-   "energy_mwh": 688960.5371,
-   "emissions_tco2e": 18254.621900000006
-  },
   {
    "network_region": "VIC1",
    "renewable_pct": 45.695037533353315,
@@ -6988,6 +6964,30 @@
    "renewable_pct": 46.32640768745111,
    "energy_mwh": 5912051.024500001,
    "emissions_tco2e": 2486157.483500002
+  },
+  {
+   "network_region": "TAS1",
+   "renewable_pct": 95.7258344543287,
+   "energy_mwh": 688960.5371,
+   "emissions_tco2e": 18254.621900000006
+  },
+  {
+   "network_region": "WEM",
+   "renewable_pct": 43.17044431510034,
+   "energy_mwh": 1890322.3373000002,
+   "emissions_tco2e": 558294.2141999999
+  },
+  {
+   "network_region": "SA1",
+   "renewable_pct": 78.62652369580282,
+   "energy_mwh": 1191842.4082000004,
+   "emissions_tco2e": 79462.0533
+  },
+  {
+   "network_region": "QLD1",
+   "renewable_pct": 37.85082115136601,
+   "energy_mwh": 5994351.0583999995,
+   "emissions_tco2e": 2979307.7645000047
   }
  ],
  "window": {

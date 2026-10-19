@@ -1,0 +1,208 @@
+{
+ "id": "emissions_by_region_week",
+ "topic": "emissions",
+ "question": "Which region had the highest emissions over the last 7 days?",
+ "recorded_at": "2026-10-19T21:39:56Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Which region had the highest emissions over the last 7 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.37,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.37,
+   "text": "I'll help you find which region had the highest emissions over the last 7 days. Let me start by checking the business rules and then query the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.372,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.372,
+   "step": 2,
+   "tool": "describe_cube",
+   "input": {
+    "name": "daily_generation"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 1.39,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 19
+  },
+  {
+   "type": "step_end",
+   "t": 1.391,
+   "step": 2,
+   "tool": "describe_cube",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 18
+  },
+  {
+   "type": "usage",
+   "t": 2.877,
+   "turns": 2,
+   "tokens": 5186
+  },
+  {
+   "type": "reasoning",
+   "t": 2.877,
+   "text": "Perfect! I can see the `daily_generation` cube has an `emissions_total` measure and `network_region` dimension. Let me query the total emissions by region over the last 7 days."
+  },
+  {
+   "type": "step_start",
+   "t": 2.879,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "emissions_total"
+    ],
+    "dimensions": [
+     "network_region"
+    ],
+    "filters": [
+     "day:gte:-7d"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 3.261,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 346,
+   "row_count": 6,
+   "columns": [
+    "network_region",
+    "emissions_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT network_region AS network_region, SUM(emissions_tco2e) AS emissions_total FROM generation_daily WHERE day >= CAST('2026-10-12' AS TIMESTAMP) GROUP BY 1"
+  },
+  {
+   "type": "usage",
+   "t": 4.789,
+   "turns": 3,
+   "tokens": 12206
+  },
+  {
+   "type": "reasoning",
+   "t": 4.789,
+   "text": "Now let me visualize this data:"
+  },
+  {
+   "type": "step_start",
+   "t": 4.79,
+   "step": 4,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Total Emissions by Region (Last 7 Days, tCO2e)",
+    "x": "network_region",
+    "y": [
+     "emissions_total"
+    ],
+    "map_key": "network_region"
+   }
+  },
+  {
+   "type": "chart",
+   "t": 4.791,
+   "step": 3,
+   "spec": {
+    "kind": "bar",
+    "title": "Total Emissions by Region (Last 7 Days, tCO2e)",
+    "x": "network_region",
+    "y": [
+     "emissions_total"
+    ],
+    "series": null,
+    "map": {
+     "key": "network_region",
+     "metric": "emissions_total"
+    }
+   },
+   "columns": [
+    "network_region",
+    "emissions_total"
+   ],
+   "rows": [
+    {
+     "network_region": "WEM",
+     "emissions_total": 124779.32709999997
+    },
+    {
+     "network_region": "NSW1",
+     "emissions_total": 588322.2651
+    },
+    {
+     "network_region": "QLD1",
+     "emissions_total": 737296.7818000001
+    },
+    {
+     "network_region": "SA1",
+     "emissions_total": 11710.135900000003
+    },
+    {
+     "network_region": "TAS1",
+     "emissions_total": 178.37089999999998
+    },
+    {
+     "network_region": "VIC1",
+     "emissions_total": 709774.2235000001
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 4.791,
+   "step": 4,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 6.525,
+   "turns": 4,
+   "tokens": 19637
+  },
+  {
+   "type": "answer",
+   "t": 6.659,
+   "text": "**QLD1 (Queensland) had the highest emissions over the last 7 days with 737,297 tCO2e.**\n\n**Tool used:** query_cube on the `daily_generation` cube, filtering for the last 7 days and grouping by `network_region`, measuring `emissions_total`.\n\n**Breakdown by region (last 7 days):**\n- QLD1: 737,297 tCO2e (highest)\n- VIC1: 709,774 tCO2e\n- NSW1: 588,322 tCO2e\n- WEM: 124,779 tCO2e\n- SA1: 11,710 tCO2e\n- TAS1: 178 tCO2e",
+   "turns": 4,
+   "tokens": 27292,
+   "over_budget": false,
+   "path": "cube"
+  }
+ ]
+}

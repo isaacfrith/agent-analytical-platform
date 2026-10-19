@@ -22,7 +22,7 @@ from __future__ import annotations
 import json
 import re
 from collections.abc import Callable, Sequence
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 import sqlglot
@@ -92,6 +92,12 @@ def type_time_literals(sql: str, time_columns: set[str]) -> str:
     return tree.sql()
 
 
+def _utc_today() -> date:
+    """Today in UTC: the clock Trino's CURRENT_DATE and the data window use, so "-7d"
+    on a cube covers the same days as `CURRENT_DATE - INTERVAL '7' DAY` in SQL."""
+    return datetime.now(UTC).date()
+
+
 def _result_text(result: dict) -> str:
     return "\n".join(b.get("text", "") for b in result.get("content") or []).strip()
 
@@ -99,7 +105,7 @@ def _result_text(result: dict) -> str:
 class CubeQueryTool:
     """The agent's query_cube, over the Wren MCP tools of one session."""
 
-    def __init__(self, mcp_tools: Sequence[Any], today: Callable[[], date] = date.today):
+    def __init__(self, mcp_tools: Sequence[Any], today: Callable[[], date] = lambda: _utc_today()):
         by_name = {t.tool_name: t for t in mcp_tools}
         self._client = by_name["query_cube"].mcp_client
         self._today = today

@@ -1,0 +1,273 @@
+{
+ "id": "pipeline_capacity",
+ "topic": "stations",
+ "question": "How much new capacity is committed or commissioning, by fuel group?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "How much new capacity is committed or commissioning, by fuel group?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.456,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.456,
+   "text": "I'll help you find the committed or commissioning capacity by fuel group. Let me start by checking the business rules and then exploring the schema."
+  },
+  {
+   "type": "step_start",
+   "t": 1.456,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.457,
+   "step": 2,
+   "tool": "list_models",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.481,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 25
+  },
+  {
+   "type": "step_end",
+   "t": 1.481,
+   "step": 2,
+   "tool": "list_models",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 25
+  },
+  {
+   "type": "usage",
+   "t": 3.089,
+   "turns": 2,
+   "tokens": 5163
+  },
+  {
+   "type": "reasoning",
+   "t": 3.089,
+   "text": "Good! I can see the `facilities` model holds capacity data with a `status` field. Let me describe it to understand the structure better."
+  },
+  {
+   "type": "step_start",
+   "t": 3.09,
+   "step": 3,
+   "tool": "describe_model",
+   "input": {
+    "name": "facilities"
+   }
+  },
+  {
+   "type": "step_start",
+   "t": 3.091,
+   "step": 4,
+   "tool": "describe_model",
+   "input": {
+    "name": "fueltech_groups"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 3.147,
+   "step": 3,
+   "tool": "describe_model",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 57
+  },
+  {
+   "type": "step_end",
+   "t": 3.147,
+   "step": 4,
+   "tool": "describe_model",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 56
+  },
+  {
+   "type": "usage",
+   "t": 5.265,
+   "turns": 3,
+   "tokens": 12299
+  },
+  {
+   "type": "reasoning",
+   "t": 5.265,
+   "text": "Perfect! Now I have all the information I need. The question asks for committed or commissioning capacity by fuel group. I'll query the `facilities` table, filtering for status = 'committed' or 'commissioning', and group by fuel group."
+  },
+  {
+   "type": "step_start",
+   "t": 5.266,
+   "step": 5,
+   "tool": "dry_run",
+   "input": {
+    "sql": "\nSELECT \n  fg.fueltech_group,\n  SUM(f.capacity_registered_mw) AS capacity_mw\nFROM facilities f\nJOIN fueltech_groups fg ON f.fueltech = fg.fueltech\nWHERE f.status IN ('committed', 'commissioning')\nGROUP BY fg.fueltech_group\nORDER BY capacity_mw DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 5.413,
+   "step": 5,
+   "tool": "dry_run",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 138,
+   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.fueltech, facilities.\"status\" FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.fueltech AS fueltech, __source.\"status\" AS \"status\" FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group, \"wren_src_fueltech_groups\".fueltech AS fueltech FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT fg.fueltech_group, SUM(f.capacity_registered_mw) AS capacity_mw FROM facilities AS f JOIN fueltech_groups AS fg ON f.fueltech = fg.fueltech WHERE f.status IN ('committed', 'commissioning') GROUP BY fg.fueltech_group ORDER BY capacity_mw DESC"
+  },
+  {
+   "type": "usage",
+   "t": 6.794,
+   "turns": 4,
+   "tokens": 21005
+  },
+  {
+   "type": "reasoning",
+   "t": 6.794,
+   "text": "Great! Now let me run the query to get the results."
+  },
+  {
+   "type": "step_start",
+   "t": 6.795,
+   "step": 6,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  fg.fueltech_group,\n  SUM(f.capacity_registered_mw) AS capacity_mw\nFROM facilities f\nJOIN fueltech_groups fg ON f.fueltech = fg.fueltech\nWHERE f.status IN ('committed', 'commissioning')\nGROUP BY fg.fueltech_group\nORDER BY capacity_mw DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 7.086,
+   "step": 6,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 284,
+   "row_count": 7,
+   "columns": [
+    "fueltech_group",
+    "capacity_mw"
+   ],
+   "truncated": false,
+   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.fueltech, facilities.\"status\" FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.fueltech AS fueltech, __source.\"status\" AS \"status\" FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group, \"wren_src_fueltech_groups\".fueltech AS fueltech FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT fg.fueltech_group, SUM(f.capacity_registered_mw) AS capacity_mw FROM facilities AS f JOIN fueltech_groups AS fg ON f.fueltech = fg.fueltech WHERE f.status IN ('committed', 'commissioning') GROUP BY fg.fueltech_group ORDER BY capacity_mw DESC"
+  },
+  {
+   "type": "usage",
+   "t": 8.56,
+   "turns": 5,
+   "tokens": 29885
+  },
+  {
+   "type": "reasoning",
+   "t": 8.561,
+   "text": "Now let me visualize this data with a chart."
+  },
+  {
+   "type": "step_start",
+   "t": 8.562,
+   "step": 7,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Committed or Commissioning Capacity by Fuel Group (MW)",
+    "x": "fueltech_group",
+    "y": [
+     "capacity_mw"
+    ]
+   }
+  },
+  {
+   "type": "chart",
+   "t": 8.562,
+   "step": 6,
+   "spec": {
+    "kind": "bar",
+    "title": "Committed or Commissioning Capacity by Fuel Group (MW)",
+    "x": "fueltech_group",
+    "y": [
+     "capacity_mw"
+    ],
+    "series": null
+   },
+   "columns": [
+    "fueltech_group",
+    "capacity_mw"
+   ],
+   "rows": [
+    {
+     "fueltech_group": "renewable",
+     "capacity_mw": 105.78
+    },
+    {
+     "fueltech_group": "hydro",
+     "capacity_mw": 2492.0
+    },
+    {
+     "fueltech_group": "solar",
+     "capacity_mw": 5057.8
+    },
+    {
+     "fueltech_group": "wind",
+     "capacity_mw": 5190.4
+    },
+    {
+     "fueltech_group": "fossil",
+     "capacity_mw": 91.5
+    },
+    {
+     "fueltech_group": "gas",
+     "capacity_mw": 1032.0
+    },
+    {
+     "fueltech_group": "battery",
+     "capacity_mw": 35997.08999999999
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 8.562,
+   "step": 7,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 12.866,
+   "turns": 6,
+   "tokens": 39187
+  },
+  {
+   "type": "answer",
+   "t": 12.976,
+   "text": "## Answer\n\n**Committed or commissioning capacity by fuel group:**\n\n| Fuel Group | Capacity (MW) |\n|---|---|\n| Battery | 35,997.1 |\n| Wind | 5,190.4 |\n| Solar | 5,057.8 |\n| Hydro | 2,492.0 |\n| Gas | 1,032.0 |\n| Fossil | 91.5 |\n| Renewable | 105.8 |\n\n**Tool used:** `run_sql`\n\n**Query executed:**\n```sql\nSELECT \n  fg.fueltech_group,\n  SUM(f.capacity_registered_mw) AS capacity_mw\nFROM facilities f\nJOIN fueltech_groups fg ON f.fueltech = fg.fueltech\nWHERE f.status IN ('committed', 'commissioning')\nGROUP BY fg.fueltech_group\nORDER BY capacity_mw DESC\n```\n\n**Key findings:**\n- **Battery storage dominates** the pipeline with 35,997 MW of committed or commissioning capacity \u2014 by far the largest component.\n- **Renewables (wind + solar + hydro)** account for 12,740 MW combined, with wind and solar nearly equal at ~5,200 MW and ~5,060 MW respectively.\n- **Gas** has 1,032 MW committed or commissioning.\n- The \"renewable\" and \"fossil\" categories shown separately represent other miscellaneous renewable and fossil techs beyond the main groups.\n\n**Caveat:** Commissioning units report \u226490% of their registered capacity, so these figures represent the registered nameplate capacity, not yet-available output.",
+   "turns": 6,
+   "tokens": 48917,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

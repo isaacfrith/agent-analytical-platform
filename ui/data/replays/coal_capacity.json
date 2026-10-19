@@ -1,8 +1,8 @@
 {
  "id": "coal_capacity",
- "label": "Coal capacity by state",
+ "topic": "stations",
  "question": "Show me operating coal capacity by state.",
- "recorded_at": "2026-10-19T06:52:28Z",
+ "recorded_at": "2026-10-19T21:33:12Z",
  "data_window": {
   "first_day": "2026-07-21 00:00:00.000000",
   "last_day": "2026-10-18 00:00:00.000000"
@@ -18,61 +18,61 @@
   },
   {
    "type": "usage",
-   "t": 1.379,
+   "t": 1.333,
    "turns": 1,
    "tokens": 0
   },
   {
    "type": "reasoning",
-   "t": 1.379,
+   "t": 1.333,
    "text": "I'll help you find operating coal capacity by state. Let me start by checking the business rules and then exploring the schema."
   },
   {
    "type": "step_start",
-   "t": 1.379,
+   "t": 1.334,
    "step": 1,
    "tool": "get_instructions",
    "input": {}
   },
   {
    "type": "step_start",
-   "t": 1.38,
+   "t": 1.335,
    "step": 2,
    "tool": "describe_schema",
    "input": {}
   },
   {
    "type": "step_end",
-   "t": 1.422,
+   "t": 1.372,
    "step": 1,
    "tool": "get_instructions",
    "status": "success",
    "path": "context",
-   "duration_ms": 43
+   "duration_ms": 38
   },
   {
    "type": "step_end",
-   "t": 1.423,
+   "t": 1.372,
    "step": 2,
    "tool": "describe_schema",
    "status": "success",
    "path": "context",
-   "duration_ms": 43
+   "duration_ms": 37
   },
   {
    "type": "usage",
-   "t": 4.13,
+   "t": 4.088,
    "turns": 2,
-   "tokens": 5158
+   "tokens": 5153
   },
   {
    "type": "reasoning",
-   "t": 4.13,
+   "t": 4.088,
    "text": "Good! I can see the schema. Now I need to query the `facilities` table to get operating coal capacity by state. The key points:\n- Filter `status = 'operating'` and `fueltech_group = 'coal'`\n- Group by state (which maps to `network_region`)\n- Sum `capacity_registered_mw`\n\nLet me build and validate the SQL:"
   },
   {
    "type": "step_start",
-   "t": 4.131,
+   "t": 4.089,
    "step": 3,
    "tool": "dry_run",
    "input": {
@@ -81,28 +81,28 @@
   },
   {
    "type": "step_end",
-   "t": 4.234,
+   "t": 4.211,
    "step": 3,
    "tool": "dry_run",
    "status": "success",
    "path": "sql",
-   "duration_ms": 96,
+   "duration_ms": 115,
    "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".network_region AS network_region, \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.fueltech, facilities.network_region, facilities.\"status\" FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.fueltech AS fueltech, __source.network_region AS network_region, __source.\"status\" AS \"status\" FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech AS fueltech, \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT f.network_region AS state, SUM(f.capacity_registered_mw) AS capacity_mw FROM facilities AS f JOIN fueltech_groups AS fg ON f.fueltech = fg.fueltech WHERE f.status = 'operating' AND fg.fueltech_group = 'coal' GROUP BY f.network_region ORDER BY capacity_mw DESC"
   },
   {
    "type": "usage",
-   "t": 5.981,
+   "t": 5.813,
    "turns": 3,
-   "tokens": 16000
+   "tokens": 15990
   },
   {
    "type": "reasoning",
-   "t": 5.981,
+   "t": 5.813,
    "text": "Great! Now let me run the query:"
   },
   {
    "type": "step_start",
-   "t": 5.983,
+   "t": 5.814,
    "step": 4,
    "tool": "run_sql",
    "input": {
@@ -111,12 +111,12 @@
   },
   {
    "type": "step_end",
-   "t": 6.208,
+   "t": 6.024,
    "step": 4,
    "tool": "run_sql",
    "status": "success",
    "path": "sql",
-   "duration_ms": 218,
+   "duration_ms": 203,
    "row_count": 4,
    "columns": [
     "state",
@@ -127,18 +127,18 @@
   },
   {
    "type": "usage",
-   "t": 7.667,
+   "t": 7.644,
    "turns": 4,
-   "tokens": 27021
+   "tokens": 27006
   },
   {
    "type": "reasoning",
-   "t": 7.667,
+   "t": 7.644,
    "text": "Now let me chart this:"
   },
   {
    "type": "step_start",
-   "t": 7.667,
+   "t": 7.645,
    "step": 5,
    "tool": "show_chart",
    "input": {
@@ -152,7 +152,7 @@
   },
   {
    "type": "chart",
-   "t": 7.667,
+   "t": 7.646,
    "step": 4,
    "spec": {
     "kind": "bar",
@@ -169,26 +169,26 @@
    ],
    "rows": [
     {
-     "state": "QLD1",
-     "capacity_mw": 8165.0
-    },
-    {
-     "state": "VIC1",
-     "capacity_mw": 4690.0
+     "state": "NSW1",
+     "capacity_mw": 8240.0
     },
     {
      "state": "WEM",
      "capacity_mw": 1177.5
     },
     {
-     "state": "NSW1",
-     "capacity_mw": 8240.0
+     "state": "VIC1",
+     "capacity_mw": 4690.0
+    },
+    {
+     "state": "QLD1",
+     "capacity_mw": 8165.0
     }
    ]
   },
   {
    "type": "step_end",
-   "t": 7.668,
+   "t": 7.646,
    "step": 5,
    "tool": "show_chart",
    "status": "success",
@@ -197,16 +197,16 @@
   },
   {
    "type": "usage",
-   "t": 10.516,
+   "t": 10.092,
    "turns": 5,
-   "tokens": 38340
+   "tokens": 38320
   },
   {
    "type": "answer",
-   "t": 10.622,
-   "text": "## Operating Coal Capacity by State\n\n**Results:**\n- **NSW1 (New South Wales)**: 8,240 MW\n- **QLD1 (Queensland)**: 8,165 MW\n- **VIC1 (Victoria)**: 4,690 MW\n- **WEM (Western Australia)**: 1,177.5 MW\n\n**Total**: 22,272.5 MW\n\n**Tool used**: `run_sql` with a JOIN on `facilities` and `fueltech_groups`, filtering for `status = 'operating'` and `fueltech_group = 'coal'`, grouped by `network_region` and summed on `capacity_registered_mw`.\n\n**Note**: NSW and Queensland dominate coal capacity in the NEM, each with ~8,200 MW. Victoria has the third-largest share at 4,690 MW. WEM (south-west Western Australia) has a smaller coal fleet at 1,177.5 MW. These are registered capacities for operating units only.",
+   "t": 10.209,
+   "text": "## Operating Coal Capacity by State\n\n**Results:**\n- **NSW1 (New South Wales)**: 8,240 MW\n- **QLD1 (Queensland)**: 8,165 MW\n- **VIC1 (Victoria)**: 4,690 MW\n- **WEM (Western Australia)**: 1,177.5 MW\n\n**Total**: ~22,272 MW of operating coal capacity across Australia.\n\n**Tool used**: `run_sql` with a JOIN on `facilities` and `fueltech_groups`, filtering for `status = 'operating'` and `fueltech_group = 'coal'`, grouped by `network_region` (state).\n\n**Note**: NSW and Queensland dominate coal capacity, each with over 8 GW. Victoria has the third-largest fleet at 4.7 GW. South Australia and Tasmania have no operating coal capacity. WEM (south-west Western Australia) has 1.2 GW.",
    "turns": 5,
-   "tokens": 49929,
+   "tokens": 49891,
    "over_budget": false,
    "path": "sql"
   }

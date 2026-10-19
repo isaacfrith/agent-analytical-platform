@@ -24,3 +24,52 @@ variable "iam_user_name" {
   type        = string
   default     = "agent-analytics-dev"
 }
+
+# --- Live questions (live.tf, live_control.tf, budget.tf) --------------------
+
+variable "bedrock_model_id" {
+  description = "The Bedrock model (inference profile ID) the hosted agent may call. Its IAM grant names this model only."
+  type        = string
+  default     = "au.anthropic.claude-haiku-4-5-20251001-v1:0"
+}
+
+variable "live_instance_type" {
+  description = "Size of the on-demand server. ARM (Graviton); the Docker stack is capped at ~4 GB, so 8 GB leaves room for the agent."
+  type        = string
+  default     = "t4g.large"
+}
+
+variable "live_param_prefix" {
+  description = "SSM Parameter Store path for the live server's settings, secrets and state."
+  type        = string
+  default     = "/agent-analytics/live"
+}
+
+variable "site_origin" {
+  description = "The website allowed to call the wake Lambda and the live API (CORS)."
+  type        = string
+  default     = "https://isaacfrith.github.io"
+}
+
+variable "repo_url" {
+  description = "Public Git repository the server pulls `main` from on every wake."
+  type        = string
+  default     = "https://github.com/isaacfrith/agent-analytical-platform.git"
+}
+
+variable "turnstile_site_key" {
+  description = "Cloudflare Turnstile site key (public; the page renders the bot check with it). The secret key is set separately in SSM, never in Terraform."
+  type        = string
+  default     = "0x4AAAAAAFcGTJXz9hwCGRlj"
+}
+
+variable "budget_limit_usd" {
+  description = "Monthly AWS spend (whole account) at which the live server is stopped and blocked from waking."
+  type        = number
+  default     = 20
+}
+
+variable "budget_email" {
+  description = "Where AWS Budgets sends spend alerts (50%, 80%, forecast 100%) and action notices."
+  type        = string
+}

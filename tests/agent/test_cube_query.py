@@ -141,3 +141,11 @@ def test_mdl_failure_is_a_tool_error_not_a_build_crash():
     tool = make_tool(client)  # building never touches the MCP server
     with pytest.raises(ValueError, match="mcp hiccup"):
         tool.query_cube(cube="renewable_share", measures=["v"])
+
+
+def test_relative_dates_use_utc_like_trino():
+    from datetime import UTC, datetime
+
+    from agent.cube_query import _utc_today
+
+    assert _utc_today() == datetime.now(UTC).date()

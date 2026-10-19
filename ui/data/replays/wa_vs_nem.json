@@ -1,8 +1,8 @@
 {
  "id": "wa_vs_nem",
- "label": "WA vs the east coast",
+ "topic": "renewables",
  "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
- "recorded_at": "2026-10-19T06:51:08Z",
+ "recorded_at": "2026-10-19T21:39:56Z",
  "data_window": {
   "first_day": "2026-07-21 00:00:00.000000",
   "last_day": "2026-10-18 00:00:00.000000"
@@ -18,162 +18,91 @@
   },
   {
    "type": "usage",
-   "t": 1.333,
+   "t": 1.314,
    "turns": 1,
    "tokens": 0
   },
   {
    "type": "reasoning",
-   "t": 1.333,
+   "t": 1.314,
    "text": "I'll help you compare WA's renewable share with each NEM region over the last 30 days. Let me start by checking the business rules and then query the data."
   },
   {
    "type": "step_start",
-   "t": 1.334,
+   "t": 1.315,
    "step": 1,
    "tool": "get_instructions",
    "input": {}
   },
   {
    "type": "step_end",
-   "t": 1.348,
+   "t": 1.322,
    "step": 1,
    "tool": "get_instructions",
-   "status": "success",
-   "path": "context",
-   "duration_ms": 14
-  },
-  {
-   "type": "usage",
-   "t": 3.895,
-   "turns": 2,
-   "tokens": 5092
-  },
-  {
-   "type": "reasoning",
-   "t": 3.895,
-   "text": "Now let me query the renewable share data for WA (WEM) and each NEM region over the last 30 days using the renewable_share cube:"
-  },
-  {
-   "type": "step_start",
-   "t": 3.896,
-   "step": 2,
-   "tool": "query_cube",
-   "input": {
-    "cube": "renewable_share",
-    "measures": [
-     "renewable_share"
-    ],
-    "dimensions": [
-     "network_region"
-    ],
-    "filters": [
-     "day:gte:-30d"
-    ]
-   }
-  },
-  {
-   "type": "step_end",
-   "t": 3.999,
-   "step": 2,
-   "tool": "query_cube",
-   "status": "error",
-   "path": "cube",
-   "duration_ms": 66,
-   "error": "Error: Error executing tool query_cube: Error during planning: Unknown measure 'renewable_share' in cube 'renewable_share'"
-  },
-  {
-   "type": "usage",
-   "t": 4.98,
-   "turns": 3,
-   "tokens": 11440
-  },
-  {
-   "type": "reasoning",
-   "t": 4.98,
-   "text": "Let me check what measures are available in the renewable_share cube:"
-  },
-  {
-   "type": "step_start",
-   "t": 4.981,
-   "step": 3,
-   "tool": "describe_cube",
-   "input": {
-    "name": "renewable_share"
-   }
-  },
-  {
-   "type": "step_end",
-   "t": 4.988,
-   "step": 3,
-   "tool": "describe_cube",
    "status": "success",
    "path": "context",
    "duration_ms": 7
   },
   {
    "type": "usage",
-   "t": 6.82,
-   "turns": 4,
-   "tokens": 17907
+   "t": 3.082,
+   "turns": 2,
+   "tokens": 5159
   },
   {
    "type": "reasoning",
-   "t": 6.82,
-   "text": "Perfect! Now let me query the renewable share percentage for WA (WEM) and each NEM region over the last 30 days:"
+   "t": 3.082,
+   "text": "Now let me query the renewable share data for WA (WEM) and each NEM region over the last 30 days using the renewable_share cube:"
   },
   {
    "type": "step_start",
-   "t": 6.821,
-   "step": 4,
+   "t": 3.082,
+   "step": 2,
    "tool": "query_cube",
    "input": {
     "cube": "renewable_share",
+    "measures": [
+     "renewable_share_pct"
+    ],
     "dimensions": [
      "network_region"
     ],
     "filters": [
      "day:gte:-30d"
-    ],
-    "measures": [
-     "renewable_share_pct"
-    ],
-    "order_by": [
-     "renewable_share_pct:desc"
     ]
    }
   },
   {
    "type": "step_end",
-   "t": 7.253,
-   "step": 4,
+   "t": 3.402,
+   "step": 2,
    "tool": "query_cube",
    "status": "success",
    "path": "cube",
-   "duration_ms": 413,
+   "duration_ms": 283,
    "row_count": 6,
    "columns": [
     "network_region",
     "renewable_share_pct"
    ],
    "truncated": false,
-   "sql": "SELECT network_region AS network_region, 100.0 * SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / NULLIF(SUM(energy_mwh), 0) AS renewable_share_pct FROM generation_with_group WHERE day >= CAST('2026-09-19' AS TIMESTAMP) GROUP BY 1 ORDER BY 2 DESC"
+   "sql": "SELECT network_region AS network_region, 100.0 * SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / NULLIF(SUM(energy_mwh), 0) AS renewable_share_pct FROM generation_with_group WHERE day >= CAST('2026-09-19' AS TIMESTAMP) GROUP BY 1"
   },
   {
    "type": "usage",
-   "t": 8.897,
-   "turns": 5,
-   "tokens": 24993
+   "t": 5.005,
+   "turns": 3,
+   "tokens": 11709
   },
   {
    "type": "reasoning",
-   "t": 8.897,
-   "text": "Now let me visualize this comparison:"
+   "t": 5.005,
+   "text": "Perfect! Now let me visualize this comparison:"
   },
   {
    "type": "step_start",
-   "t": 8.899,
-   "step": 5,
+   "t": 5.005,
+   "step": 3,
    "tool": "show_chart",
    "input": {
     "kind": "bar",
@@ -181,13 +110,14 @@
     "x": "network_region",
     "y": [
      "renewable_share_pct"
-    ]
+    ],
+    "map_key": "network_region"
    }
   },
   {
    "type": "chart",
-   "t": 8.899,
-   "step": 4,
+   "t": 5.005,
+   "step": 2,
    "spec": {
     "kind": "bar",
     "title": "Renewable Share by Region \u2013 Last 30 Days (%)",
@@ -207,35 +137,35 @@
    ],
    "rows": [
     {
-     "network_region": "SA1",
-     "renewable_share_pct": 78.62652369580283
-    },
-    {
      "network_region": "QLD1",
      "renewable_share_pct": 37.85082115136602
-    },
-    {
-     "network_region": "WEM",
-     "renewable_share_pct": 43.182653979220795
-    },
-    {
-     "network_region": "TAS1",
-     "renewable_share_pct": 95.72583445432872
     },
     {
      "network_region": "NSW1",
      "renewable_share_pct": 46.326407687451116
     },
     {
+     "network_region": "SA1",
+     "renewable_share_pct": 78.62652369580283
+    },
+    {
+     "network_region": "WEM",
+     "renewable_share_pct": 43.17044431510034
+    },
+    {
      "network_region": "VIC1",
      "renewable_share_pct": 45.695037533353315
+    },
+    {
+     "network_region": "TAS1",
+     "renewable_share_pct": 95.72583445432872
     }
    ]
   },
   {
    "type": "step_end",
-   "t": 8.899,
-   "step": 5,
+   "t": 5.006,
+   "step": 3,
    "tool": "show_chart",
    "status": "success",
    "path": "chart",
@@ -243,16 +173,16 @@
   },
   {
    "type": "usage",
-   "t": 12.496,
-   "turns": 6,
-   "tokens": 32491
+   "t": 8.217,
+   "turns": 4,
+   "tokens": 18694
   },
   {
    "type": "answer",
-   "t": 12.61,
-   "text": "## Renewable Share Comparison: WA vs NEM Regions (Last 30 Days)\n\n**WA (WEM): 43.2%**\n\n**NEM Regions:**\n- **TAS1**: 95.7% (highest)\n- **SA1**: 78.6%\n- **NSW1**: 46.3%\n- **VIC1**: 45.7%\n- **QLD1**: 37.9% (lowest)\n\n**Key findings:**\n- WA's renewable share of **43.2%** is **above the NEM average** (roughly 41% across the five regions), placing it between NSW1/VIC1 and QLD1.\n- **Tasmania dominates** with 95.7%, driven by hydroelectric generation.\n- **South Australia** is second at 78.6%, reflecting strong wind and solar capacity.\n- **Queensland has the lowest share** at 37.9%, reflecting its coal-heavy generation mix.\n- WA's 43.2% is competitive with NSW1 (46.3%) and VIC1 (45.7%), suggesting a balanced renewable portfolio in the south-west interconnected system.\n\n**Tool used:** `query_cube` on the `renewable_share` cube, aggregating renewable_share_pct over the last 30 days by network_region.",
-   "turns": 6,
-   "tokens": 40334,
+   "t": 8.331,
+   "text": "## Renewable Share Comparison: WA vs NEM Regions (Last 30 Days)\n\n**WA (WEM): 43.2%**\n\n**NEM regions:**\n- **Tasmania (TAS1): 95.7%** \u2014 highest, almost entirely renewable\n- **South Australia (SA1): 78.6%** \u2014 strong renewable penetration\n- **New South Wales (NSW1): 46.3%** \u2014 slightly above WA\n- **Victoria (VIC1): 45.7%** \u2014 comparable to WA\n- **Queensland (QLD1): 37.9%** \u2014 lowest, most coal-dependent\n\n**Key insight:** WA's renewable share (43.2%) sits in the middle of the NEM pack\u2014higher than Queensland but lower than NSW and Victoria. Tasmania and South Australia are clear leaders, driven by hydro and wind respectively. WA's 43% is notably lower than the NEM's most renewable regions but reflects a more balanced generation mix than Queensland's coal-heavy portfolio.\n\n**Tool used:** `query_cube` on the `renewable_share` cube, aggregating renewable_share_pct by network_region over the last 30 days (filters: `day:gte:-30d`).",
+   "turns": 4,
+   "tokens": 25998,
    "over_budget": false,
    "path": "cube"
   }

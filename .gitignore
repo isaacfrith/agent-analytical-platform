@@ -14,3 +14,6 @@ evaluations/*.log
 terraform.tfstate*
 terraform.tfvars
 *.tfplan
+
+# Terraform build artifacts (the Lambda zip)
+terraform/.build/

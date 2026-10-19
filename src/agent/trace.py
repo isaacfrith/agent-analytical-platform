@@ -117,8 +117,9 @@ class TraceRecorder(HookProvider):
         registry.add_callback(AfterModelCallEvent, self._after_model)
 
     def path(self) -> str:
-        """Overall route: the charted step's tool if any; else cube if a cube
-        returned rows, else sql, else refused."""
+        """Overall route, from the step that produced the answer: the charted
+        step if there is a chart, else the last data step that returned rows.
+        No rows at all means the agent refused."""
         ends = [
             e
             for e in self.events
@@ -129,12 +130,7 @@ class TraceRecorder(HookProvider):
             charted = next((e for e in ends if e["step"] == charts[-1]["step"]), None)
             if charted is not None:
                 return step_path(charted["tool"])
-        tools = {e["tool"] for e in ends}
-        if "query_cube" in tools:
-            return "cube"
-        if "run_sql" in tools:
-            return "sql"
-        return "refused"
+        return step_path(ends[-1]["tool"]) if ends else "refused"
 
     def latest_dataset_step(self) -> int | None:
         return max(self.datasets) if self.datasets else None

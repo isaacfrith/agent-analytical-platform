@@ -7,9 +7,16 @@ Two idempotent-tolerant steps against the management API (run `make up` first):
      backed by the real S3 bucket, vending STS credentials through the IAM role
      managed in terraform/iam.tf.
 
-The S3 access keys are read from ~/.aws via boto3 and POSTed to Lakekeeper,
-which stores them encrypted (LAKEKEEPER__PG_ENCRYPTION_KEY in the compose
-file). They are never written to any file in this repo.
+Two ways for Lakekeeper to reach S3:
+  - laptop (default): the app user's access keys are read from ~/.aws via
+    boto3 and POSTed to Lakekeeper, which stores them encrypted
+    (LAKEKEEPER__PG_ENCRYPTION_KEY in the compose file). Never written to any
+    file in this repo.
+  - hosted (LAKEKEEPER_SYSTEM_IDENTITY=true): no keys at all. Lakekeeper uses
+    the server's IAM role (aws-system-identity) and assumes the vending role
+    with LAKEKEEPER_EXTERNAL_ID. Needs docker/compose.hosted.yaml.
+WAREHOUSE_KEY_PREFIX (default "warehouse") keeps the hosted server's data
+apart from the laptop's in the same bucket.
 
 Run from the repo root:
     uv run python scripts/bootstrap_catalog.py
@@ -30,7 +37,6 @@ from botocore.credentials import ReadOnlyCredentials
 from repo_config import fail_line, pass_line, require_env
 
 REQUIRED_KEYS: tuple[str, ...] = (
-    "AWS_PROFILE",
     "AWS_REGION",
     "AWS_S3_BUCKET",
     "LAKEKEEPER_URI",
@@ -101,7 +107,27 @@ def warehouse_already_exists(response: requests.Response) -> bool:
     return error_type == "CreateWarehouseStorageProfileOverlap"
 
 
-def create_warehouse(base_uri: str, keys: ReadOnlyCredentials) -> bool:
+def system_identity() -> bool:
+    return os.environ.get("LAKEKEEPER_SYSTEM_IDENTITY", "").lower() in ("1", "true", "yes")
+
+
+def storage_credential(keys: ReadOnlyCredentials | None) -> dict:
+    """How Lakekeeper authenticates to AWS: the server's IAM role, or the app user's keys."""
+    if keys is None:
+        return {
+            "type": "s3",
+            "credential-type": "aws-system-identity",
+            "external-id": os.environ["LAKEKEEPER_EXTERNAL_ID"],
+        }
+    return {
+        "type": "s3",
+        "credential-type": "access-key",
+        "aws-access-key-id": keys.access_key,
+        "aws-secret-access-key": keys.secret_key,
+    }
+
+
+def create_warehouse(base_uri: str, keys: ReadOnlyCredentials | None) -> bool:
     """Create the S3-backed warehouse with STS credential vending enabled."""
     url = f"{base_uri}/management/v1/warehouse"
     payload = {
@@ -109,18 +135,13 @@ def create_warehouse(base_uri: str, keys: ReadOnlyCredentials) -> bool:
         "storage-profile": {
             "type": "s3",
             "bucket": os.environ["AWS_S3_BUCKET"],
-            "key-prefix": "warehouse",
+            "key-prefix": os.environ.get("WAREHOUSE_KEY_PREFIX", "warehouse").strip("/"),
             "region": os.environ["AWS_REGION"],
             "sts-enabled": True,
             "sts-role-arn": os.environ["LAKEKEEPER_STS_ROLE_ARN"],
             "flavor": "aws",
         },
-        "storage-credential": {
-            "type": "s3",
-            "credential-type": "access-key",
-            "aws-access-key-id": keys.access_key,
-            "aws-secret-access-key": keys.secret_key,
-        },
+        "storage-credential": storage_credential(keys),
     }
     try:
         response = requests.post(url, json=payload, timeout=TIMEOUT_SECONDS)
@@ -163,10 +184,16 @@ def main() -> int:
     base_uri = os.environ["LAKEKEEPER_URI"].rstrip("/")
     warehouse_name = os.environ["ICEBERG_WAREHOUSE"]
 
-    # Fail early if the credential type is unusable, before touching the API.
-    keys = load_app_credentials()
-    if keys is None:
-        return 1
+    keys = None
+    if system_identity():
+        require_env("LAKEKEEPER_EXTERNAL_ID")
+        pass_line("credentials: the server's IAM role (aws-system-identity), no stored keys")
+    else:
+        # Fail early if the credential type is unusable, before touching the API.
+        require_env("AWS_PROFILE")
+        keys = load_app_credentials()
+        if keys is None:
+            return 1
 
     results = [
         bootstrap(base_uri),

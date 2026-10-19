@@ -170,3 +170,9 @@ def test_path_follows_the_charted_step(rec: TraceRecorder):
     run_tool(rec, "run_sql", {"sql": "..."}, wren_result(), use_id="u2")
     ChartTools(rec).show_chart(kind="bar", title="P", x="network_region", y=["avg_price"])
     assert rec.path() == "sql"
+
+
+def test_without_a_chart_the_last_data_step_decides_the_path(rec: TraceRecorder):
+    run_tool(rec, "query_cube", {}, wren_result(), use_id="u1")
+    run_tool(rec, "run_sql", {"sql": "..."}, wren_result(), use_id="u2")
+    assert rec.path() == "sql"  # the cube's rows didn't produce the answer

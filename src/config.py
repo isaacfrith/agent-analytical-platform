@@ -8,7 +8,7 @@ Usage:
     config.agent.turns_budget
     config.memory.valkey_url
     config.aws.bedrock_model_id
-    config.demo.passcode
+    config.demo.daily_cap
 """
 
 from __future__ import annotations
@@ -61,9 +61,13 @@ class MemoryConfig:
 
 @dataclass
 class AwsConfig:
-    """AWS credentials and Bedrock configuration."""
+    """AWS credentials and Bedrock configuration.
 
-    profile: str
+    profile is None on the hosted server: boto3 then uses the default chain
+    (the instance's IAM role). On a laptop it names an ~/.aws profile.
+    """
+
+    profile: str | None
     region: str
     bedrock_model_id: str
     s3_bucket: str
@@ -74,7 +78,7 @@ class AwsConfig:
 
         Raises ValueError if any required var is missing.
         """
-        required_keys = ("AWS_PROFILE", "AWS_REGION", "BEDROCK_MODEL_ID", "AWS_S3_BUCKET")
+        required_keys = ("AWS_REGION", "BEDROCK_MODEL_ID", "AWS_S3_BUCKET")
         missing = [key for key in required_keys if not os.environ.get(key)]
         if missing:
             raise ValueError(
@@ -82,7 +86,7 @@ class AwsConfig:
                 "Set them in .env or in your shell. See .env.example for the template."
             )
         return cls(
-            profile=os.environ["AWS_PROFILE"],
+            profile=os.environ.get("AWS_PROFILE") or None,
             region=os.environ["AWS_REGION"],
             bedrock_model_id=os.environ["BEDROCK_MODEL_ID"],
             s3_bucket=os.environ["AWS_S3_BUCKET"],
@@ -91,23 +95,38 @@ class AwsConfig:
 
 @dataclass
 class DemoConfig:
-    """Energy demo UI live mode (src/api). Unset passcode = live mode refuses to start."""
+    """Live questions for the demo UI (src/api): limits, bot check, kill switch.
 
-    passcode: str | None = None
-    daily_cap: int = 30
-    allowed_origins: tuple[str, ...] = ("*",)
-    site_url: str = "https://isaacfrith.github.io/agent-analytical-platform/"
+    The server refuses to start without a Turnstile secret unless it runs in
+    local test mode (scripts/demo_live.py --local).
+    """
+
+    daily_cap: int = 20  # live questions per UTC day, across every visitor
+    per_visitor_cap: int = 2  # live questions per visitor per UTC day
+    turnstile_site_key: str | None = None  # public; the page renders the bot check with it
+    turnstile_secret: str | None = None  # private; verifies each question's bot-check token
+    enabled: bool = True  # the kill switch; DEMO_SWITCH_PARAM (SSM) overrides it when set
+    switch_param: str | None = None  # SSM parameter name holding "on"/"off"
+    allowed_origins: tuple[str, ...] = (
+        "https://isaacfrith.github.io",
+        "http://localhost:8765",
+    )
     port: int = 8787
 
     @classmethod
     def from_env(cls) -> DemoConfig:
         """Load from DEMO_* environment variables."""
-        origins = os.environ.get("DEMO_ALLOWED_ORIGINS", "*")
+        origins = os.environ.get("DEMO_ALLOWED_ORIGINS")
         return cls(
-            passcode=os.environ.get("DEMO_PASSCODE") or None,
-            daily_cap=int(os.environ.get("DEMO_DAILY_CAP", "30")),
-            allowed_origins=tuple(o.strip() for o in origins.split(",") if o.strip()),
-            site_url=os.environ.get("DEMO_SITE_URL", cls.site_url),
+            daily_cap=int(os.environ.get("DEMO_DAILY_CAP", "20")),
+            per_visitor_cap=int(os.environ.get("DEMO_PER_VISITOR_CAP", "2")),
+            turnstile_site_key=os.environ.get("DEMO_TURNSTILE_SITE_KEY") or None,
+            turnstile_secret=os.environ.get("DEMO_TURNSTILE_SECRET") or None,
+            enabled=os.environ.get("DEMO_ENABLED", "true").lower() not in ("0", "false", "off"),
+            switch_param=os.environ.get("DEMO_SWITCH_PARAM") or None,
+            allowed_origins=tuple(o.strip() for o in origins.split(",") if o.strip())
+            if origins
+            else cls.allowed_origins,
             port=int(os.environ.get("DEMO_PORT", "8787")),
         )
 

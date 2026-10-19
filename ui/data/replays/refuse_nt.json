@@ -1,0 +1,62 @@
+{
+ "id": "refuse_nt",
+ "topic": "limits",
+ "question": "What was the renewable share in the Northern Territory over the last 30 days?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "What was the renewable share in the Northern Territory over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.06,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.06,
+   "text": "I'll check the business rules first, then address your question."
+  },
+  {
+   "type": "step_start",
+   "t": 1.062,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.074,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 11
+  },
+  {
+   "type": "usage",
+   "t": 4.324,
+   "turns": 2,
+   "tokens": 5131
+  },
+  {
+   "type": "answer",
+   "t": 4.419,
+   "text": "**Northern Territory is not covered by this data.** \n\nThe energy dataset covers only two markets:\n- **NEM** (National Electricity Market): NSW1, QLD1, SA1, TAS1, VIC1 regions on Australia's east coast\n- **WEM** (Wholesale Electricity Market): the South West Interconnected System of Western Australia (Perth and south-west WA only)\n\nNorthern Territory is not included in either market. I cannot provide renewable share data for it.\n\nIf you'd like the renewable share for a specific NEM region or the WEM over the last 30 days, I'm happy to run that query instead.",
+   "turns": 2,
+   "tokens": 11640,
+   "over_budget": false,
+   "path": "refused"
+  }
+ ]
+}

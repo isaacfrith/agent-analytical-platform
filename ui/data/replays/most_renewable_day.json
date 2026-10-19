@@ -1,0 +1,104 @@
+{
+ "id": "most_renewable_day",
+ "topic": "renewables",
+ "question": "On which day in the last 90 days was the NEM's renewable share highest?",
+ "recorded_at": "2026-10-19T21:39:56Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "On which day in the last 90 days was the NEM's renewable share highest?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 2.357,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 2.357,
+   "text": "I'll help you find the day with the highest renewable share in the NEM over the last 90 days.\n\nLet me start by checking the business rules and then query the renewable share data."
+  },
+  {
+   "type": "step_start",
+   "t": 2.358,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 2.358,
+   "step": 2,
+   "tool": "query_cube",
+   "input": {
+    "cube": "renewable_share",
+    "measures": [
+     "renewable_share_pct"
+    ],
+    "dimensions": [
+     "day",
+     "network"
+    ],
+    "filters": [
+     "network:eq:NEM"
+    ],
+    "time_dimension": "day:day:-90d,today",
+    "order_by": [
+     "renewable_share_pct:desc"
+    ],
+    "limit": 1
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 2.385,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 27
+  },
+  {
+   "type": "step_end",
+   "t": 2.695,
+   "step": 2,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 300,
+   "row_count": 1,
+   "columns": [
+    "day__day",
+    "day",
+    "network",
+    "renewable_share_pct"
+   ],
+   "truncated": false,
+   "sql": "SELECT DATE_TRUNC('DAY', day) AS day__day, day AS day, network AS network, 100.0 * SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / NULLIF(SUM(energy_mwh), 0) AS renewable_share_pct FROM generation_with_group WHERE day >= CAST('2026-07-21' AS TIMESTAMP) AND day < CAST('2026-10-19' AS TIMESTAMP) AND network = 'NEM' GROUP BY 1, 2, 3 ORDER BY 4 DESC LIMIT 1"
+  },
+  {
+   "type": "usage",
+   "t": 4.874,
+   "turns": 2,
+   "tokens": 5340
+  },
+  {
+   "type": "answer",
+   "t": 4.975,
+   "text": "Perfect! I found the answer using the renewable_share cube.\n\n**On 20 September 2026, the NEM's renewable share was highest at 55.18%.**\n\n**Tool used:** query_cube on the `renewable_share` cube, filtered to NEM only, over the last 90 days, ordered by renewable_share_pct descending, limit 1.\n\n**Parameters:**\n- Cube: `renewable_share`\n- Dimensions: `day`, `network`\n- Filters: `network:eq:NEM`\n- Measures: `renewable_share_pct`\n- Time window: last 90 days (ending yesterday)\n- Order: `renewable_share_pct:desc`\n- Limit: 1",
+   "turns": 2,
+   "tokens": 12272,
+   "over_budget": false,
+   "path": "cube"
+  }
+ ]
+}

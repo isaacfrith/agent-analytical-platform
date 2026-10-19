@@ -1,58 +1,194 @@
 {
- "chips": [
+ "questions": [
   {
-   "id": "renewable_share_nsw",
-   "label": "Renewable share, NSW",
-   "question": "What share of NSW generation was renewable over the last 30 days?",
-   "recorded_at": "2026-10-19T05:12:51Z",
+   "id": "price_by_region",
+   "topic": "prices",
+   "question": "What was the average spot price by region over the last 30 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
    "path": "cube",
    "ok": true
   },
   {
-   "id": "price_by_region",
-   "label": "Spot price by region",
-   "question": "What was the average spot price by region over the last 30 days?",
-   "recorded_at": "2026-10-19T06:51:08Z",
+   "id": "cheapest_region_week",
+   "topic": "prices",
+   "question": "Which region had the cheapest average spot price over the last 7 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
    "path": "cube",
    "ok": true
   },
   {
    "id": "price_spike_fuel_mix",
-   "label": "Fuel mix on the price spike",
+   "topic": "prices",
    "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
-   "recorded_at": "2026-10-19T05:10:19Z",
+   "recorded_at": "2026-10-19T21:33:12Z",
    "path": "sql",
    "ok": true
   },
   {
-   "id": "coal_capacity",
-   "label": "Coal capacity by state",
-   "question": "Show me operating coal capacity by state.",
-   "recorded_at": "2026-10-19T06:52:28Z",
-   "path": "sql",
-   "ok": true
-  },
-  {
-   "id": "wa_vs_nem",
-   "label": "WA vs the east coast",
-   "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
-   "recorded_at": "2026-10-19T06:51:08Z",
+   "id": "demand_by_region",
+   "topic": "prices",
+   "question": "Which region used the most electricity over the last 30 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
    "path": "cube",
    "ok": true
   },
   {
+   "id": "fuel_mix_qld_week",
+   "topic": "generation",
+   "question": "Which fuel types generated the most in Queensland over the last 7 days?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "wind_nem_week",
+   "topic": "generation",
+   "question": "How much electricity did wind generate across the NEM over the last 7 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "cube",
+   "ok": true
+  },
+  {
+   "id": "rooftop_solar_by_region",
+   "topic": "generation",
+   "question": "How much did rooftop solar generate in each region over the last 30 days?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "coal_share_nem",
+   "topic": "generation",
+   "question": "What share of NEM generation came from coal over the last 30 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "emissions_by_region_week",
+   "topic": "emissions",
+   "question": "Which region had the highest emissions over the last 7 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "cube",
+   "ok": true
+  },
+  {
+   "id": "emissions_vic_by_fuel",
+   "topic": "emissions",
+   "question": "Which fuel types emitted the most in Victoria over the last 30 days?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "emissions_intensity",
+   "topic": "emissions",
+   "question": "Which region had the lowest emissions per MWh generated over the last 30 days?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "dirtiest_units",
+   "topic": "emissions",
+   "question": "Which operating generating units have the highest emissions factor?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "renewable_share_nsw",
+   "topic": "renewables",
+   "question": "What share of NSW generation was renewable over the last 30 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "cube",
+   "ok": true
+  },
+  {
+   "id": "wa_vs_nem",
+   "topic": "renewables",
+   "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "cube",
+   "ok": true
+  },
+  {
+   "id": "renewable_trend_sa",
+   "topic": "renewables",
+   "question": "How did South Australia's daily renewable share change over the last 30 days?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "cube",
+   "ok": true
+  },
+  {
+   "id": "most_renewable_day",
+   "topic": "renewables",
+   "question": "On which day in the last 90 days was the NEM's renewable share highest?",
+   "recorded_at": "2026-10-19T21:39:56Z",
+   "path": "cube",
+   "ok": true
+  },
+  {
+   "id": "coal_capacity",
+   "topic": "stations",
+   "question": "Show me operating coal capacity by state.",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
    "id": "largest_wind_solar",
-   "label": "Largest wind & solar farms",
+   "topic": "stations",
    "question": "Which are the 15 largest operating wind and solar facilities by registered capacity?",
-   "recorded_at": "2026-10-19T05:08:19Z",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "pipeline_capacity",
+   "topic": "stations",
+   "question": "How much new capacity is committed or commissioning, by fuel group?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "biggest_batteries",
+   "topic": "stations",
+   "question": "Which are the 10 largest operating batteries by storage capacity?",
+   "recorded_at": "2026-10-19T21:33:12Z",
    "path": "sql",
    "ok": true
   },
   {
    "id": "refuse_efficiency",
-   "label": "Generation by efficiency",
+   "topic": "limits",
    "question": "Show me generation by unit efficiency.",
-   "recorded_at": "2026-10-19T05:08:19Z",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "refused",
+   "ok": true
+  },
+  {
+   "id": "refuse_nt",
+   "topic": "limits",
+   "question": "What was the renewable share in the Northern Territory over the last 30 days?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "refused",
+   "ok": true
+  },
+  {
+   "id": "refuse_hourly",
+   "topic": "limits",
+   "question": "What was the spot price in NSW at 6pm yesterday?",
+   "recorded_at": "2026-10-19T21:33:12Z",
+   "path": "refused",
+   "ok": true
+  },
+  {
+   "id": "refuse_forecast",
+   "topic": "limits",
+   "question": "What will the spot price be in Victoria next week?",
+   "recorded_at": "2026-10-19T21:33:12Z",
    "path": "refused",
    "ok": true
   }

@@ -111,13 +111,36 @@ def validate_topics(topics: dict, subset: dict, seeds: dict[str, dict]) -> None:
                 ]
             else:
                 problems.append(f"{where}: a use needs 'cube' or 'model'")
-        for ex in topic.get("examples") or []:
-            if ex.get("seed") and ex["seed"] not in seeds:
-                problems.append(f"{where}: no seed query {ex['seed']!r} in wren/knowledge/sql/")
     if problems:
         raise ValueError(
             "Topics file doesn't match the semantic model:\n  " + "\n  ".join(problems)
         )
+
+
+EXPECTATIONS = ("answer", "refused")
+LIMITS_TOPIC = "limits"  # questions the data can't answer; not a topic in the diagram
+
+
+def validate_questions(questions: list[dict], topic_ids: set[str], seeds: dict[str, dict]) -> None:
+    """Raise ValueError listing every problem in the suggested-questions file."""
+    problems = []
+    seen: set[str] = set()
+    for q in questions:
+        qid = q.get("id")
+        where = f"question {qid!r}"
+        if not qid or not q.get("question"):
+            problems.append(f"{where}: needs an id and a question")
+        if qid in seen:
+            problems.append(f"{where}: duplicate id")
+        seen.add(qid)
+        if q.get("topic") not in topic_ids | {LIMITS_TOPIC}:
+            problems.append(f"{where}: unknown topic {q.get('topic')!r}")
+        if q.get("expect", "answer") not in EXPECTATIONS:
+            problems.append(f"{where}: expect must be one of {EXPECTATIONS}")
+        if q.get("seed") and q["seed"] not in seeds:
+            problems.append(f"{where}: no seed query {q['seed']!r} in wren/knowledge/sql/")
+    if problems:
+        raise ValueError("Questions file has problems:\n  " + "\n  ".join(problems))
 
 
 def topic_path(topic: dict, subset: dict) -> dict:
@@ -181,15 +204,20 @@ def topic_path(topic: dict, subset: dict) -> dict:
 def build_catalog(
     mdl: dict,
     topics: dict,
+    questions: list[dict],
     stats: dict[str, dict],
     rules_md: str,
     seeds: dict[str, dict],
-    chip_ids_by_question: dict[str, str],
     recorded_at: str,
 ) -> dict:
-    """The JSON the "What's in the data" tab renders."""
+    """The JSON the "What's in the data" tab renders.
+
+    Each topic's example questions are the suggested questions filed under it;
+    each names its recording (`replay`), which the UI plays if it recorded cleanly.
+    """
     subset = energy_subset(mdl)
     validate_topics(topics, subset, seeds)
+    validate_questions(questions, {t["id"] for t in topics.get("topics") or []}, seeds)
     model_index = {m["name"]: m for m in subset["models"]}
 
     def column_entry(model: str, col: dict) -> dict:
@@ -280,12 +308,12 @@ def build_catalog(
     out_topics = []
     for t in topics["topics"]:
         examples = []
-        for ex in t.get("examples") or []:
-            item = {"question": ex["question"]}
-            if ex["question"] in chip_ids_by_question:
-                item["replay"] = chip_ids_by_question[ex["question"]]
-            if ex.get("seed"):
-                item["sql"] = seeds[ex["seed"]]["sql"].strip()
+        for q in questions:
+            if q["topic"] != t["id"]:
+                continue
+            item = {"question": q["question"], "replay": q["id"]}
+            if q.get("seed"):
+                item["sql"] = seeds[q["seed"]]["sql"].strip()
             examples.append(item)
         out_topics.append(
             {

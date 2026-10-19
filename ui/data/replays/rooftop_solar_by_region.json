@@ -1,0 +1,246 @@
+{
+ "id": "rooftop_solar_by_region",
+ "topic": "generation",
+ "question": "How much did rooftop solar generate in each region over the last 30 days?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "How much did rooftop solar generate in each region over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.758,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.758,
+   "text": "I'll help you find rooftop solar generation by region over the last 30 days. Let me start by checking the business rules and then querying the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.758,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.758,
+   "step": 2,
+   "tool": "get_context",
+   "input": {
+    "question": "rooftop solar generation by region last 30 days"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 2.397,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 639
+  },
+  {
+   "type": "step_end",
+   "t": 2.397,
+   "step": 2,
+   "tool": "get_context",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 639
+  },
+  {
+   "type": "usage",
+   "t": 5.285,
+   "turns": 2,
+   "tokens": 5202
+  },
+  {
+   "type": "reasoning",
+   "t": 5.285,
+   "text": "I can see the schema includes energy data. Now let me query rooftop solar generation by region over the last 30 days. I'll use the `daily_generation` cube with a filter for rooftop solar."
+  },
+  {
+   "type": "step_start",
+   "t": 5.286,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "energy_total"
+    ],
+    "dimensions": [
+     "network_region"
+    ],
+    "filters": [
+     "fueltech:eq:solar_rooftop"
+    ],
+    "time_dimension": "day:day:-30d,today"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 5.465,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 143,
+   "row_count": 174,
+   "columns": [
+    "day__day",
+    "network_region",
+    "energy_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT DATE_TRUNC('DAY', day) AS day__day, network_region AS network_region, SUM(energy_mwh) AS energy_total FROM generation_daily WHERE day >= CAST('2026-09-20' AS TIMESTAMP) AND day < CAST('2026-10-20' AS TIMESTAMP) AND fueltech = 'solar_rooftop' GROUP BY 1, 2 ORDER BY 1"
+  },
+  {
+   "type": "usage",
+   "t": 7.703,
+   "turns": 3,
+   "tokens": 16057
+  },
+  {
+   "type": "reasoning",
+   "t": 7.703,
+   "text": "The query returned daily data. Let me aggregate this to get the total rooftop solar generation by region over the last 30 days:"
+  },
+  {
+   "type": "step_start",
+   "t": 7.704,
+   "step": 4,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  network_region,\n  SUM(energy_mwh) as total_energy_mwh\nFROM generation_daily\nWHERE fueltech = 'solar_rooftop'\n  AND day >= CURRENT_DATE - INTERVAL '30 days'\nGROUP BY network_region\nORDER BY total_energy_mwh DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 7.796,
+   "step": 4,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 76,
+   "row_count": 6,
+   "columns": [
+    "network_region",
+    "total_energy_mwh"
+   ],
+   "truncated": false,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".network_region AS network_region, \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech, generation_daily.network_region FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech, __source.network_region AS network_region FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\") SELECT network_region, SUM(energy_mwh) AS total_energy_mwh FROM generation_daily WHERE fueltech = 'solar_rooftop' AND day >= CURRENT_DATE - INTERVAL '30' DAY GROUP BY network_region ORDER BY total_energy_mwh DESC"
+  },
+  {
+   "type": "usage",
+   "t": 9.213,
+   "turns": 4,
+   "tokens": 36070
+  },
+  {
+   "type": "reasoning",
+   "t": 9.213,
+   "text": "Perfect! Now let me create a chart to visualize this data:"
+  },
+  {
+   "type": "step_start",
+   "t": 9.214,
+   "step": 5,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Rooftop Solar Generation by Region (Last 30 Days, MWh)",
+    "x": "network_region",
+    "y": [
+     "total_energy_mwh"
+    ],
+    "map_key": "network_region"
+   }
+  },
+  {
+   "type": "chart",
+   "t": 9.214,
+   "step": 4,
+   "spec": {
+    "kind": "bar",
+    "title": "Rooftop Solar Generation by Region (Last 30 Days, MWh)",
+    "x": "network_region",
+    "y": [
+     "total_energy_mwh"
+    ],
+    "series": null,
+    "map": {
+     "key": "network_region",
+     "metric": "total_energy_mwh"
+    }
+   },
+   "columns": [
+    "network_region",
+    "total_energy_mwh"
+   ],
+   "rows": [
+    {
+     "network_region": "TAS1",
+     "total_energy_mwh": 52831.53119999999
+    },
+    {
+     "network_region": "SA1",
+     "total_energy_mwh": 335378.7984
+    },
+    {
+     "network_region": "QLD1",
+     "total_energy_mwh": 983408.8914
+    },
+    {
+     "network_region": "VIC1",
+     "total_energy_mwh": 667410.6876
+    },
+    {
+     "network_region": "NSW1",
+     "total_energy_mwh": 1035537.1073999999
+    },
+    {
+     "network_region": "WEM",
+     "total_energy_mwh": 443380.4726999999
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 9.215,
+   "step": 5,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 12.139,
+   "turns": 5,
+   "tokens": 56530
+  },
+  {
+   "type": "answer",
+   "t": 12.291,
+   "text": "## Rooftop Solar Generation by Region (Last 30 Days)\n\n**Results:**\n\n| Region | Total Generation (MWh) |\n|--------|------------------------|\n| NSW1   | 1,035,537 MWh          |\n| QLD1   | 983,409 MWh            |\n| VIC1   | 667,411 MWh            |\n| WEM    | 443,380 MWh            |\n| SA1    | 335,379 MWh            |\n| TAS1   | 52,832 MWh             |\n\n**Key findings:**\n- **NSW1 (New South Wales)** led rooftop solar generation with 1.04 million MWh over the last 30 days\n- **QLD1 (Queensland)** was a close second with 983,409 MWh\n- **VIC1 (Victoria)** generated 667,411 MWh\n- **WEM (Western Australia)** contributed 443,380 MWh\n- **SA1 (South Australia)** generated 335,379 MWh\n- **TAS1 (Tasmania)** had the lowest output at 52,832 MWh\n\n**Tool used:** `run_sql` with aggregation query filtering for `fueltech = 'solar_rooftop'` over the last 30 days, grouped by network_region and summed energy_mwh.",
+   "turns": 5,
+   "tokens": 77374,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

@@ -1,0 +1,276 @@
+{
+ "id": "fuel_mix_qld_week",
+ "topic": "generation",
+ "question": "Which fuel types generated the most in Queensland over the last 7 days?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Which fuel types generated the most in Queensland over the last 7 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.646,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.646,
+   "text": "I'll help you find which fuel types generated the most in Queensland over the last 7 days. Let me start by checking the business rules and then query the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.647,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.647,
+   "step": 2,
+   "tool": "get_context",
+   "input": {
+    "question": "fuel types generation Queensland last 7 days"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 2.379,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 732
+  },
+  {
+   "type": "step_end",
+   "t": 2.379,
+   "step": 2,
+   "tool": "get_context",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 731
+  },
+  {
+   "type": "usage",
+   "t": 6.201,
+   "turns": 2,
+   "tokens": 5196
+  },
+  {
+   "type": "reasoning",
+   "t": 6.201,
+   "text": "Good! I can see the energy domain is active. Now I'll query the daily_generation cube to find which fuel types generated the most in Queensland (QLD1) over the last 7 days."
+  },
+  {
+   "type": "step_start",
+   "t": 6.202,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "energy_total"
+    ],
+    "dimensions": [
+     "fueltech"
+    ],
+    "filters": [
+     "network_region:eq:QLD1"
+    ],
+    "time_dimension": "day:day:-7d,today",
+    "order_by": [
+     "energy_total:desc"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 6.42,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 178,
+   "row_count": 84,
+   "columns": [
+    "day__day",
+    "fueltech",
+    "energy_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT DATE_TRUNC('DAY', day) AS day__day, fueltech AS fueltech, SUM(energy_mwh) AS energy_total FROM generation_daily WHERE day >= CAST('2026-10-13' AS TIMESTAMP) AND day < CAST('2026-10-20' AS TIMESTAMP) AND network_region = 'QLD1' GROUP BY 1, 2 ORDER BY 3 DESC"
+  },
+  {
+   "type": "usage",
+   "t": 8.884,
+   "turns": 3,
+   "tokens": 16064
+  },
+  {
+   "type": "reasoning",
+   "t": 8.884,
+   "text": "I see the data is returned per day and fuel type. Let me aggregate this to get the total generation by fuel type over the 7-day period. I'll use SQL to sum across all days:"
+  },
+  {
+   "type": "step_start",
+   "t": 8.884,
+   "step": 4,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  fueltech,\n  SUM(energy_mwh) as total_energy_mwh\nFROM generation_daily\nWHERE network_region = 'QLD1'\n  AND day >= CURRENT_DATE - INTERVAL '7' day\nGROUP BY fueltech\nORDER BY total_energy_mwh DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 8.954,
+   "step": 4,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 57,
+   "row_count": 14,
+   "columns": [
+    "fueltech",
+    "total_energy_mwh"
+   ],
+   "truncated": false,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".network_region AS network_region, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech, generation_daily.network_region FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech, __source.network_region AS network_region FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\") SELECT fueltech, SUM(energy_mwh) AS total_energy_mwh FROM generation_daily WHERE network_region = 'QLD1' AND day >= CURRENT_DATE - INTERVAL '7' DAY GROUP BY fueltech ORDER BY total_energy_mwh DESC"
+  },
+  {
+   "type": "usage",
+   "t": 10.656,
+   "turns": 4,
+   "tokens": 31537
+  },
+  {
+   "type": "reasoning",
+   "t": 10.656,
+   "text": "Perfect! Now let me create a chart to visualize this data:"
+  },
+  {
+   "type": "step_start",
+   "t": 10.658,
+   "step": 5,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Generation by Fuel Type in Queensland (QLD1) - Last 7 Days (MWh)",
+    "x": "fueltech",
+    "y": [
+     "total_energy_mwh"
+    ]
+   }
+  },
+  {
+   "type": "chart",
+   "t": 10.658,
+   "step": 4,
+   "spec": {
+    "kind": "bar",
+    "title": "Generation by Fuel Type in Queensland (QLD1) - Last 7 Days (MWh)",
+    "x": "fueltech",
+    "y": [
+     "total_energy_mwh"
+    ],
+    "series": null
+   },
+   "columns": [
+    "fueltech",
+    "total_energy_mwh"
+   ],
+   "rows": [
+    {
+     "fueltech": "gas_ccgt",
+     "total_energy_mwh": 13421.5873
+    },
+    {
+     "fueltech": "coal_black",
+     "total_energy_mwh": 801924.3915
+    },
+    {
+     "fueltech": "bioenergy_biomass",
+     "total_energy_mwh": 6974.6826
+    },
+    {
+     "fueltech": "distillate",
+     "total_energy_mwh": 168.6115
+    },
+    {
+     "fueltech": "battery",
+     "total_energy_mwh": -8352.854099999999
+    },
+    {
+     "fueltech": "solar_utility",
+     "total_energy_mwh": 115807.20289999999
+    },
+    {
+     "fueltech": "battery_discharging",
+     "total_energy_mwh": 26582.1243
+    },
+    {
+     "fueltech": "gas_wcmg",
+     "total_energy_mwh": 6370.9097
+    },
+    {
+     "fueltech": "wind",
+     "total_energy_mwh": 177837.8474
+    },
+    {
+     "fueltech": "battery_charging",
+     "total_energy_mwh": 34912.1838
+    },
+    {
+     "fueltech": "solar_rooftop",
+     "total_energy_mwh": 187654.7064
+    },
+    {
+     "fueltech": "pumps",
+     "total_energy_mwh": 15325.4103
+    },
+    {
+     "fueltech": "gas_ocgt",
+     "total_energy_mwh": 12474.003
+    },
+    {
+     "fueltech": "hydro",
+     "total_energy_mwh": 19128.439300000002
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 10.658,
+   "step": 5,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 1
+  },
+  {
+   "type": "usage",
+   "t": 14.673,
+   "turns": 5,
+   "tokens": 47725
+  },
+  {
+   "type": "answer",
+   "t": 14.828,
+   "text": "## Answer\n\nOver the last 7 days in Queensland (QLD1), the fuel types that generated the most energy were:\n\n1. **Solar Rooftop**: 187,655 MWh (largest generator)\n2. **Wind**: 177,838 MWh\n3. **Coal (Black)**: 801,924 MWh (largest single fuel type)\n4. **Solar Utility**: 115,807 MWh\n5. **Battery Charging**: 34,912 MWh (load)\n6. **Battery Discharging**: 26,582 MWh (generation)\n7. **Hydro**: 19,128 MWh\n8. **Pumps**: 15,325 MWh\n9. **Gas CCGT**: 13,422 MWh\n10. **Gas OCGT**: 12,474 MWh\n11. **Gas WCMG**: 6,371 MWh\n12. **Bioenergy (Biomass)**: 6,975 MWh\n13. **Distillate**: 169 MWh\n14. **Battery (net)**: -8,353 MWh (net charging load)\n\n**Key insight**: Coal black was the single largest fuel source at 801,924 MWh, but when combining renewables, solar rooftop (187,655 MWh) + wind (177,838 MWh) + solar utility (115,807 MWh) + hydro (19,128 MWh) + bioenergy (6,975 MWh) = 507,403 MWh of renewable generation, which is substantial but still less than coal's output.\n\n**Tool used**: `run_sql` with aggregation over generation_daily for QLD1 region, last 7 days.",
+   "turns": 5,
+   "tokens": 64392,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

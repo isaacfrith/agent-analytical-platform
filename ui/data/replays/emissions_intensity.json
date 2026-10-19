@@ -1,0 +1,278 @@
+{
+ "id": "emissions_intensity",
+ "topic": "emissions",
+ "question": "Which region had the lowest emissions per MWh generated over the last 30 days?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Which region had the lowest emissions per MWh generated over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.365,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.366,
+   "text": "I'll help you find which region had the lowest emissions per MWh generated over the last 30 days. Let me start by checking the business rules and then query the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.367,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.367,
+   "step": 2,
+   "tool": "describe_schema",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.413,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 46
+  },
+  {
+   "type": "step_end",
+   "t": 1.413,
+   "step": 2,
+   "tool": "describe_schema",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 45
+  },
+  {
+   "type": "usage",
+   "t": 3.884,
+   "turns": 2,
+   "tokens": 5177
+  },
+  {
+   "type": "reasoning",
+   "t": 3.884,
+   "text": "Good! I can see the energy schema. Now I need to calculate emissions per MWh generated for each region over the last 30 days. I'll use the `daily_generation` cube to get total energy and emissions by region, then calculate the ratio."
+  },
+  {
+   "type": "step_start",
+   "t": 3.884,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "energy_total",
+     "emissions_total"
+    ],
+    "dimensions": [
+     "network_region"
+    ],
+    "filters": [
+     "day:gte:-30d"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 4.253,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 332,
+   "row_count": 6,
+   "columns": [
+    "network_region",
+    "energy_total",
+    "emissions_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT network_region AS network_region, SUM(energy_mwh) AS energy_total, SUM(emissions_tco2e) AS emissions_total FROM generation_daily WHERE day >= CAST('2026-09-20' AS TIMESTAMP) GROUP BY 1"
+  },
+  {
+   "type": "usage",
+   "t": 9.18,
+   "turns": 3,
+   "tokens": 15982
+  },
+  {
+   "type": "reasoning",
+   "t": 9.18,
+   "text": "Perfect! Now I'll calculate the emissions per MWh for each region:\n\n- **TAS1**: 18,227.73 / 668,159.59 = **0.027 tCO2e/MWh** \u2713 Lowest\n- **SA1**: 78,629.53 / 1,149,586.31 = **0.068 tCO2e/MWh**\n- **NSW1**: 2,409,323.65 / 5,695,230.83 = **0.423 tCO2e/MWh**\n- **VIC1**: 2,793,286.38 / 4,653,565.94 = **0.601 tCO2e/MWh**\n- **QLD1**: 2,891,212.76 / 5,812,839.85 = **0.497 tCO2e/MWh**\n- **WEM**: 541,762.05 / 1,826,972.93 = **0.297 tCO2e/MWh**\n\n**Answer: TAS1 (Tasmania) had the lowest emissions per MWh generated at 0.027 tCO2e/MWh over the last 30 days.**\n\n**Tool used:** `query_cube` on `daily_generation` cube with dimensions `network_region`, filters `day:gte:-30d`, and measures `energy_total` and `emissions_total`.\n\n**Caveat:** Tasmania's very low emissions intensity reflects its high proportion of renewable generation (primarily hydro). The calculation sums all emissions and energy across all fuel types for each region over the 30-day window."
+  },
+  {
+   "type": "step_start",
+   "t": 9.182,
+   "step": 4,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Emissions intensity by region (tCO2e/MWh), last 30 days",
+    "x": "network_region",
+    "y": [
+     "emissions_per_mwh"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 9.182,
+   "step": 4,
+   "tool": "show_chart",
+   "status": "error",
+   "path": "chart",
+   "duration_ms": 0,
+   "error": "Error: Unknown column(s) ['emissions_per_mwh'] for step 3. Available: ['network_region', 'energy_total', 'emissions_total']."
+  },
+  {
+   "type": "usage",
+   "t": 11.24,
+   "turns": 4,
+   "tokens": 27682
+  },
+  {
+   "type": "reasoning",
+   "t": 11.24,
+   "text": "Let me recalculate this with a SQL query to compute the ratio directly so I can chart it:"
+  },
+  {
+   "type": "step_start",
+   "t": 11.241,
+   "step": 5,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  network_region,\n  SUM(emissions_tco2e) / NULLIF(SUM(energy_mwh), 0) AS emissions_per_mwh\nFROM generation_daily\nWHERE day >= CURRENT_DATE - INTERVAL '30' DAY\nGROUP BY network_region\nORDER BY emissions_per_mwh ASC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 11.344,
+   "step": 5,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 87,
+   "row_count": 6,
+   "columns": [
+    "network_region",
+    "emissions_per_mwh"
+   ],
+   "truncated": false,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".network_region AS network_region, \"wren_src_generation_daily\".\"day\" AS day, \"wren_src_generation_daily\".emissions_tco2e AS emissions_tco2e, \"wren_src_generation_daily\".energy_mwh AS energy_mwh FROM (SELECT generation_daily.\"day\", generation_daily.emissions_tco2e, generation_daily.energy_mwh, generation_daily.network_region FROM (SELECT __source.\"day\" AS \"day\", __source.emissions_tco2e AS emissions_tco2e, __source.energy_mwh AS energy_mwh, __source.network_region AS network_region FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\") SELECT network_region, SUM(emissions_tco2e) / NULLIF(SUM(energy_mwh), 0) AS emissions_per_mwh FROM generation_daily WHERE day >= CURRENT_DATE - INTERVAL '30' DAY GROUP BY network_region ORDER BY emissions_per_mwh ASC"
+  },
+  {
+   "type": "usage",
+   "t": 12.826,
+   "turns": 5,
+   "tokens": 39603
+  },
+  {
+   "type": "reasoning",
+   "t": 12.827,
+   "text": "Now let me chart this result:"
+  },
+  {
+   "type": "step_start",
+   "t": 12.827,
+   "step": 6,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Emissions intensity by region (tCO2e/MWh), last 30 days",
+    "x": "network_region",
+    "y": [
+     "emissions_per_mwh"
+    ]
+   }
+  },
+  {
+   "type": "chart",
+   "t": 12.827,
+   "step": 5,
+   "spec": {
+    "kind": "bar",
+    "title": "Emissions intensity by region (tCO2e/MWh), last 30 days",
+    "x": "network_region",
+    "y": [
+     "emissions_per_mwh"
+    ],
+    "series": null,
+    "map": {
+     "key": "network_region",
+     "metric": "emissions_per_mwh"
+    }
+   },
+   "columns": [
+    "network_region",
+    "emissions_per_mwh"
+   ],
+   "rows": [
+    {
+     "network_region": "WEM",
+     "emissions_per_mwh": 0.29534339365498213
+    },
+    {
+     "network_region": "TAS1",
+     "emissions_per_mwh": 0.026495888976222185
+    },
+    {
+     "network_region": "VIC1",
+     "emissions_per_mwh": 0.5952876588337727
+    },
+    {
+     "network_region": "SA1",
+     "emissions_per_mwh": 0.06667161090534517
+    },
+    {
+     "network_region": "QLD1",
+     "emissions_per_mwh": 0.49701923285341176
+    },
+    {
+     "network_region": "NSW1",
+     "emissions_per_mwh": 0.42052368513011323
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 12.827,
+   "step": 6,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 15.231,
+   "turns": 6,
+   "tokens": 51957
+  },
+  {
+   "type": "answer",
+   "t": 15.34,
+   "text": "**Answer: TAS1 (Tasmania) had the lowest emissions per MWh generated at 0.027 tCO2e/MWh over the last 30 days.**\n\n**Tool used:** `run_sql` query that summed emissions and energy by region over the last 30 days and calculated the ratio.\n\n**Ranking (lowest to highest emissions intensity):**\n1. **TAS1**: 0.027 tCO2e/MWh\n2. **SA1**: 0.067 tCO2e/MWh\n3. **NSW1**: 0.421 tCO2e/MWh\n4. **QLD1**: 0.497 tCO2e/MWh\n5. **VIC1**: 0.595 tCO2e/MWh\n6. **WEM**: 0.295 tCO2e/MWh\n\nTasmania's exceptionally low emissions intensity reflects its generation mix, which is dominated by renewable sources (primarily hydroelectric power).",
+   "turns": 6,
+   "tokens": 64598,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

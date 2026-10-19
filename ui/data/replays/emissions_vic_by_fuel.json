@@ -1,0 +1,260 @@
+{
+ "id": "emissions_vic_by_fuel",
+ "topic": "emissions",
+ "question": "Which fuel types emitted the most in Victoria over the last 30 days?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Which fuel types emitted the most in Victoria over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.455,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.455,
+   "text": "I'll help you find which fuel types emitted the most in Victoria over the last 30 days. Let me start by checking the business rules and then query the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.455,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.455,
+   "step": 2,
+   "tool": "describe_cube",
+   "input": {
+    "name": "daily_generation"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 1.462,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 7
+  },
+  {
+   "type": "step_end",
+   "t": 1.462,
+   "step": 2,
+   "tool": "describe_cube",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 7
+  },
+  {
+   "type": "usage",
+   "t": 4.04,
+   "turns": 2,
+   "tokens": 5192
+  },
+  {
+   "type": "reasoning",
+   "t": 4.041,
+   "text": "Perfect! I can see the daily_generation cube has an `emissions_total` measure. Now let me query for emissions by fuel type in Victoria (VIC1 region) over the last 30 days."
+  },
+  {
+   "type": "step_start",
+   "t": 4.041,
+   "step": 3,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_generation",
+    "measures": [
+     "emissions_total"
+    ],
+    "dimensions": [
+     "fueltech"
+    ],
+    "filters": [
+     "network_region:eq:VIC1"
+    ],
+    "time_dimension": "day:day:-30d,today",
+    "order_by": [
+     "emissions_total:desc"
+    ]
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 4.466,
+   "step": 3,
+   "tool": "query_cube",
+   "status": "success",
+   "path": "cube",
+   "duration_ms": 376,
+   "row_count": 290,
+   "columns": [
+    "day__day",
+    "fueltech",
+    "emissions_total"
+   ],
+   "truncated": false,
+   "sql": "SELECT DATE_TRUNC('DAY', day) AS day__day, fueltech AS fueltech, SUM(emissions_tco2e) AS emissions_total FROM generation_daily WHERE day >= CAST('2026-09-20' AS TIMESTAMP) AND day < CAST('2026-10-20' AS TIMESTAMP) AND network_region = 'VIC1' GROUP BY 1, 2 ORDER BY 3 DESC"
+  },
+  {
+   "type": "usage",
+   "t": 6.758,
+   "turns": 3,
+   "tokens": 12272
+  },
+  {
+   "type": "reasoning",
+   "t": 6.758,
+   "text": "The query returned daily rows. I need to aggregate by fuel type to get the total emissions over the 30-day period. Let me use SQL to sum emissions by fuel type."
+  },
+  {
+   "type": "step_start",
+   "t": 6.759,
+   "step": 4,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  fueltech,\n  SUM(emissions_tco2e) as total_emissions_tco2e\nFROM generation_daily\nWHERE network_region = 'VIC1'\n  AND day >= CURRENT_DATE - INTERVAL '30' DAY\nGROUP BY fueltech\nORDER BY total_emissions_tco2e DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 6.849,
+   "step": 4,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 81,
+   "row_count": 10,
+   "columns": [
+    "fueltech",
+    "total_emissions_tco2e"
+   ],
+   "truncated": false,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".emissions_tco2e AS emissions_tco2e, \"wren_src_generation_daily\".network_region AS network_region, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.emissions_tco2e, generation_daily.fueltech, generation_daily.network_region FROM (SELECT __source.\"day\" AS \"day\", __source.emissions_tco2e AS emissions_tco2e, __source.fueltech AS fueltech, __source.network_region AS network_region FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\") SELECT fueltech, SUM(emissions_tco2e) AS total_emissions_tco2e FROM generation_daily WHERE network_region = 'VIC1' AND day >= CURRENT_DATE - INTERVAL '30' DAY GROUP BY fueltech ORDER BY total_emissions_tco2e DESC"
+  },
+  {
+   "type": "usage",
+   "t": 8.398,
+   "turns": 4,
+   "tokens": 34179
+  },
+  {
+   "type": "reasoning",
+   "t": 8.398,
+   "text": "Perfect! Now let me create a chart to visualize this data."
+  },
+  {
+   "type": "step_start",
+   "t": 8.399,
+   "step": 5,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Total Emissions by Fuel Type in Victoria (Last 30 Days, tCO2e)",
+    "x": "fueltech",
+    "y": [
+     "total_emissions_tco2e"
+    ]
+   }
+  },
+  {
+   "type": "chart",
+   "t": 8.399,
+   "step": 4,
+   "spec": {
+    "kind": "bar",
+    "title": "Total Emissions by Fuel Type in Victoria (Last 30 Days, tCO2e)",
+    "x": "fueltech",
+    "y": [
+     "total_emissions_tco2e"
+    ],
+    "series": null
+   },
+   "columns": [
+    "fueltech",
+    "total_emissions_tco2e"
+   ],
+   "rows": [
+    {
+     "fueltech": "battery",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "solar_utility",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "coal_brown",
+     "total_emissions_tco2e": 2831641.2805999997
+    },
+    {
+     "fueltech": "gas_ocgt",
+     "total_emissions_tco2e": 24142.849700000002
+    },
+    {
+     "fueltech": "hydro",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "gas_steam",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "battery_charging",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "solar_rooftop",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "battery_discharging",
+     "total_emissions_tco2e": 0.0
+    },
+    {
+     "fueltech": "wind",
+     "total_emissions_tco2e": 0.0
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 8.4,
+   "step": 5,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 11.808,
+   "turns": 5,
+   "tokens": 56652
+  },
+  {
+   "type": "answer",
+   "t": 11.922,
+   "text": "## Answer\n\nOver the last 30 days in Victoria (VIC1), **coal (brown coal)** emitted by far the most, followed by gas:\n\n| Fuel Type | Total Emissions (tCO2e) |\n|-----------|------------------------|\n| **Coal (brown)** | **2,831,641.3** |\n| **Gas (OCGT)** | **24,142.8** |\n| All others (hydro, wind, solar, battery) | 0.0 |\n\n**Coal dominates Victoria's emissions**, accounting for 99.2% of all emissions from generation over this period. Gas (open-cycle gas turbine) contributes a small fraction at 0.8%. Renewable sources (wind, solar, hydro) and battery storage produce zero emissions by definition.\n\n**Tool used:** `run_sql` with aggregation over `generation_daily` for VIC1 region, last 30 days, grouped by fueltech and summed on emissions_tco2e.",
+   "turns": 5,
+   "tokens": 79404,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

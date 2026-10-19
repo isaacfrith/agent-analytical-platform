@@ -328,7 +328,7 @@ const catalog = {
     }
     const exampleItem = (ex) => {
       const btn = el("button", { type: "button", class: "example", onclick: () => this.ask(ex) }, ex.question);
-      const recorded = state.chips.some((c) => c.id === ex.replay);
+      const recorded = state.questions.some((q) => q.id === ex.replay);
       const note = recorded ? el("span", { class: "ex-note", text: "▶ recorded run" }) : el("span", { class: "ex-note muted", text: state.live ? "ask live" : "live mode only" });
       const item = el("li", {}, btn, note);
       if (ex.sql) item.append(el("details", { class: "sql" }, el("summary", { text: "Stored SQL for this question" }), el("pre", { text: ex.sql })));
@@ -351,10 +351,10 @@ const catalog = {
   },
 
   ask(ex) {
-    const chip = state.chips.find((c) => c.id === ex.replay);
-    if (chip) {
+    const recorded = state.questions.find((q) => q.id === ex.replay);
+    if (recorded) {
       showTab("ask");
-      playReplay(chip);
+      playReplay(recorded);
     } else if (state.live) {
       showTab("ask");
       $("question").value = ex.question;

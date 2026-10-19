@@ -1,0 +1,94 @@
+#!/bin/bash
+# First boot of the live-questions server (cloud-init runs this once).
+# Installs the tools, writes non-secret settings, clones the repo, and
+# installs two systemd units:
+#   live.service           every boot: scripts/hosted/start.sh (pull main, stack, tunnel)
+#   live-watchdog.timer    every minute: scripts/hosted/live_watchdog.py (idle/runtime stop)
+# Secrets are NOT here: start.sh reads them from SSM at each boot.
+set -euxo pipefail
+
+dnf -y install docker git
+systemctl enable --now docker
+usermod -aG docker ec2-user
+
+mkdir -p /usr/local/lib/docker/cli-plugins
+curl -fsSL -o /usr/local/lib/docker/cli-plugins/docker-compose \
+  https://github.com/docker/compose/releases/latest/download/docker-compose-linux-aarch64
+chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+curl -fsSL -o /usr/local/bin/cloudflared \
+  https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64
+chmod +x /usr/local/bin/cloudflared
+curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
+
+install -d -o ec2-user -g ec2-user /var/lib/live
+install -d /etc/live
+cat > /etc/live/config.env <<'EOF'
+REPO_DIR=/opt/app
+PARAM_PREFIX=${param_prefix}
+AWS_REGION=${aws_region}
+AWS_S3_BUCKET=${bucket}
+BEDROCK_MODEL_ID=${bedrock_model_id}
+LAKEKEEPER_URI=http://localhost:8181
+ICEBERG_WAREHOUSE=dev_lakehouse
+LAKEKEEPER_STS_ROLE_ARN=${vending_role_arn}
+LAKEKEEPER_SYSTEM_IDENTITY=true
+LAKEKEEPER_EXTERNAL_ID=${external_id}
+WAREHOUSE_KEY_PREFIX=hosted/warehouse
+LANDING_PREFIX=hosted/landing
+DEMO_SWITCH_PARAM=${param_prefix}/switch
+DEMO_ACTIVITY_FILE=/var/lib/live/last-question
+DEMO_ALLOWED_ORIGINS=${site_origin}
+DEMO_DAILY_CAP=20
+DEMO_PER_VISITOR_CAP=2
+EOF
+chmod 644 /etc/live/config.env
+
+git clone --branch main ${repo_url} /opt/app
+chown -R ec2-user:ec2-user /opt/app
+
+cat > /etc/systemd/system/live.service <<'EOF'
+[Unit]
+Description=Live questions: update code, start the lakehouse, open the tunnel
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/opt/app
+EnvironmentFile=/etc/live/config.env
+ExecStartPre=+/usr/bin/dnf -y -q upgrade --security
+ExecStart=/opt/app/scripts/hosted/start.sh
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat > /etc/systemd/system/live-watchdog.service <<'EOF'
+[Unit]
+Description=Live questions: stop the server when idle or over today's allowance
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/live/config.env
+ExecStart=/usr/local/bin/uv run --no-project --python 3.12 --with boto3 /opt/app/scripts/hosted/live_watchdog.py
+EOF
+
+cat > /etc/systemd/system/live-watchdog.timer <<'EOF'
+[Unit]
+Description=Run the live-questions watchdog every minute
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now live-watchdog.timer
+systemctl enable --now live.service

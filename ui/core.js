@@ -1,5 +1,5 @@
 // Shared by every script: constants, DOM helpers, formatting and page state.
-// Load order (index.html): core.js, charts.js, map.js, app.js, catalog.js.
+// Load order (index.html): core.js, charts.js, map.js, suggest.js, app.js, catalog.js.
 
 const TURNS_BUDGET = 10;
 const TOKENS_BUDGET = 150000;
@@ -76,15 +76,18 @@ const PATH_LABEL = {
 
 const state = {
   overview: null,
-  chips: [],
+  questions: [], // recorded suggested questions (data/replays/index.json)
+  topicNames: {}, // topic id -> display name (data/model.json)
+  current: null, // the suggested question playing, if any
   runToken: 0, // bumps on every new run; stale playback loops stop
   skip: false,
-  live: null,
+  live: null, // live API base URL, when live questions are available
+  control: null, // wake/status Lambda URL for the hosted server (live-config.json)
+  health: null,
+  botCheck: null,
 };
 
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 }
 
-function sessionStorageGet(k) { try { return sessionStorage.getItem(k); } catch { return null; } }
-function sessionStorageSet(k, v) { try { v ? sessionStorage.setItem(k, v) : sessionStorage.removeItem(k); } catch { /* private mode */ } }

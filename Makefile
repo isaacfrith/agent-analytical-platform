@@ -7,7 +7,7 @@ COMPOSE := docker compose -f docker/compose.yaml
 .PHONY: help preflight infra-init infra-plan infra-apply infra-destroy up down logs ps \
         bootstrap data pipeline energy-data energy-test mdl memory mdl-test refresh wren-query \
         ask ask-mem memory-check memory-wipe test test-integration lint evals \
-        demo-record demo-serve demo-live
+        demo-record demo-serve demo-live profile live-config
 
 help: ## Show this list
 	@awk 'BEGIN {FS = ":.*## "} /^## / {printf "\n\033[1m%s\033[0m\n", substr($$0, 4)} /^[a-z-]+:.*## / {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -45,6 +45,8 @@ energy-test: ## Energy: data checks against Trino (no LLM)
 	uv run python scripts/check_energy_data.py
 
 ## Semantic layer
+profile: ## One-time: install WrenAI's connection profile for the local Trino
+	uv run wren profile add agent-analytics-trino --from-file wren/profile.yml --activate
 mdl: ## Compile the Wren model (MDL)
 	cd wren && uv run wren context build
 memory: ## Index the model and example queries for retrieval
@@ -83,5 +85,8 @@ demo-record: ## Re-record the demo questions, map and data catalog (costs Bedroc
 demo-serve: ## Serve the UI at http://localhost:8765
 	@echo "http://localhost:8765"
 	cd ui && python3 -m http.server 8765
-demo-live: ## Live questions from this laptop via a Cloudflare quick tunnel
+demo-live: ## Test live questions on this laptop (no tunnel, no bot check)
 	uv run python scripts/demo_live.py
+live-config: ## After `terraform apply`: point the site at the wake Lambda (ui/live-config.json)
+	@url=$$(cd terraform && terraform output -raw live_control_url) && \
+	  printf '{"control_url": "%s"}\n' "$$url" > ui/live-config.json && cat ui/live-config.json

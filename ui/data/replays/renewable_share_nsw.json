@@ -1,8 +1,8 @@
 {
  "id": "renewable_share_nsw",
- "label": "Renewable share, NSW",
+ "topic": "renewables",
  "question": "What share of NSW generation was renewable over the last 30 days?",
- "recorded_at": "2026-10-19T05:12:51Z",
+ "recorded_at": "2026-10-19T21:39:56Z",
  "data_window": {
   "first_day": "2026-07-21 00:00:00.000000",
   "last_day": "2026-10-18 00:00:00.000000"
@@ -18,25 +18,25 @@
   },
   {
    "type": "usage",
-   "t": 1.803,
+   "t": 1.411,
    "turns": 1,
    "tokens": 0
   },
   {
    "type": "reasoning",
-   "t": 1.803,
+   "t": 1.411,
    "text": "I'll help you find the renewable share of NSW generation over the last 30 days. Let me start by checking the business rules and then query the data."
   },
   {
    "type": "step_start",
-   "t": 1.805,
+   "t": 1.412,
    "step": 1,
    "tool": "get_instructions",
    "input": {}
   },
   {
    "type": "step_start",
-   "t": 1.806,
+   "t": 1.412,
    "step": 2,
    "tool": "describe_cube",
    "input": {
@@ -45,36 +45,36 @@
   },
   {
    "type": "step_end",
-   "t": 1.826,
+   "t": 1.432,
    "step": 1,
    "tool": "get_instructions",
    "status": "success",
    "path": "context",
-   "duration_ms": 21
+   "duration_ms": 20
   },
   {
    "type": "step_end",
-   "t": 1.826,
+   "t": 1.433,
    "step": 2,
    "tool": "describe_cube",
    "status": "success",
    "path": "context",
-   "duration_ms": 21
+   "duration_ms": 20
   },
   {
    "type": "usage",
-   "t": 5.632,
+   "t": 3.237,
    "turns": 2,
-   "tokens": 5120
+   "tokens": 5187
   },
   {
    "type": "reasoning",
-   "t": 5.632,
-   "text": "Perfect! I have the renewable_share cube which is exactly what I need. Now I'll query it for NSW1 (NSW region) over the last 30 days, filtering to get the aggregate share across the entire period."
+   "t": 3.237,
+   "text": "Perfect! I have the renewable_share cube available. Now I'll query it for NSW1 (NSW region) over the last 30 days, filtering to aggregate the entire window into a single renewable share percentage."
   },
   {
    "type": "step_start",
-   "t": 5.633,
+   "t": 3.238,
    "step": 3,
    "tool": "query_cube",
    "input": {
@@ -93,12 +93,12 @@
   },
   {
    "type": "step_end",
-   "t": 5.948,
+   "t": 3.641,
    "step": 3,
    "tool": "query_cube",
    "status": "success",
    "path": "cube",
-   "duration_ms": 279,
+   "duration_ms": 366,
    "row_count": 1,
    "columns": [
     "network_region",
@@ -109,16 +109,16 @@
   },
   {
    "type": "usage",
-   "t": 7.647,
+   "t": 5.022,
    "turns": 3,
-   "tokens": 11997
+   "tokens": 12260
   },
   {
    "type": "answer",
-   "t": 7.746,
-   "text": "**Answer: 46.3% of NSW generation was renewable over the last 30 days.**\n\n**Tool used:** `query_cube` on the `renewable_share` cube, filtering for `network_region = NSW1` and `day >= -30d`, measuring `renewable_share_pct`.\n\nThis figure represents the ratio of renewable energy (wind, solar, hydro, bioenergy) to total generation across NSW1 over the 30-day window, aggregated as a single share percentage.",
+   "t": 5.132,
+   "text": "**Over the last 30 days, renewable generation accounted for 46.3% of NSW1 generation.**\n\n**Tool used:** `query_cube` on the `renewable_share` cube, filtering to NSW1 region over the last 30 days (day:gte:-30d). The cube's `renewable_share_pct` measure aggregates renewable energy (wind, solar, hydro, bioenergy) as a percentage of total generation across the entire window.",
    "turns": 3,
-   "tokens": 19088,
+   "tokens": 19541,
    "over_budget": false,
    "path": "cube"
   }

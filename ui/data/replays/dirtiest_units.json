@@ -1,0 +1,393 @@
+{
+ "id": "dirtiest_units",
+ "topic": "emissions",
+ "question": "Which operating generating units have the highest emissions factor?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Which operating generating units have the highest emissions factor?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.352,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.352,
+   "text": "I'll help you find the operating generating units with the highest emissions factor. Let me start by checking the business rules and exploring the schema."
+  },
+  {
+   "type": "step_start",
+   "t": 1.353,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.354,
+   "step": 2,
+   "tool": "describe_schema",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.4,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 47
+  },
+  {
+   "type": "step_end",
+   "t": 1.4,
+   "step": 2,
+   "tool": "describe_schema",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 46
+  },
+  {
+   "type": "usage",
+   "t": 4.021,
+   "turns": 2,
+   "tokens": 5158
+  },
+  {
+   "type": "reasoning",
+   "t": 4.021,
+   "text": "Good! I can see the schema. The question asks for operating generating units with the highest emissions factor. I need to query the `facilities` table, filter for `status = 'operating'`, and rank by `emissions_factor_tco2e_mwh`. Let me construct and validate the SQL:"
+  },
+  {
+   "type": "step_start",
+   "t": 4.022,
+   "step": 3,
+   "tool": "dry_run",
+   "input": {
+    "sql": "\nSELECT \n  unit_code,\n  facility_name,\n  facility_code,\n  network_region,\n  fueltech,\n  capacity_registered_mw,\n  emissions_factor_tco2e_mwh\nFROM facilities\nWHERE status = 'operating' AND emissions_factor_tco2e_mwh IS NOT NULL\nORDER BY emissions_factor_tco2e_mwh DESC\nLIMIT 20\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 4.155,
+   "step": 3,
+   "tool": "dry_run",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 125,
+   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".unit_code AS unit_code, \"wren_src_facilities\".facility_name AS facility_name, \"wren_src_facilities\".facility_code AS facility_code, \"wren_src_facilities\".network_region AS network_region, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".emissions_factor_tco2e_mwh AS emissions_factor_tco2e_mwh, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.emissions_factor_tco2e_mwh, facilities.facility_code, facilities.facility_name, facilities.fueltech, facilities.network_region, facilities.\"status\", facilities.unit_code FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.emissions_factor_tco2e_mwh AS emissions_factor_tco2e_mwh, __source.facility_code AS facility_code, __source.facility_name AS facility_name, __source.fueltech AS fueltech, __source.network_region AS network_region, __source.\"status\" AS \"status\", __source.unit_code AS unit_code FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\") SELECT unit_code, facility_name, facility_code, network_region, fueltech, capacity_registered_mw, emissions_factor_tco2e_mwh FROM facilities WHERE status = 'operating' AND NOT emissions_factor_tco2e_mwh IS NULL ORDER BY emissions_factor_tco2e_mwh DESC LIMIT 20"
+  },
+  {
+   "type": "usage",
+   "t": 5.44,
+   "turns": 3,
+   "tokens": 15985
+  },
+  {
+   "type": "reasoning",
+   "t": 5.44,
+   "text": "Great! Now let me run the query:"
+  },
+  {
+   "type": "step_start",
+   "t": 5.441,
+   "step": 4,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  unit_code,\n  facility_name,\n  facility_code,\n  network_region,\n  fueltech,\n  capacity_registered_mw,\n  emissions_factor_tco2e_mwh\nFROM facilities\nWHERE status = 'operating' AND emissions_factor_tco2e_mwh IS NOT NULL\nORDER BY emissions_factor_tco2e_mwh DESC\nLIMIT 20\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 5.685,
+   "step": 4,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 237,
+   "row_count": 20,
+   "columns": [
+    "unit_code",
+    "facility_name",
+    "facility_code",
+    "network_region",
+    "fueltech",
+    "capacity_registered_mw",
+    "emissions_factor_tco2e_mwh"
+   ],
+   "truncated": false,
+   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".unit_code AS unit_code, \"wren_src_facilities\".facility_name AS facility_name, \"wren_src_facilities\".facility_code AS facility_code, \"wren_src_facilities\".network_region AS network_region, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".emissions_factor_tco2e_mwh AS emissions_factor_tco2e_mwh, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.emissions_factor_tco2e_mwh, facilities.facility_code, facilities.facility_name, facilities.fueltech, facilities.network_region, facilities.\"status\", facilities.unit_code FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.emissions_factor_tco2e_mwh AS emissions_factor_tco2e_mwh, __source.facility_code AS facility_code, __source.facility_name AS facility_name, __source.fueltech AS fueltech, __source.network_region AS network_region, __source.\"status\" AS \"status\", __source.unit_code AS unit_code FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\") SELECT unit_code, facility_name, facility_code, network_region, fueltech, capacity_registered_mw, emissions_factor_tco2e_mwh FROM facilities WHERE status = 'operating' AND NOT emissions_factor_tco2e_mwh IS NULL ORDER BY emissions_factor_tco2e_mwh DESC LIMIT 20"
+  },
+  {
+   "type": "usage",
+   "t": 7.366,
+   "turns": 4,
+   "tokens": 26998
+  },
+  {
+   "type": "reasoning",
+   "t": 7.366,
+   "text": "Now let me create a chart to visualize the top units by emissions factor:"
+  },
+  {
+   "type": "step_start",
+   "t": 7.367,
+   "step": 5,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Top 20 Operating Generating Units by Emissions Factor (tCO2e/MWh)",
+    "x": "unit_code",
+    "y": [
+     "emissions_factor_tco2e_mwh"
+    ],
+    "series": "fueltech"
+   }
+  },
+  {
+   "type": "chart",
+   "t": 7.367,
+   "step": 4,
+   "spec": {
+    "kind": "bar",
+    "title": "Top 20 Operating Generating Units by Emissions Factor (tCO2e/MWh)",
+    "x": "unit_code",
+    "y": [
+     "emissions_factor_tco2e_mwh"
+    ],
+    "series": "fueltech",
+    "map": {
+     "key": "facility_code",
+     "metric": "emissions_factor_tco2e_mwh"
+    }
+   },
+   "columns": [
+    "unit_code",
+    "facility_name",
+    "facility_code",
+    "network_region",
+    "fueltech",
+    "capacity_registered_mw",
+    "emissions_factor_tco2e_mwh"
+   ],
+   "rows": [
+    {
+     "unit_code": "PTSTAN1",
+     "facility_name": "Port Stanvac",
+     "facility_code": "STANVAC",
+     "network_region": "SA1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 57.6,
+     "emissions_factor_tco2e_mwh": 1.4918
+    },
+    {
+     "unit_code": "POR03",
+     "facility_name": "Port Lincoln",
+     "facility_code": "PORTLCN",
+     "network_region": "SA1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 23.5,
+     "emissions_factor_tco2e_mwh": 1.3888
+    },
+    {
+     "unit_code": "YWPS2",
+     "facility_name": "Yallourn W",
+     "facility_code": "YALLOURN",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 360.0,
+     "emissions_factor_tco2e_mwh": 1.35
+    },
+    {
+     "unit_code": "YWPS4",
+     "facility_name": "Yallourn W",
+     "facility_code": "YALLOURN",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 380.0,
+     "emissions_factor_tco2e_mwh": 1.35
+    },
+    {
+     "unit_code": "YWPS1",
+     "facility_name": "Yallourn W",
+     "facility_code": "YALLOURN",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 360.0,
+     "emissions_factor_tco2e_mwh": 1.35
+    },
+    {
+     "unit_code": "YWPS3",
+     "facility_name": "Yallourn W",
+     "facility_code": "YALLOURN",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 380.0,
+     "emissions_factor_tco2e_mwh": 1.35
+    },
+    {
+     "unit_code": "BARCALDN",
+     "facility_name": "Barcaldine",
+     "facility_code": "BARCALDN",
+     "network_region": "QLD1",
+     "fueltech": "gas_ccgt",
+     "capacity_registered_mw": 37.0,
+     "emissions_factor_tco2e_mwh": 1.2153
+    },
+    {
+     "unit_code": "LYA3",
+     "facility_name": "Loy Yang A",
+     "facility_code": "LOYYANGA",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 560.0,
+     "emissions_factor_tco2e_mwh": 1.18
+    },
+    {
+     "unit_code": "LYA1",
+     "facility_name": "Loy Yang A",
+     "facility_code": "LOYYANGA",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 560.0,
+     "emissions_factor_tco2e_mwh": 1.18
+    },
+    {
+     "unit_code": "LYA2",
+     "facility_name": "Loy Yang A",
+     "facility_code": "LOYYANGA",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 530.0,
+     "emissions_factor_tco2e_mwh": 1.18
+    },
+    {
+     "unit_code": "LYA4",
+     "facility_name": "Loy Yang A",
+     "facility_code": "LOYYANGA",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 560.0,
+     "emissions_factor_tco2e_mwh": 1.18
+    },
+    {
+     "unit_code": "LOYYB2",
+     "facility_name": "Loy Yang B",
+     "facility_code": "LOYYB",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 500.0,
+     "emissions_factor_tco2e_mwh": 1.1223
+    },
+    {
+     "unit_code": "LOYYB1",
+     "facility_name": "Loy Yang B",
+     "facility_code": "LOYYB",
+     "network_region": "VIC1",
+     "fueltech": "coal_brown",
+     "capacity_registered_mw": 500.0,
+     "emissions_factor_tco2e_mwh": 1.1223
+    },
+    {
+     "unit_code": "SNUGNL1",
+     "facility_name": "Snuggery",
+     "facility_code": "SNUG",
+     "network_region": "SA1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 21.0,
+     "emissions_factor_tco2e_mwh": 1.066
+    },
+    {
+     "unit_code": "SNUG1",
+     "facility_name": "Snuggery",
+     "facility_code": "SNUG",
+     "network_region": "SA1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 63.0,
+     "emissions_factor_tco2e_mwh": 1.066
+    },
+    {
+     "unit_code": "MSTUART2",
+     "facility_name": "Mt Stuart",
+     "facility_code": "MSTUART",
+     "network_region": "QLD1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 144.0,
+     "emissions_factor_tco2e_mwh": 1.0498
+    },
+    {
+     "unit_code": "MSTUART1",
+     "facility_name": "Mt Stuart",
+     "facility_code": "MSTUART",
+     "network_region": "QLD1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 144.0,
+     "emissions_factor_tco2e_mwh": 1.0498
+    },
+    {
+     "unit_code": "MSTUART3",
+     "facility_name": "Mt Stuart",
+     "facility_code": "MSTUART",
+     "network_region": "QLD1",
+     "fueltech": "distillate",
+     "capacity_registered_mw": 131.0,
+     "emissions_factor_tco2e_mwh": 1.0498
+    },
+    {
+     "unit_code": "VP6",
+     "facility_name": "Vales Point B",
+     "facility_code": "VP",
+     "network_region": "NSW1",
+     "fueltech": "coal_black",
+     "capacity_registered_mw": 660.0,
+     "emissions_factor_tco2e_mwh": 0.9877
+    },
+    {
+     "unit_code": "VP5",
+     "facility_name": "Vales Point B",
+     "facility_code": "VP",
+     "network_region": "NSW1",
+     "fueltech": "coal_black",
+     "capacity_registered_mw": 660.0,
+     "emissions_factor_tco2e_mwh": 0.9877
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 7.367,
+   "step": 5,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 11.812,
+   "turns": 5,
+   "tokens": 40398
+  },
+  {
+   "type": "answer",
+   "t": 11.924,
+   "text": "## Answer\n\nThe **operating generating units with the highest emissions factors** are:\n\n**Top 5:**\n1. **PTSTAN1** (Port Stanvac, SA1) \u2014 **1.49 tCO2e/MWh** \u2014 Distillate, 57.6 MW\n2. **POR03** (Port Lincoln, SA1) \u2014 **1.39 tCO2e/MWh** \u2014 Distillate, 23.5 MW\n3. **YWPS2, YWPS4, YWPS1, YWPS3** (Yallourn W, VIC1) \u2014 **1.35 tCO2e/MWh** \u2014 Brown coal, 360\u2013380 MW each\n\n**Key findings:**\n- **Distillate units** (Port Stanvac, Port Lincoln, Mt Stuart, Snuggery) dominate the top ranks with emissions factors of 1.05\u20131.49 tCO2e/MWh.\n- **Brown coal units** (Yallourn W, Loy Yang A/B) follow with 1.12\u20131.35 tCO2e/MWh.\n- **Black coal** (Vales Point B) is lower at ~0.99 tCO2e/MWh.\n- **Gas** (Barcaldine CCGT) is lower still at 1.22 tCO2e/MWh.\n\n**Tool used:** `run_sql` with a query filtering `facilities` for `status = 'operating'` and non-null `emissions_factor_tco2e_mwh`, ranked descending. The chart shows the top 20 units coloured by fuel technology.",
+   "turns": 5,
+   "tokens": 54260,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}

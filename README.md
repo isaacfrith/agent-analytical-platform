@@ -20,7 +20,7 @@ The platform holds two sets of data:
 - [Setup](#setup): running the whole platform yourself
 - [Asking questions from the terminal](#asking-questions-from-the-terminal)
 - [Updating and publishing the demo](#updating-and-publishing-the-demo)
-- [Letting others ask live questions](#letting-others-ask-live-questions)
+- [Live questions: hosted and local](#live-questions-hosted-and-local)
 - [How it works](#how-it-works) · [The data](#the-data) · [Quality checks](#quality-checks) · [Project layout](#project-layout) · [Limitations](#scope-and-limitations)
 
 ## Using the demo
@@ -29,7 +29,7 @@ Open the [live demo](https://isaacfrith.github.io/agent-analytical-platform/). I
 
 ### The "Ask" tab
 
-1. **Click a question** at the top, for example *Renewable share, NSW*. It replays a real recorded run of the agent. Replays are free and identical every time.
+1. **Click a suggested question** in the middle panel. Three suggestions rotate there while you look, drawn from 24 recorded questions (one tagged *Beyond the data* shows the agent refusing). Each replays a real recorded run of the agent: free, instant and identical every time. After an answer, **Ask next** offers related questions.
 2. **Read the three panels from left to right:**
 
    | Panel | What it shows |
@@ -64,7 +64,7 @@ Use this tab to find out what you can ask.
 
 ### Asking your own questions
 
-The question box at the top only works when the owner is running live mode and has given you a **share link** and a **passcode** (see [Letting others ask live questions](#letting-others-ask-live-questions)). Open the share link, type a question, and enter the passcode when asked. You'll watch the agent work in real time. Without a share link, the box says "Live mode offline".
+The box at the bottom of the middle panel runs the real agent on your own question. The server behind it **sleeps when nobody's asking**: if it's asleep, click **Start live questions** and wait about two minutes while it starts the whole lakehouse, then ask. Each visitor gets **2 live questions a day**, after an invisible bot check, and there's a cap on the total per day. When live questions aren't available the box says why; the suggested questions always work.
 
 ## Choose your path
 
@@ -74,7 +74,7 @@ The question box at the top only works when the owner is running live mode and h
 | **Run the demo site on my machine** | This repo and Python 3 | `make demo-serve`, then open http://localhost:8765 |
 | **Ask the agent my own questions** | The full [setup](#setup) | `make ask q="…"` |
 | **Re-record the demo with fresh data** | The full setup | [Updating and publishing the demo](#updating-and-publishing-the-demo) |
-| **Let other people ask live questions** | The full setup, plus `cloudflared` | [Letting others ask live questions](#letting-others-ask-live-questions) |
+| **Run the always-on live server** | The full setup, admin AWS credentials | [Live questions: hosted and local](#live-questions-hosted-and-local) |
 
 The recordings and the data catalog are committed in `ui/data/`, so the first two need no AWS, no Docker and no keys.
 
@@ -98,6 +98,7 @@ make up                           # starts Postgres, Lakekeeper, Trino and Valke
 make bootstrap                    # one-time: creates the data warehouse on S3
 make energy-data                  # loads 90 days of energy data
 make data pipeline                # loads the ecommerce data
+make profile                      # one-time: tells WrenAI how to reach the local Trino
 make mdl memory                   # builds the semantic layer and its search index
 make mdl-test energy-test         # checks it all works (no AI involved)
 ```
@@ -153,40 +154,60 @@ make refresh rule="Refunds by status always use return_status from returned_orde
 The demo site is plain files in [`ui/`](ui). GitHub Pages republishes it automatically about a minute after every push to `main` that changes `ui/`.
 
 1. **Refresh the data** (optional, since the energy data is a rolling 90 days): `make energy-data`
-2. **Re-record the demo:** `make demo-record`. This re-runs the seven demo questions through the real agent, which takes a few minutes and costs about seven questions' worth of tokens. It also rebuilds the map data and the "What's in the data" catalog. Each recording shows a "Recorded on…" date in the UI.
+2. **Re-record the demo:** `make demo-record`. This re-runs all 24 suggested questions through the real agent (about 15 minutes; roughly a million tokens, about a dollar on Haiku 4.5) and checks each one still gets the expected kind of answer: a question marked `refused` must be refused, every other one must be answered. It also rebuilds the map data and the "What's in the data" catalog. Each recording shows a "Recorded on…" date in the UI.
    - Only some questions: `uv run python scripts/demo_record.py --only price_by_region,wa_vs_nem`
    - Only the data tab (free, no AI): `uv run python scripts/demo_record.py --catalog-only`
 3. **Check it locally:** `make demo-serve`, then open http://localhost:8765. Always use this: opening `ui/index.html` straight from disk won't work, because browsers block it from loading its data files.
 4. **Publish:** commit `ui/data/` and push to `main`.
 
-To change which questions the demo offers, edit `CHIPS` in [`scripts/demo_record.py`](scripts/demo_record.py). To change the topics, example questions and limits on the data tab, edit [`demos/energy-topics.yml`](demos/energy-topics.yml). Recording fails if that file names a table, column or metric that doesn't exist.
+To change the suggested questions, edit [`demos/energy-questions.yml`](demos/energy-questions.yml): each has an id, a topic and an expected outcome, and they also become the example questions on the data tab. To change the topics and limits on the data tab, edit [`demos/energy-topics.yml`](demos/energy-topics.yml). Recording fails if either file names something that doesn't exist.
 
-## Letting others ask live questions
+## Live questions: hosted and local
 
-Live mode lets people type their own questions on the public site. The agent runs **on your laptop**, so it only works while you have it running.
+### How the hosted server works
 
-**One-time setup:**
+The website is static (GitHub Pages) and can't run the agent, so live questions run on **one AWS server that starts on demand**: the same Docker stack as your laptop (Trino, Iceberg, Lakekeeper, Postgres, Valkey) plus WrenAI and the agent, in Sydney next to the S3 data.
 
-1. Install the tunnel tool: `brew install cloudflared`
-2. Pick a passcode and add it to `.env`: `DEMO_PASSCODE=something-long`
+- A visitor clicks **Start live questions**. After a bot check, a small Lambda function starts the server. On every start the server pulls the latest `main`, starts the stack, and opens an outbound Cloudflare tunnel; the website connects through it once the agent answers.
+- The server **stops itself** after 20 minutes without a question, and runs at most 3 hours a day.
+- Its data lives under `hosted/` in the bucket, apart from your laptop's, and refreshes itself when it's more than 3 days old.
 
-**Each time you want to share it:**
+**Limits** (all enforced server-side): 2 live questions per visitor per day, 20 a day in total, one at a time, 6 wakes a day, 3 hours of running a day. **Backstop:** an AWS budget of $20 a month for the whole account emails you at 50% and 80%, and at 100% stops the server and blocks the wake function. **Typical cost:** a few dollars a month (the server runs only when used, plus about $3 a month of disk).
 
-1. Make sure the local services are running: `make up`
-2. Start live mode: `make demo-live`
-3. It prints a **share link**. Send it, along with the passcode, to the people you want to try it:
+**Security:** no inbound ports and no SSH (Session Manager for emergencies); no stored AWS keys (an IAM role limited to the `hosted/` prefix, the one Bedrock model and its own settings); secrets in SSM Parameter Store, never in the repo or Terraform state; the agent is read-only.
+
+### Deploy it (once)
+
+You need admin AWS credentials for Terraform (the app user can't create these resources), a free Cloudflare Turnstile widget for your site's domain, and your Open Electricity key.
+
+1. **Create the resources:** `make infra-init infra-plan`, check the plan (28 to add: the server, its role and firewall, the wake Lambda, the budget and its actions, the settings; 1 to change: the vending role now also trusts the server), then `make infra-apply`.
+2. **Set the two secrets** straight away (Terraform prints these commands as `live_set_secrets`):
+   ```bash
+   aws ssm put-parameter --region ap-southeast-2 --overwrite --type SecureString --name /agent-analytics/live/turnstile-secret --value 'YOUR_TURNSTILE_SECRET'
+   aws ssm put-parameter --region ap-southeast-2 --overwrite --type SecureString --name /agent-analytics/live/openelectricity-key --value 'YOUR_OPENELECTRICITY_KEY'
    ```
-   Share link (with the passcode):
-     https://isaacfrith.github.io/agent-analytical-platform/?live=https%3A%2F%2Frandom-words.trycloudflare.com
-   ```
-4. Press **Ctrl-C** to stop. The question box then shows "Live mode offline".
+3. **Point the site at it:** `make live-config`, then commit `ui/live-config.json` and push. The first boot installs everything and loads the data (about 15 minutes); after that, starts take about 2 minutes.
 
-**Things to know:**
+### Run it
 
-- **The link changes every time** you run `make demo-live`, so send a fresh one each session. Only people with the current link can reach your laptop.
-- **Spending is capped:** 30 live questions a day in total, across everyone. Change it with `DEMO_DAILY_CAP` in `.env`. Only one question runs at a time.
-- **Every question costs tokens** on your AWS account (a few cents each on Haiku 4.5).
-- **Testing on your own machine without a tunnel:** run `uv run python scripts/demo_live.py --local` and `make demo-serve`, then open the local link it prints.
+| I want to… | Do this |
+| --- | --- |
+| Turn live questions off now | `aws ssm put-parameter --region ap-southeast-2 --overwrite --type String --name /agent-analytics/live/switch --value off` (`on` to undo) |
+| See what the server is doing | AWS console → Systems Manager → Session Manager → connect, then `journalctl -u live -f` |
+| Recover after the budget action fired | Check the spend, then AWS console → Budgets → `agent-analytics-monthly` → Actions → reverse both |
+| Remove it all | `make infra-destroy` (also deletes the bucket) |
+
+### Test live questions on your laptop
+
+Run the live API locally and point the local site at it. Local mode skips the bot check; the limits still apply (counted in your local Valkey).
+
+```bash
+make up            # the local services
+make demo-live     # terminal 1: the live API; it prints a link
+make demo-serve    # terminal 2: the website
+```
+
+Open the link `make demo-live` prints (`http://localhost:8765/?live=…`). Every question costs tokens on your AWS account (a few cents each on Haiku 4.5). Settings live in `.env` (see `.env.example`): `DEMO_DAILY_CAP`, `DEMO_PER_VISITOR_CAP`, and `DEMO_ENABLED=false` to switch live questions off.
 
 There's also a presenter script for demoing from the terminal: [`demos/energy.md`](demos/energy.md).
 
@@ -242,21 +263,22 @@ The eval cases live in [`evaluations/golden_suite.json`](evaluations/golden_suit
 ```
 src/
   agent/          the agent: orchestrator, cube tool, trace events for the UI, memory tools
-  api/            live mode for the demo (passcode, daily cap, streaming)
+  api/            live questions for the demo (bot check, limits, streaming)
   demo/           builds the demo's data catalog from the semantic layer
   memory/         saved user definitions (Mem0 over Valkey)
   config.py       settings from the environment
   repo_config.py  repo paths and helpers shared by the scripts
 scripts/          command-line entry points: ask, load data, checks, record and serve the demo
+  hosted/         the live server's boot sequence and idle/runtime watchdog
 prompts/          the agent's instructions: shared rules plus one file per dataset
 wren/             the semantic layer: tables, views, metrics, joins, rules, example queries
 ui/               the demo website (data/ holds the recordings and the catalog)
 evaluations/      the eval questions and the harness that grades them
 tests/            unit tests
-demos/            the terminal presenter script and the demo's topic list
+demos/            the demo's suggested questions and topics, and a terminal presenter script
 docs/             diagrams, screenshots and the demo's design notes
 docker/           the local services
-terraform/        the AWS resources
+terraform/        the AWS resources: bucket and IAM; the live server, wake Lambda and budget
 ```
 
 ## Scope and limitations

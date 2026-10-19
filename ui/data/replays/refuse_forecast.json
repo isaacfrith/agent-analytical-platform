@@ -1,0 +1,80 @@
+{
+ "id": "refuse_forecast",
+ "topic": "limits",
+ "question": "What will the spot price be in Victoria next week?",
+ "recorded_at": "2026-10-19T21:33:12Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "What will the spot price be in Victoria next week?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.533,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.533,
+   "text": "I'll help you find information about Victoria's spot price, but I need to clarify what data is available."
+  },
+  {
+   "type": "step_start",
+   "t": 1.534,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.535,
+   "step": 2,
+   "tool": "describe_cube",
+   "input": {
+    "name": "daily_price"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 1.554,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 20
+  },
+  {
+   "type": "step_end",
+   "t": 1.555,
+   "step": 2,
+   "tool": "describe_cube",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 20
+  },
+  {
+   "type": "usage",
+   "t": 4.771,
+   "turns": 2,
+   "tokens": 5173
+  },
+  {
+   "type": "answer",
+   "t": 4.853,
+   "text": "I cannot predict future spot prices. The `daily_price` cube contains **historical data only** \u2014 it covers a 90-day rolling window ending yesterday. The data is market-local calendar days (NEM +10 hours, WEM +08 hours) and includes actual spot prices that have already occurred.\n\n**What I can do instead:**\n- Show you **recent spot price trends** in Victoria (VIC1) over the past week, month, or 90 days\n- Compare Victoria's prices to other NEM regions\n- Show you historical patterns (e.g., average prices by day of week, or recent highs/lows)\n\n**Would you like me to:**\n1. Show Victoria's spot prices for the **past week** (actual data)?\n2. Show a **longer trend** (past 30 or 90 days) to help you understand recent patterns?\n3. Compare Victoria to other NEM regions?\n\nLet me know which would be most useful, and I'll pull the data for you.",
+   "turns": 2,
+   "tokens": 12166,
+   "over_budget": false,
+   "path": "refused"
+  }
+ ]
+}

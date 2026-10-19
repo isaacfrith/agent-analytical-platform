@@ -1,6 +1,6 @@
 // Australian Energy Analyst — one page, two event sources.
 // Replay: a recorded event stream from data/replays/<id>.json, played back on its clock.
-// Live:   the same events streamed from the backend (?live=<url>), passcode-gated.
+// Live:   the same events streamed from the backend (?live=<url>).
 // Every renderer consumes the same event shapes (see src/agent/trace.py).
 
 // ---------------------------------------------------------------------------
@@ -9,6 +9,8 @@
 function resetRun(question, meta = {}) {
   state.runToken += 1;
   state.skip = false;
+  state.current = meta.id ? state.questions.find((q) => q.id === meta.id) || null : null;
+  suggest.clear();
   $("timeline").replaceChildren();
   $("charts").replaceChildren();
   $("answer-text").replaceChildren(el("p", { class: "thinking", text: "The agent is working…" }));
@@ -92,11 +94,13 @@ function handleEvent(ev) {
       badge.hidden = false;
       $("answer-text").innerHTML = DOMPurify.sanitize(marked.parse(ev.text || ""));
       $("skip").hidden = true;
+      suggest.showNext(state.current);
       break;
     }
     case "error":
       $("answer-text").replaceChildren(el("p", { class: "step-error", text: `The run failed: ${ev.message}` }));
       $("skip").hidden = true;
+      suggest.showNext(state.current);
       break;
   }
 }
@@ -128,31 +132,32 @@ function describeInput(tool, input) {
 
 function showIntro() {
   const badge = (kind, text) => el("span", { class: `badge b-${kind}`, text });
+  $("answer-question").textContent = "Ask about Australia's electricity";
   $("answer-text").replaceChildren(
-    el("p", { text: "Ask a question about Australia's two main electricity markets: the east-coast NEM and Western Australia's WEM. The agent can't see raw tables. It works through a governed semantic layer (WrenAI) that defines what \"renewable\", \"price\" and \"capacity\" mean, and it compiles the SQL." }),
-    el("p", { text: "Pick a demo question above to replay a real run. On the left, watch each step it took:" }),
-    el("ul", {},
-      el("li", {}, badge("cube", PATH_LABEL.cube), " a governed metric answered the question"),
-      el("li", {}, badge("sql", PATH_LABEL.sql), " no metric fit, so it wrote SQL against governed models"),
-      el("li", {}, badge("refused", PATH_LABEL.refused), " the data can't answer it, and it says so instead of guessing")),
-    el("p", { text: "Charts are drawn only from rows the semantic layer returned. The agent picks the columns but never types the numbers." }),
-    el("p", {}, el("button", { type: "button", class: "link", onclick: () => showTab("data") }, "Not sure what to ask? See what's in the data →")));
+    el("p", { text: "Real data for the east-coast NEM and Western Australia's WEM. The agent can't see raw tables: it asks a governed semantic layer, which defines what \"renewable\", \"price\" and \"capacity\" mean and compiles the SQL. Every number comes from a real query." }),
+    el("p", { class: "legend-line" },
+      badge("cube", PATH_LABEL.cube), " governed metric ",
+      badge("sql", PATH_LABEL.sql), " SQL on approved tables ",
+      badge("refused", PATH_LABEL.refused), " won't guess"),
+    el("p", {}, el("button", { type: "button", class: "link", onclick: () => showTab("data") }, "See what's in the data →")));
+  suggest.showStart();
 }
 
 // ---------------------------------------------------------------------------
 // Replay
 
-async function playReplay(chip) {
-  document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.id === chip.id)));
+async function playReplay(q) {
+  suggest.seen.add(q.id);
+  $("answer-scroll").scrollTop = 0;
   let replay;
   try {
-    replay = await fetch(`data/replays/${chip.id}.json`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+    replay = await fetch(`data/replays/${q.id}.json`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
   } catch (e) {
-    resetRun(chip.question);
+    resetRun(q.question, { id: q.id });
     handleEvent({ type: "error", message: `could not load the recording (${e.message})` });
     return;
   }
-  const token = resetRun(replay.question, replay);
+  const token = resetRun(replay.question, { ...replay, id: q.id });
   $("skip").hidden = false;
   let prevT = 0;
   for (const ev of replay.events) {
@@ -168,50 +173,191 @@ async function playReplay(chip) {
 }
 
 // ---------------------------------------------------------------------------
-// Live mode: POST the question, read server-sent events off the response body.
+// Live questions: POST the question, read server-sent events off the response body.
+// The server enforces every limit; the page only reflects them.
 
+const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+// Two ways to find the live API:
+//   ?live=<url>                     a server you run yourself (make demo-live)
+//   live-config.json control_url    the hosted server, woken on demand through
+//                                   the wake/status Lambda (terraform/live_control.tf)
 async function initLive() {
   const live = new URLSearchParams(location.search).get("live");
-  const status = $("live-status");
-  if (!live) {
-    status.textContent = "Demo questions replay recorded runs, so they're free to view. Live questions need a share link.";
+  if (live) {
+    state.live = live.replace(/\/$/, "");
+    await refreshLive();
     return;
   }
-  state.live = live.replace(/\/$/, "");
-  status.textContent = "Checking live mode…";
+  const cfg = await fetch("live-config.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+  if (!cfg.control_url) {
+    setLive(false, "Suggestions replay real recorded runs, free and instant.");
+    return;
+  }
+  state.control = cfg.control_url.replace(/\/$/, "");
+  await checkServer();
+}
+
+const WAKE_POLL_MS = 5000;
+const WAKE_GIVE_UP_MS = 8 * 60 * 1000;
+
+// Ask the wake Lambda where the hosted server is, and offer to wake it if asleep.
+async function checkServer() {
+  let s;
   try {
-    const health = await fetch(`${state.live}/api/health`).then((r) => r.json());
-    $("question").disabled = false;
-    $("ask-btn").disabled = false;
-    $("question").placeholder = "Ask anything about the NEM or WA…";
-    status.textContent = `Live mode on · ${health.remaining} of ${health.daily_cap} live questions left today`;
+    s = await fetch(`${state.control}/status`).then((r) => r.json());
   } catch {
-    status.textContent = "Live mode offline. Try a demo question above.";
+    setLive(false, "Live questions are offline right now. Pick a suggestion.");
+    return null;
+  }
+  if (s.turnstile_site_key && s.turnstile_site_key !== "-") loadBotCheck(s.turnstile_site_key);
+  if (s.ready && s.url) {
+    showWake(false);
+    state.live = s.url.replace(/\/$/, "");
+    await refreshLive(true);
+  } else if (s.state === "running" && /failed|missing/.test(s.stage || "")) {
+    showWake(false);
+    setLive(false, "The live server couldn't start. Try again later; suggestions are free.");
+  } else if (s.state === "pending" || s.state === "running") {
+    showWake(false);
+    setLive(false, `Starting the live server: ${s.stage || "booting"}…`, "Live questions are starting up — about 2 minutes");
+  } else if (!s.enabled) {
+    showWake(false);
+    setLive(false, "Live questions are switched off right now. Pick a suggestion.");
+  } else if (s.can_wake) {
+    showWake(true);
+    setLive(false, "Live questions sleep when nobody's asking. Start them to ask your own (takes about 2 minutes).", "Live questions are asleep — start them below");
+  } else {
+    showWake(false);
+    setLive(false, "Live questions have used today's allowance. Come back tomorrow; suggestions are free.");
+  }
+  return s;
+}
+
+function showWake(on) {
+  $("wake-btn").hidden = !on;
+  $("wake-btn").disabled = false;
+}
+
+async function wakeServer() {
+  $("wake-btn").disabled = true;
+  setLive(false, "Checking you're human…");
+  const turnstile_token = await botToken();
+  let resp;
+  try {
+    resp = await fetch(`${state.control}/wake`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ turnstile_token }),
+    });
+  } catch (e) {
+    showWake(true);
+    setLive(false, `Couldn't reach the live server's switch (${e.message}).`);
+    return;
+  }
+  if (!resp.ok && resp.status !== 202) {
+    const body = await resp.json().catch(() => ({}));
+    showWake(body.code === "bot_check");
+    setLive(false, body.detail || `Couldn't start live questions (HTTP ${resp.status}).`);
+    return;
+  }
+  showWake(false);
+  const started = Date.now();
+  while (Date.now() - started < WAKE_GIVE_UP_MS) {
+    await new Promise((r) => setTimeout(r, WAKE_POLL_MS));
+    const s = await checkServer();
+    if (state.live || !s || s.state === "stopped" || /failed|missing/.test(s.stage || "")) return;
+  }
+  setLive(false, "The live server is taking too long to start. Try again later; suggestions are free.");
+}
+
+// fromCheck: called by checkServer, which just said the server is ready. If the API
+// still doesn't answer, say so and stop, rather than bouncing back to checkServer.
+async function refreshLive(fromCheck = false) {
+  let health;
+  try {
+    health = await fetch(`${state.live}/api/health`).then((r) => r.json());
+  } catch {
+    state.live = state.control ? null : state.live;
+    if (state.control && !fromCheck) {
+      await checkServer(); // the server may have gone to sleep since
+      return;
+    }
+    setLive(false, "Live questions are offline right now. Pick a suggestion.");
+    return;
+  }
+  state.health = health;
+  if (!health.enabled) {
+    setLive(false, "Live questions are switched off right now. Pick a suggestion.");
+  } else if (health.visitor_remaining <= 0) {
+    setLive(false, "You've used today's live questions. Suggestions are always free.", "You've used today's live questions — come back tomorrow");
+  } else {
+    const left = `${health.visitor_remaining} left today`;
+    setLive(true, `Live: your question runs the real agent now (${left}). Suggestions are free.`, `Ask your own question (${left})`);
+    if (health.bot_check && health.turnstile_site_key) loadBotCheck(health.turnstile_site_key);
   }
 }
 
+function setLive(on, status, placeholder) {
+  $("question").disabled = !on;
+  $("ask-btn").disabled = !on;
+  $("question").placeholder = placeholder || "Live questions are unavailable right now — pick a suggestion";
+  $("live-status").textContent = status;
+}
+
+// Cloudflare Turnstile, rendered once and invisibly; it only shows a challenge if unsure.
+function loadBotCheck(siteKey) {
+  if (state.botCheck) return;
+  let resolveReady;
+  const ready = new Promise((resolve) => { resolveReady = resolve; });
+  state.botCheck = { ready, resolveReady };
+  const script = el("script", { src: TURNSTILE_SRC, async: true, defer: true });
+  script.addEventListener("load", () => {
+    state.botCheck.widget = turnstile.render("#bot-check", {
+      sitekey: siteKey,
+      execution: "execute",
+      appearance: "interaction-only",
+      callback: (token) => state.botCheck.onToken?.(token),
+      "error-callback": () => state.botCheck.onToken?.(""),
+    });
+    state.botCheck.resolveReady();
+  });
+  document.head.append(script);
+}
+
+const BOT_CHECK_TIMEOUT_MS = 15000;
+
+// A fresh single-use token, or "" if the check can't run (the server then refuses politely).
+async function botToken() {
+  if (!state.botCheck) return "";
+  const timeout = new Promise((resolve) => setTimeout(() => resolve(""), BOT_CHECK_TIMEOUT_MS));
+  const token = state.botCheck.ready.then(() => new Promise((resolve) => {
+    state.botCheck.onToken = resolve;
+    turnstile.reset(state.botCheck.widget);
+    turnstile.execute(state.botCheck.widget);
+  }));
+  return Promise.race([token, timeout]);
+}
+
 async function askLive(question) {
-  let passcode = sessionStorageGet("passcode");
-  if (!passcode) {
-    passcode = prompt("Passcode for live questions:");
-    if (!passcode) return;
-  }
-  document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", "false"));
+  setLive(false, "Checking you're human…");
+  const turnstile_token = await botToken();
   const token = resetRun(question, { live: true });
-  $("ask-btn").disabled = true;
+  $("question").value = "";
+  $("live-status").textContent = "The agent is working on your question…";
   try {
     const resp = await fetch(`${state.live}/api/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, passcode }),
+      body: JSON.stringify({ question, turnstile_token }),
     });
     if (!resp.ok) {
+      // A refusal from the limits, not a failed run: say so calmly and go back to suggestions.
       const body = await resp.json().catch(() => ({}));
-      if (resp.status === 401) sessionStorageSet("passcode", "");
-      handleEvent({ type: "error", message: body.detail || `HTTP ${resp.status}` });
+      showIntro();
+      $("live-status").textContent = body.detail || `Live questions are unavailable (HTTP ${resp.status}).`;
       return;
     }
-    sessionStorageSet("passcode", passcode);
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
@@ -230,8 +376,7 @@ async function askLive(question) {
   } catch (e) {
     handleEvent({ type: "error", message: `live mode unreachable (${e.message})` });
   } finally {
-    $("ask-btn").disabled = false;
-    initLive();
+    await refreshLive();
   }
 }
 
@@ -242,16 +387,19 @@ async function boot() {
   $("show-reasoning").addEventListener("change", (e) => document.body.classList.toggle("show-reasoning", e.target.checked));
   $("skip").addEventListener("click", () => { state.skip = true; });
   $("map-reset").addEventListener("click", () => mapView.reset());
+  $("wake-btn").addEventListener("click", wakeServer);
   $("ask-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const q = $("question").value.trim();
     if (q && state.live) askLive(q);
   });
 
-  const [overview, states, index] = await Promise.all([
+  const empty = { questions: [], topics: [] };
+  const [overview, states, index, model] = await Promise.all([
     fetch("data/overview.json").then((r) => r.json()),
     fetch("data/australia-states.geojson").then((r) => r.json()),
-    fetch("data/replays/index.json").then((r) => (r.ok ? r.json() : { chips: [] })).catch(() => ({ chips: [] })),
+    fetch("data/replays/index.json").then((r) => (r.ok ? r.json() : empty)).catch(() => empty),
+    fetch("data/model.json").then((r) => (r.ok ? r.json() : empty)).catch(() => empty),
   ]);
   state.overview = overview;
   try {
@@ -260,13 +408,13 @@ async function boot() {
     // The map library comes from a CDN; without it the rest of the page still works.
     $("map").replaceChildren(el("p", { class: "step-error", text: `The map couldn't load (${e.message}). Reload to try again.` }));
   }
-  state.chips = index.chips.filter((c) => c.ok);
-  $("chips").replaceChildren(...state.chips.map((c) =>
-    el("button", { type: "button", class: "chip", role: "listitem", "data-id": c.id, "aria-pressed": "false", title: c.question, onclick: () => playReplay(c) }, c.label)));
+  // Only questions that recorded cleanly are offered.
+  state.questions = (index.questions || index.chips || []).filter((q) => q.ok);
+  state.topicNames = Object.fromEntries((model.topics || []).map((t) => [t.id.replace(/^topic:/, ""), t.name]));
   showIntro();
   initLive();
-  // Deep link: ?play=<chip id> starts that replay.
-  const deep = state.chips.find((c) => c.id === new URLSearchParams(location.search).get("play"));
+  // Deep link: ?play=<question id> starts that replay.
+  const deep = state.questions.find((q) => q.id === new URLSearchParams(location.search).get("play"));
   if (deep) playReplay(deep);
 }
 
