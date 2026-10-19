@@ -23,6 +23,13 @@
   Batteries and pumps STORE energy; they are not generation. Never enumerate
   techs in SQL — join the mapping table or use the renewable_share cube.
 
+## Fuel families (governed)
+- "Coal", "gas", "solar", "wind", "hydro", "battery" mean a fueltech_group
+  from the fueltech_groups mapping, never a hand-picked list of fueltech
+  values: coal = coal_black AND coal_brown (Victoria burns brown coal),
+  gas = five gas techs, solar = utility + rooftop + thermal. Filter
+  `fueltech_group = 'coal'` via the mapping (join on fueltech).
+
 ## Batteries
 - Battery `energy_mwh` goes NEGATIVE when charging. This is correct NEM
   behaviour, not dirty data. Do not filter negatives out.

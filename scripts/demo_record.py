@@ -1,14 +1,15 @@
 """Record the energy demo UI's replays and map overview (Phase 3).
 
 Runs each suggestion chip through the real agent with trace events on,
-and writes one replay file per chip plus an index. Also snapshots the map
-overview (facility dots, 30-day renewable share by region) with plain SQL
-through the semantic layer, with no LLM. Everything lands in ui/data/, which is
+and writes one replay file per chip plus an index. Also snapshots, with
+plain SQL through the semantic layer and no LLM: the map overview (facility
+dots, 30-day renewable share by region) and the data catalog behind the
+"What's in the data" tab (compiled MDL + demos/energy-topics.yml + stats). Everything lands in ui/data/, which is
 committed, so GitHub Pages serves it and re-recordings show up as diffs.
 
 Costs Bedrock tokens: about 7 questions at 25-50k tokens each (~$1).
 
-Usage: uv run python scripts/demo_record.py [--only chip_id,...] [--overview-only]
+Usage: uv run python scripts/demo_record.py [--only chip_id,...] [--overview-only | --catalog-only]
        (or `make demo-record`)
 """
 
@@ -22,9 +23,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+import yaml
+
 from agent.orchestrator import _wren_mcp_tools, answer_question
 from agent.trace import parse_rows
-from repo_config import REPO_ROOT, load_env
+from demo.catalog import (
+    build_catalog,
+    energy_subset,
+    low_cardinality_columns,
+    parse_stats,
+    stats_sql,
+)
+from repo_config import REPO_ROOT, WREN_DIR, load_env
 
 DATA_DIR = REPO_ROOT / "ui" / "data"
 REPLAY_DIR = DATA_DIR / "replays"
@@ -87,6 +97,54 @@ def record_overview(recorded_at: str) -> dict:
     return out
 
 
+TOPICS_FILE = REPO_ROOT / "demos" / "energy-topics.yml"
+
+
+def load_seeds() -> dict[str, dict]:
+    """wren/knowledge/sql/*.md front matter ({nl, sql, ...}) by file stem."""
+    seeds = {}
+    for path in sorted((WREN_DIR / "knowledge" / "sql").glob("*.md")):
+        parts = path.read_text().split("---")
+        if len(parts) >= 3:
+            seeds[path.stem] = yaml.safe_load(parts[1]) or {}
+    return seeds
+
+
+def record_catalog(recorded_at: str) -> dict:
+    """ui/data/model.json: the governed model, its stats, and the curated topics."""
+    with _wren_mcp_tools() as tools:
+        by_name = {t.tool_name: t for t in tools}
+        client = by_name["run_sql"].mcp_client
+
+        def call(name: str, arguments: dict) -> str:
+            result = client.call_tool_sync(tool_use_id=f"catalog-{name}", name=name, arguments=arguments)
+            if result.get("status") != "success":
+                raise RuntimeError(f"{name} failed: {str(result)[:500]}")
+            return "\n".join(b.get("text", "") for b in result.get("content") or [])
+
+        mdl = json.loads(call("get_mdl", {}))
+        stats: dict[str, dict] = {}
+        for model in energy_subset(mdl)["models"]:
+            rows = json.loads(call("run_sql", {"sql": stats_sql(model)}))["rows"]
+            stats[model["name"]] = parse_stats(model, rows[0])
+            for col in low_cardinality_columns(model, stats[model["name"]]):
+                values = json.loads(call("run_sql", {"sql": f"SELECT DISTINCT {col} AS v FROM {model['name']}", "limit": 100}))["rows"]
+                stats[model["name"]]["columns"][col]["values"] = sorted(str(r["v"]) for r in values if r["v"] is not None)
+    catalog = build_catalog(
+        mdl,
+        yaml.safe_load(TOPICS_FILE.read_text()),
+        stats,
+        (WREN_DIR / "knowledge" / "rules" / "energy.md").read_text(),
+        load_seeds(),
+        {question: chip_id for chip_id, _, question in CHIPS},
+        recorded_at,
+    )
+    write_json(DATA_DIR / "model.json", catalog)
+    columns = sum(len(m["columns"]) for m in catalog["models"])
+    print(f"[PASS] catalog: {len(catalog['topics'])} topics, {len(catalog['cubes'])} cubes, {len(catalog['models'])} models, {columns} columns")
+    return catalog
+
+
 def record_chip(chip_id: str, label: str, question: str, recorded_at: str, window: dict | None) -> dict:
     events: list[dict] = []
     status = "ok"
@@ -118,10 +176,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--only", default="", help="comma-separated chip ids to re-record")
     parser.add_argument("--overview-only", action="store_true")
+    parser.add_argument("--catalog-only", action="store_true", help="only the data catalog (no LLM)")
     args = parser.parse_args()
     load_env()
 
     recorded_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    record_catalog(recorded_at)
+    if args.catalog_only:
+        return 0
     overview = record_overview(recorded_at)
     if args.overview_only:
         return 0

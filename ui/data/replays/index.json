@@ -12,9 +12,9 @@
    "id": "price_by_region",
    "label": "Spot price by region",
    "question": "What was the average spot price by region over the last 30 days?",
-   "recorded_at": "2026-10-19T05:12:51Z",
-   "path": null,
-   "ok": false
+   "recorded_at": "2026-10-19T06:51:08Z",
+   "path": "cube",
+   "ok": true
   },
   {
    "id": "price_spike_fuel_mix",
@@ -28,7 +28,7 @@
    "id": "coal_capacity",
    "label": "Coal capacity by state",
    "question": "Show me operating coal capacity by state.",
-   "recorded_at": "2026-10-19T05:08:19Z",
+   "recorded_at": "2026-10-19T06:52:28Z",
    "path": "sql",
    "ok": true
   },
@@ -36,9 +36,9 @@
    "id": "wa_vs_nem",
    "label": "WA vs the east coast",
    "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
-   "recorded_at": "2026-10-19T05:12:51Z",
-   "path": null,
-   "ok": false
+   "recorded_at": "2026-10-19T06:51:08Z",
+   "path": "cube",
+   "ok": true
   },
   {
    "id": "largest_wind_solar",

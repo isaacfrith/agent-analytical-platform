@@ -263,7 +263,7 @@
                 {
                     "asserts": [
                         {
-                            "rubric": "The user asked for operating coal capacity by state. Capacity is registered MW from facilities (never MWh output from generation_daily). PASS only if the answer reports capacity in MW (summing registered capacity, operating status, coal fuel) and does not present energy output as capacity. FAIL on MWh figures presented as capacity or an unqualified silent choice.",
+                            "rubric": "The user asked for operating coal capacity by state. Capacity is registered MW from facilities (never MWh output from generation_daily). PASS only if the answer reports capacity in MW (summing registered capacity, operating status, coal fuel) and does not present energy output as capacity. FAIL on MWh figures presented as capacity or an unqualified silent choice. Coal includes brown coal: Victoria (VIC1) has several thousand MW of operating brown-coal capacity, so FAIL if VIC1 is missing or reported as having no coal.",
                             "type": "judge"
                         }
                     ],

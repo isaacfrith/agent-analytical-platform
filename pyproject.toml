@@ -12,6 +12,7 @@ dependencies = [
     "pyarrow>=26.0.0",
     "pyiceberg[pyarrow,pyiceberg-core,s3fs]>=0.12.0",
     "python-dotenv>=1.2.4",
+    "pyyaml>=6.0",
     "requests>=2.34.2",
     "s3fs>=2026.9.0",
     "spacy>=3.8.16",

@@ -1,0 +1,996 @@
+{
+ "recorded_at": "2026-10-19T06:52:28Z",
+ "limits": [
+  "Daily figures only, no hourly or 5-minute data.",
+  "The last 90 days only, ending yesterday.",
+  "No Northern Territory, which has no public market data.",
+  "WA means the WEM, which covers the south-west only (not the Pilbara or remote WA).",
+  "Output is by region and fuel, not per power station. Stations have capacity only.",
+  "No forecasts, only what already happened."
+ ],
+ "rules_md": "# Energy business rules (NEM + WEM, via Open Electricity)\n\n## Networks and regions\n- Two separate markets, NOT interconnected \u2014 `network` says which:\n  - NEM: five regions NSW1 | QLD1 | SA1 | TAS1 | VIC1 (state-scale zones).\n  - WEM: one region, WEM \u2014 the South West Interconnected System of WA\n    (Perth and the south-west only; not the Pilbara or remote WA).\n- \"The NEM\" means `network = 'NEM'` \u2014 always filter it; never let WEM rows\n  into NEM totals or averages. \"Australia\", \"national\", \"all markets\" means\n  both, reported per network. Northern Territory is not covered.\n- Always qualify which region (and, when both appear, which network) a\n  number belongs to.\n\n## Units\n- Energy MWh (additive \u2014 sum it). Power MW and demand MW are daily-average\n  rates \u2014 average, never sum. Prices AUD/MWh (a rate \u2014 average only, can go\n  negative). NEM and WEM prices come from different market designs: show\n  them side by side, never average across the two networks. Emissions\n  tCO2e (additive). Market value AUD (additive).\n\n## Renewable definition (governed)\n- Renewable = `is_renewable` in fueltech_groups (wind/solar/hydro/bioenergy).\n  Batteries and pumps STORE energy; they are not generation. Never enumerate\n  techs in SQL \u2014 join the mapping table or use the renewable_share cube.\n\n## Fuel families (governed)\n- \"Coal\", \"gas\", \"solar\", \"wind\", \"hydro\", \"battery\" mean a fueltech_group\n  from the fueltech_groups mapping, never a hand-picked list of fueltech\n  values: coal = coal_black AND coal_brown (Victoria burns brown coal),\n  gas = five gas techs, solar = utility + rooftop + thermal. Filter\n  `fueltech_group = 'coal'` via the mapping (join on fueltech).\n\n## Batteries\n- Battery `energy_mwh` goes NEGATIVE when charging. This is correct NEM\n  behaviour, not dirty data. Do not filter negatives out.\n\n## Statuses\n- facilities.status: operating | committed | commissioning | retired.\n  Commissioning units report <=90% of capacity. Capacity questions SUM\n  capacity_registered_mw; output questions belong to generation_daily.\n\n## Grain and window\n- Daily grain, market-local calendar days (NEM AEST +10, WEM AWST +08 \u2014\n  the same date covers different hours), 90-day rolling window ending\n  yesterday. `facilities` is unit grain (site columns carried).\n- No facility-level output table exists yet: capacity-vs-output questions\n  need two queries (capacity from facilities, output from generation_daily).\n\n## Canonical joins\n- generation_daily \u2192 fueltech_groups on fueltech; facilities \u2192\n  fueltech_groups on fueltech; generation_daily \u2192 market_daily on\n  network_region + day.\n",
+ "topics": [
+  {
+   "id": "topic:prices",
+   "name": "Prices & demand",
+   "summary": "Daily wholesale spot prices and electricity demand, per region.",
+   "limits": [
+    "Prices are averaged, never summed. NEM and WA prices come from different market designs, so they are compared side by side, never averaged together."
+   ],
+   "examples": [
+    {
+     "question": "What was the average spot price by region over the last 30 days?",
+     "replay": "price_by_region"
+    },
+    {
+     "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
+     "replay": "price_spike_fuel_mix",
+     "sql": "WITH spike AS (\n  SELECT day, network_region, price_aud_mwh\n  FROM market_daily\n  WHERE day >= CURRENT_DATE - INTERVAL '30' DAY\n  ORDER BY price_aud_mwh DESC\n  LIMIT 1\n)\nSELECT g.fueltech, SUM(g.energy_mwh) AS energy_mwh\nFROM generation_daily AS g\nJOIN spike AS s\n  ON g.network_region = s.network_region AND g.day = s.day\nGROUP BY 1\nORDER BY 2 DESC"
+    },
+    {
+     "question": "Which region had the most demand over the last 7 days?"
+    }
+   ],
+   "path": {
+    "nodes": [
+     "cube:daily_price",
+     "model:market_daily",
+     "topic:prices"
+    ],
+    "edges": [
+     [
+      "cube:daily_price",
+      "model:market_daily"
+     ],
+     [
+      "topic:prices",
+      "cube:daily_price"
+     ]
+    ],
+    "columns": {
+     "cube:daily_price": [
+      "avg_price",
+      "day",
+      "demand_energy_total",
+      "network",
+      "network_region"
+     ],
+     "model:market_daily": [
+      "day",
+      "demand_energy_mwh",
+      "network",
+      "network_region",
+      "price_aud_mwh"
+     ]
+    }
+   }
+  },
+  {
+   "id": "topic:generation",
+   "name": "Generation & fuel mix",
+   "summary": "How much electricity each fuel type produced, per region and day, and what it was worth at spot prices.",
+   "limits": [
+    "Battery rows go negative when charging. That is correct, not bad data."
+   ],
+   "examples": [
+    {
+     "question": "Which fuel types generated the most in Queensland over the last 7 days?"
+    },
+    {
+     "question": "How much did wind generate across the NEM last week?"
+    }
+   ],
+   "path": {
+    "nodes": [
+     "cube:daily_generation",
+     "model:generation_daily",
+     "topic:generation"
+    ],
+    "edges": [
+     [
+      "cube:daily_generation",
+      "model:generation_daily"
+     ],
+     [
+      "topic:generation",
+      "cube:daily_generation"
+     ]
+    ],
+    "columns": {
+     "cube:daily_generation": [
+      "day",
+      "energy_total",
+      "fueltech",
+      "market_value_total",
+      "network",
+      "network_region"
+     ],
+     "model:generation_daily": [
+      "day",
+      "energy_mwh",
+      "fueltech",
+      "market_value_aud",
+      "network",
+      "network_region"
+     ]
+    }
+   }
+  },
+  {
+   "id": "topic:emissions",
+   "name": "Emissions",
+   "summary": "Tonnes of CO2-equivalent emitted per region, fuel and day, plus each generating unit's emissions factor.",
+   "limits": [],
+   "examples": [
+    {
+     "question": "Which region had the highest emissions over the last 7 days?"
+    },
+    {
+     "question": "Which fuel types emitted the most in Victoria last month?"
+    }
+   ],
+   "path": {
+    "nodes": [
+     "cube:daily_generation",
+     "model:facilities",
+     "model:generation_daily",
+     "topic:emissions"
+    ],
+    "edges": [
+     [
+      "cube:daily_generation",
+      "model:generation_daily"
+     ],
+     [
+      "topic:emissions",
+      "cube:daily_generation"
+     ],
+     [
+      "topic:emissions",
+      "model:facilities"
+     ]
+    ],
+    "columns": {
+     "cube:daily_generation": [
+      "day",
+      "emissions_total",
+      "fueltech",
+      "network",
+      "network_region"
+     ],
+     "model:facilities": [
+      "emissions_factor_tco2e_mwh",
+      "facility_name",
+      "fueltech",
+      "network_region"
+     ],
+     "model:generation_daily": [
+      "day",
+      "emissions_tco2e",
+      "fueltech",
+      "network",
+      "network_region"
+     ]
+    }
+   }
+  },
+  {
+   "id": "topic:renewables",
+   "name": "Renewables",
+   "summary": "Renewable share of generation, using the governed definition (wind, solar, hydro and bioenergy; batteries excluded).",
+   "limits": [
+    "Renewable follows the governed is_renewable flag. Storage (batteries, pumps) is never counted as generation."
+   ],
+   "examples": [
+    {
+     "question": "What share of NSW generation was renewable over the last 30 days?",
+     "replay": "renewable_share_nsw",
+     "sql": "SELECT day, SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / SUM(energy_mwh) * 100 AS renewable_pct\nFROM generation_with_group\nWHERE network_region = 'NSW1' AND day >= CURRENT_DATE - INTERVAL '30' DAY\nGROUP BY 1\nORDER BY 1"
+    },
+    {
+     "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
+     "replay": "wa_vs_nem"
+    }
+   ],
+   "path": {
+    "nodes": [
+     "cube:renewable_share",
+     "model:fueltech_groups",
+     "model:generation_daily",
+     "topic:renewables",
+     "view:generation_with_group"
+    ],
+    "edges": [
+     [
+      "cube:renewable_share",
+      "view:generation_with_group"
+     ],
+     [
+      "topic:renewables",
+      "cube:renewable_share"
+     ],
+     [
+      "view:generation_with_group",
+      "model:fueltech_groups"
+     ],
+     [
+      "view:generation_with_group",
+      "model:generation_daily"
+     ]
+    ],
+    "columns": {
+     "cube:renewable_share": [
+      "day",
+      "network",
+      "network_region",
+      "renewable_energy",
+      "renewable_share_pct",
+      "total_energy"
+     ],
+     "model:fueltech_groups": [
+      "fueltech",
+      "is_renewable"
+     ],
+     "model:generation_daily": [
+      "day",
+      "energy_mwh",
+      "fueltech",
+      "network",
+      "network_region"
+     ],
+     "view:generation_with_group": [
+      "day",
+      "energy_mwh",
+      "is_renewable",
+      "network",
+      "network_region"
+     ]
+    }
+   }
+  },
+  {
+   "id": "topic:stations",
+   "name": "Power stations & capacity",
+   "summary": "Every registered generating unit with its location, fuel, status and capacity in MW.",
+   "limits": [
+    "Capacity is registered MW, not output. Commissioning units may run below full capacity."
+   ],
+   "examples": [
+    {
+     "question": "Show me operating coal capacity by state.",
+     "replay": "coal_capacity",
+     "sql": "SELECT f.network, f.network_region, SUM(f.capacity_registered_mw) AS coal_mw, COUNT(DISTINCT f.facility_code) AS sites\nFROM facilities AS f\nJOIN fueltech_groups AS g ON f.fueltech = g.fueltech\nWHERE f.status = 'operating' AND g.fueltech_group = 'coal'\nGROUP BY 1, 2\nORDER BY 3 DESC"
+    },
+    {
+     "question": "Which are the 15 largest operating wind and solar facilities by registered capacity?",
+     "replay": "largest_wind_solar"
+    },
+    {
+     "question": "How much new capacity is committed or commissioning, by fuel group?"
+    }
+   ],
+   "path": {
+    "nodes": [
+     "model:facilities",
+     "model:fueltech_groups",
+     "topic:stations"
+    ],
+    "edges": [
+     [
+      "topic:stations",
+      "model:facilities"
+     ],
+     [
+      "topic:stations",
+      "model:fueltech_groups"
+     ]
+    ],
+    "columns": {
+     "model:facilities": [
+      "capacity_maximum_mw",
+      "capacity_registered_mw",
+      "capacity_storage_mwh",
+      "facility_code",
+      "facility_name",
+      "fueltech",
+      "latitude",
+      "longitude",
+      "network",
+      "network_region",
+      "status"
+     ],
+     "model:fueltech_groups": [
+      "fueltech",
+      "fueltech_group",
+      "is_renewable"
+     ]
+    }
+   }
+  }
+ ],
+ "cubes": [
+  {
+   "id": "cube:daily_generation",
+   "name": "daily_generation",
+   "base": "model:generation_daily",
+   "description": "Daily generation output (NEM regions + WEM), emissions, and market value by region and fuel tech. Gross energy, MWh \u2014 battery rows can be negative (charging). Pair with renewable_share for the clean share.",
+   "measures": [
+    {
+     "name": "energy_total",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "SUM(energy_mwh)"
+    },
+    {
+     "name": "emissions_total",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "SUM(emissions_tco2e)"
+    },
+    {
+     "name": "market_value_total",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "SUM(market_value_aud)"
+    }
+   ],
+   "dimensions": [
+    {
+     "name": "network",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "network"
+    },
+    {
+     "name": "network_region",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "network_region"
+    },
+    {
+     "name": "fueltech",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "fueltech"
+    },
+    {
+     "name": "day",
+     "kind": "time",
+     "type": "TIMESTAMP",
+     "expression": "day"
+    }
+   ]
+  },
+  {
+   "id": "cube:daily_price",
+   "name": "daily_price",
+   "base": "model:market_daily",
+   "description": "Daily spot price (NEM regions + WEM) (AUD/MWh, averaged \u2014 never summed) and additive demand energy by region. Join generation for fuel-mix-during-price-events questions.",
+   "measures": [
+    {
+     "name": "avg_price",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "AVG(price_aud_mwh)"
+    },
+    {
+     "name": "demand_energy_total",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "SUM(demand_energy_mwh)"
+    }
+   ],
+   "dimensions": [
+    {
+     "name": "network",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "network"
+    },
+    {
+     "name": "network_region",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "network_region"
+    },
+    {
+     "name": "day",
+     "kind": "time",
+     "type": "TIMESTAMP",
+     "expression": "day"
+    }
+   ]
+  },
+  {
+   "id": "cube:renewable_share",
+   "name": "renewable_share",
+   "base": "view:generation_with_group",
+   "description": "Renewable vs total daily generation by region. renewable_share_pct is the governed share (percent, ratio of sums over whatever window and grouping you query) \u2014 use it, never divide yourself. Renewable follows the governed is_renewable flag (wind/solar/hydro/bioenergy; batteries excluded).",
+   "measures": [
+    {
+     "name": "renewable_energy",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END)"
+    },
+    {
+     "name": "total_energy",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "SUM(energy_mwh)"
+    },
+    {
+     "name": "renewable_share_pct",
+     "kind": "measure",
+     "type": "DOUBLE",
+     "expression": "100.0 * SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / NULLIF(SUM(energy_mwh), 0)"
+    }
+   ],
+   "dimensions": [
+    {
+     "name": "network",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "network"
+    },
+    {
+     "name": "network_region",
+     "kind": "dimension",
+     "type": "VARCHAR",
+     "expression": "network_region"
+    },
+    {
+     "name": "day",
+     "kind": "time",
+     "type": "TIMESTAMP",
+     "expression": "day"
+    }
+   ]
+  }
+ ],
+ "views": [
+  {
+   "id": "view:generation_with_group",
+   "name": "generation_with_group",
+   "description": "Daily generation pre-joined to the governed fuel grouping. Grain: one row per region x fueltech x day (network carried); use as the base for renewable-share aggregation (avoids re-declaring the mapping).",
+   "sources": [
+    "fueltech_groups",
+    "generation_daily"
+   ],
+   "columns": [
+    {
+     "name": "day",
+     "type": "TIMESTAMP",
+     "description": "Market-local calendar day (midnight): NEM days are AEST (+10), WEM days AWST (+08). 90-day rolling window.",
+     "distinct": 90,
+     "min": "2026-07-21",
+     "max": "2026-10-18",
+     "source": "generation_daily.day"
+    },
+    {
+     "name": "network",
+     "type": "VARCHAR",
+     "description": "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets \u2014 filter network = 'NEM' when the user says 'the NEM'.",
+     "distinct": 2,
+     "values": [
+      "NEM",
+      "WEM"
+     ],
+     "source": "generation_daily.network"
+    },
+    {
+     "name": "network_region",
+     "type": "VARCHAR",
+     "description": "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM) or WEM (network WEM, south-west WA).",
+     "distinct": 6,
+     "values": [
+      "NSW1",
+      "QLD1",
+      "SA1",
+      "TAS1",
+      "VIC1",
+      "WEM"
+     ],
+     "source": "generation_daily.network_region"
+    },
+    {
+     "name": "fueltech",
+     "type": "VARCHAR",
+     "description": "Fuel technology. Joins to fueltech_groups.fueltech for group + renewable flag \u2014 never hardcode which techs are renewable.",
+     "distinct": 18,
+     "values": [
+      "battery",
+      "battery_charging",
+      "battery_discharging",
+      "bioenergy_biogas",
+      "bioenergy_biomass",
+      "coal_black",
+      "coal_brown",
+      "distillate",
+      "gas_ccgt",
+      "gas_ocgt",
+      "gas_recip",
+      "gas_steam",
+      "gas_wcmg",
+      "hydro",
+      "pumps",
+      "solar_rooftop",
+      "solar_utility",
+      "wind"
+     ],
+     "source": "generation_daily.fueltech"
+    },
+    {
+     "name": "fueltech_group",
+     "type": "VARCHAR",
+     "description": "Coarse group: coal|gas|hydro|wind|solar|battery|fossil|renewable|other.",
+     "distinct": 9,
+     "values": [
+      "battery",
+      "coal",
+      "fossil",
+      "gas",
+      "hydro",
+      "other",
+      "renewable",
+      "solar",
+      "wind"
+     ],
+     "source": "fueltech_groups.fueltech_group"
+    },
+    {
+     "name": "is_renewable",
+     "type": "BOOLEAN",
+     "description": "THE governed renewable flag. Wind/solar/hydro/bioenergy only \u2014 batteries and pumps store energy, they do not generate it. Never redefine renewable in SQL.",
+     "distinct": 2,
+     "values": [
+      "False",
+      "True"
+     ],
+     "source": "fueltech_groups.is_renewable"
+    },
+    {
+     "name": "energy_mwh",
+     "type": "DOUBLE",
+     "description": "MWh generated that day. Battery rows go NEGATIVE when charging (load exceeds discharge) \u2014 this is correct, not dirty data.",
+     "distinct": 5377,
+     "min": -4406.1244,
+     "max": 154083.1526,
+     "source": "generation_daily.energy_mwh"
+    },
+    {
+     "name": "emissions_tco2e",
+     "type": "DOUBLE",
+     "description": "Tonnes CO2e emitted that day. Null/zero for non-emitting tech.",
+     "distinct": 1799,
+     "min": 0.0,
+     "max": 138745.1115,
+     "source": "generation_daily.emissions_tco2e"
+    },
+    {
+     "name": "market_value_aud",
+     "type": "DOUBLE",
+     "description": "AUD value of that day's output at spot prices.",
+     "distinct": 5456,
+     "min": -1896074.2381,
+     "max": 65015009.4458,
+     "source": "generation_daily.market_value_aud"
+    }
+   ]
+  }
+ ],
+ "models": [
+  {
+   "id": "model:facilities",
+   "name": "facilities",
+   "description": "Generation registry (NEM + WEM) at unit grain. Capacity questions SUM capacity_registered_mw; output questions belong to generation_daily \u2014 this table holds no output.",
+   "primary_key": "unit_code",
+   "rows": 1143,
+   "columns": [
+    {
+     "name": "facility_code",
+     "type": "VARCHAR",
+     "description": "Site identifier (e.g. a power station). One site has many units \u2014 COUNT(DISTINCT facility_code) for site counts.",
+     "distinct": 632
+    },
+    {
+     "name": "facility_name",
+     "type": "VARCHAR",
+     "description": "Display name of the site.",
+     "distinct": 591
+    },
+    {
+     "name": "network_region",
+     "type": "VARCHAR",
+     "description": "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM, state-scale zones) or WEM (network WEM, south-west WA).",
+     "distinct": 6,
+     "values": [
+      "NSW1",
+      "QLD1",
+      "SA1",
+      "TAS1",
+      "VIC1",
+      "WEM"
+     ]
+    },
+    {
+     "name": "network",
+     "type": "VARCHAR",
+     "description": "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets \u2014 filter network = 'NEM' when the user says 'the NEM'.",
+     "distinct": 2,
+     "values": [
+      "NEM",
+      "WEM"
+     ]
+    },
+    {
+     "name": "unit_code",
+     "type": "VARCHAR",
+     "description": "Generator identifier. Grain: one row per UNIT, not per site.",
+     "distinct": 1143
+    },
+    {
+     "name": "fueltech",
+     "type": "VARCHAR",
+     "description": "Unit fuel technology (coal_black|wind|solar_utility|battery|...). Joins to fueltech_groups.fueltech for group + renewable flag.",
+     "distinct": 17,
+     "values": [
+      "battery",
+      "battery_charging",
+      "battery_discharging",
+      "bioenergy_biogas",
+      "bioenergy_biomass",
+      "coal_black",
+      "coal_brown",
+      "distillate",
+      "gas_ccgt",
+      "gas_ocgt",
+      "gas_recip",
+      "gas_steam",
+      "gas_wcmg",
+      "hydro",
+      "pumps",
+      "solar_utility",
+      "wind"
+     ]
+    },
+    {
+     "name": "status",
+     "type": "VARCHAR",
+     "description": "Unit status: operating|committed|commissioning|retired. Commissioning units report <=90% of capacity \u2014 they are not full output.",
+     "distinct": 4,
+     "values": [
+      "commissioning",
+      "committed",
+      "operating",
+      "retired"
+     ]
+    },
+    {
+     "name": "capacity_registered_mw",
+     "type": "DOUBLE",
+     "description": "Registered capacity in MW. SUM this for capacity questions \u2014 never output.",
+     "distinct": 416,
+     "min": 0.02,
+     "max": 1500.0
+    },
+    {
+     "name": "capacity_maximum_mw",
+     "type": "DOUBLE",
+     "description": "Maximum achievable capacity in MW.",
+     "distinct": 298,
+     "min": 0.02,
+     "max": 1800.0
+    },
+    {
+     "name": "capacity_storage_mwh",
+     "type": "DOUBLE",
+     "description": "Storage capacity in MWh. Only batteries and pumped hydro have values.",
+     "distinct": 94,
+     "min": 4.0,
+     "max": 233320.0
+    },
+    {
+     "name": "emissions_factor_tco2e_mwh",
+     "type": "DOUBLE",
+     "description": "Tonnes CO2e per MWh. Null for non-emitting tech (wind, solar).",
+     "distinct": 163,
+     "min": 0.0157,
+     "max": 1.6487
+    },
+    {
+     "name": "latitude",
+     "type": "DOUBLE",
+     "description": "Site latitude (WGS84). Site-level \u2014 every unit of a site shares it. Null for a few sites.",
+     "distinct": 587,
+     "min": -42.740519,
+     "max": -16.850852
+    },
+    {
+     "name": "longitude",
+     "type": "DOUBLE",
+     "description": "Site longitude (WGS84). Site-level \u2014 every unit of a site shares it. Null for a few sites.",
+     "distinct": 587,
+     "min": 114.194519,
+     "max": 153.445756
+    }
+   ]
+  },
+  {
+   "id": "model:fueltech_groups",
+   "name": "fueltech_groups",
+   "description": "Static 29-row mapping. The single source of truth for 'what counts as renewable' \u2014 join it, don't enumerate techs.",
+   "primary_key": "fueltech",
+   "rows": 29,
+   "columns": [
+    {
+     "name": "fueltech",
+     "type": "VARCHAR",
+     "description": "Fuel technology identifier, matches generation_daily.fueltech and facilities.fueltech.",
+     "distinct": 29,
+     "values": [
+      "aggregator_dr",
+      "aggregator_vpp",
+      "battery",
+      "battery_charging",
+      "battery_discharging",
+      "bioenergy_biogas",
+      "bioenergy_biomass",
+      "coal_black",
+      "coal_brown",
+      "distillate",
+      "exports",
+      "gas_ccgt",
+      "gas_ocgt",
+      "gas_recip",
+      "gas_steam",
+      "gas_wcmg",
+      "hydro",
+      "hydro_and_storage",
+      "imports",
+      "interconnector",
+      "nuclear",
+      "other",
+      "pumps",
+      "solar",
+      "solar_rooftop",
+      "solar_thermal",
+      "solar_utility",
+      "wind",
+      "wind_offshore"
+     ]
+    },
+    {
+     "name": "fueltech_group",
+     "type": "VARCHAR",
+     "description": "Coarse group: coal|gas|hydro|wind|solar|battery|fossil|renewable|other.",
+     "distinct": 9,
+     "values": [
+      "battery",
+      "coal",
+      "fossil",
+      "gas",
+      "hydro",
+      "other",
+      "renewable",
+      "solar",
+      "wind"
+     ]
+    },
+    {
+     "name": "is_renewable",
+     "type": "BOOLEAN",
+     "description": "THE governed renewable flag. Wind/solar/hydro/bioenergy only \u2014 batteries and pumps store energy, they do not generate it. Never redefine renewable in SQL.",
+     "distinct": 2,
+     "values": [
+      "False",
+      "True"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "model:generation_daily",
+   "name": "generation_daily",
+   "description": "Daily generation by network, region and fuel tech (NEM + WEM). Grain: one row per region x fueltech x day. For market context join market_daily on region + day.",
+   "primary_key": "day",
+   "rows": 5940,
+   "columns": [
+    {
+     "name": "day",
+     "type": "TIMESTAMP",
+     "description": "Market-local calendar day (midnight): NEM days are AEST (+10), WEM days AWST (+08). 90-day rolling window.",
+     "distinct": 90,
+     "min": "2026-07-21",
+     "max": "2026-10-18"
+    },
+    {
+     "name": "network_region",
+     "type": "VARCHAR",
+     "description": "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM) or WEM (network WEM, south-west WA).",
+     "distinct": 6,
+     "values": [
+      "NSW1",
+      "QLD1",
+      "SA1",
+      "TAS1",
+      "VIC1",
+      "WEM"
+     ]
+    },
+    {
+     "name": "network",
+     "type": "VARCHAR",
+     "description": "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets \u2014 filter network = 'NEM' when the user says 'the NEM'.",
+     "distinct": 2,
+     "values": [
+      "NEM",
+      "WEM"
+     ]
+    },
+    {
+     "name": "fueltech",
+     "type": "VARCHAR",
+     "description": "Fuel technology. Joins to fueltech_groups.fueltech for group + renewable flag \u2014 never hardcode which techs are renewable.",
+     "distinct": 18,
+     "values": [
+      "battery",
+      "battery_charging",
+      "battery_discharging",
+      "bioenergy_biogas",
+      "bioenergy_biomass",
+      "coal_black",
+      "coal_brown",
+      "distillate",
+      "gas_ccgt",
+      "gas_ocgt",
+      "gas_recip",
+      "gas_steam",
+      "gas_wcmg",
+      "hydro",
+      "pumps",
+      "solar_rooftop",
+      "solar_utility",
+      "wind"
+     ]
+    },
+    {
+     "name": "energy_mwh",
+     "type": "DOUBLE",
+     "description": "MWh generated that day. Battery rows go NEGATIVE when charging (load exceeds discharge) \u2014 this is correct, not dirty data.",
+     "distinct": 5377,
+     "min": -4406.1244,
+     "max": 154083.1526
+    },
+    {
+     "name": "emissions_tco2e",
+     "type": "DOUBLE",
+     "description": "Tonnes CO2e emitted that day. Null/zero for non-emitting tech.",
+     "distinct": 1799,
+     "min": 0.0,
+     "max": 138745.1115
+    },
+    {
+     "name": "market_value_aud",
+     "type": "DOUBLE",
+     "description": "AUD value of that day's output at spot prices.",
+     "distinct": 5456,
+     "min": -1896074.2381,
+     "max": 65015009.4458
+    }
+   ]
+  },
+  {
+   "id": "model:market_daily",
+   "name": "market_daily",
+   "description": "Daily market outcomes by network and region (NEM + WEM). Grain: one row per region x day. Join generation_daily on region + day for fuel-mix-during-price-events questions.",
+   "primary_key": "day",
+   "rows": 540,
+   "columns": [
+    {
+     "name": "day",
+     "type": "TIMESTAMP",
+     "description": "Market-local calendar day (midnight): NEM days are AEST (+10), WEM days AWST (+08). 90-day rolling window.",
+     "distinct": 90,
+     "min": "2026-07-21",
+     "max": "2026-10-18"
+    },
+    {
+     "name": "network_region",
+     "type": "VARCHAR",
+     "description": "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM) or WEM (network WEM, south-west WA).",
+     "distinct": 6,
+     "values": [
+      "NSW1",
+      "QLD1",
+      "SA1",
+      "TAS1",
+      "VIC1",
+      "WEM"
+     ]
+    },
+    {
+     "name": "network",
+     "type": "VARCHAR",
+     "description": "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets \u2014 filter network = 'NEM' when the user says 'the NEM'.",
+     "distinct": 2,
+     "values": [
+      "NEM",
+      "WEM"
+     ]
+    },
+    {
+     "name": "price_aud_mwh",
+     "type": "DOUBLE",
+     "description": "Volume-weighted average spot price that day, AUD/MWh. A rate \u2014 average it, never sum it. Can go negative. NEM and WEM prices come from different market designs: compare them side by side, never average across networks.",
+     "distinct": 540,
+     "min": -33.027986,
+     "max": 647.774618
+    },
+    {
+     "name": "demand_mw",
+     "type": "DOUBLE",
+     "description": "Average demand in MW (a rate). For additive demand use demand_energy_mwh.",
+     "distinct": 540,
+     "min": 871.518125,
+     "max": 9055.279688
+    },
+    {
+     "name": "demand_energy_mwh",
+     "type": "DOUBLE",
+     "description": "Total energy demanded that day in MWh. The additive demand metric \u2014 sum this.",
+     "distinct": 540,
+     "min": 20917.268,
+     "max": 217317.0288
+    }
+   ]
+  }
+ ],
+ "joins": [
+  {
+   "name": "generation_fueltech_groups",
+   "type": "MANY_TO_ONE",
+   "condition": "generation_daily.fueltech = fueltech_groups.fueltech",
+   "keys": [
+    {
+     "from": "model:generation_daily",
+     "from_col": "fueltech",
+     "to": "model:fueltech_groups",
+     "to_col": "fueltech"
+    }
+   ]
+  },
+  {
+   "name": "facilities_fueltech_groups",
+   "type": "MANY_TO_ONE",
+   "condition": "facilities.fueltech = fueltech_groups.fueltech",
+   "keys": [
+    {
+     "from": "model:facilities",
+     "from_col": "fueltech",
+     "to": "model:fueltech_groups",
+     "to_col": "fueltech"
+    }
+   ]
+  },
+  {
+   "name": "market_generation",
+   "type": "MANY_TO_ONE",
+   "condition": "generation_daily.network_region = market_daily.network_region AND generation_daily.day = market_daily.day",
+   "keys": [
+    {
+     "from": "model:generation_daily",
+     "from_col": "network_region",
+     "to": "model:market_daily",
+     "to_col": "network_region"
+    },
+    {
+     "from": "model:generation_daily",
+     "from_col": "day",
+     "to": "model:market_daily",
+     "to_col": "day"
+    }
+   ]
+  }
+ ]
+}

@@ -78,3 +78,36 @@ filter (`time_dimension` ranges or `day:gte:...`) compiles to
 filters work. So every time-windowed question falls back to SQL, and no chip
 currently shows the "governed cube" path. It also burns turns on retries:
 two chips use 10/10 turns.
+
+## "What's in the data" tab (agreed 2026-10-19)
+
+Visitors don't know what they can ask because they can't see the data. A
+second top-level tab shows the governed model underneath, energy only.
+
+- **Placement:** tabs **Ask** | **What's in the data**; the Ask empty state
+  links across ("Not sure what to ask? See what's in the data →").
+- **Source:** `make demo-record` writes `ui/data/model.json` from the compiled
+  MDL (energy cubes, view, models, relationships), plain-SQL facts (row
+  counts, window, categorical values, measure ranges) and a small curated
+  topics file. Recording fails if the topics file names anything missing
+  from the MDL. Columns a topic touches are derived by parsing cube
+  expressions and the view SQL; Power stations (no cube) lists its columns.
+- **Layout:**
+  1. "What it can't answer" strip: daily only, 90 days, no NT, WA south-west
+     only, no per-station output (capacity only), no forecasts.
+  2. Three-tier diagram: topics → cubes/view → models with every column
+     (name + type marker), joins labelled with keys. Hover a column for its
+     description and real values/range. Click a topic to light up its path
+     down to the exact columns and dim the rest; a side panel shows example
+     questions and the topic's limits.
+  3. "How we define things": the governed rules from `energy.md`.
+- **Example questions:** play the replay if one is recorded; fill the box in
+  live mode; else plain text with a "live mode only" note. Stored SQL shows
+  in an expandable block.
+
+As built: the tab fills the viewport — a pan/zoom canvas (fit on load,
+±, drag, scroll) beside the side panel, which holds the topic list and the
+"What it can't answer" box; the rules open in a dialog. marked and DOMPurify
+are vendored in `ui/vendor/` and the diagram draws before anything that
+needs a library, so a slow or blocked CDN can't blank it. Opening
+`ui/index.html` from disk shows how to serve it instead (`make demo-serve`).

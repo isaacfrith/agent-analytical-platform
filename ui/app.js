@@ -159,10 +159,12 @@ function handleEvent(ev) {
     case "usage":
       renderMeters(ev.turns, ev.tokens);
       break;
-    case "chart":
+    case "chart": {
       renderChart(ev);
-      if (ev.spec.map) mapView.showAnswer(ev);
+      const map = ev.spec.map || inferRegionMap(ev);
+      if (map) mapView.showAnswer({ ...ev, spec: { ...ev.spec, map } });
       break;
+    }
     case "answer": {
       renderMeters(ev.turns, typeof ev.tokens === "number" ? ev.tokens : 0);
       const badge = $("path-badge");
@@ -178,6 +180,13 @@ function handleEvent(ev) {
       $("skip").hidden = true;
       break;
   }
+}
+
+// Region rows renamed by the agent (e.g. "state") still map: recognise them by value.
+function inferRegionMap(ev) {
+  const key = ev.columns.find((c) => ev.rows.length && ev.rows.every((r) => REGION_NAMES[r[c]]));
+  const metric = ev.spec.y.find((c) => ev.rows.some((r) => typeof r[c] === "number"));
+  return key && metric ? { key, metric } : null;
 }
 
 function describeInput(tool, input) {
@@ -282,6 +291,10 @@ function renderChart(ev) {
       bar: { binSpacing: 2 },
     },
   };
+  if (typeof vegaEmbed === "undefined") {
+    plot.replaceChildren(el("p", { class: "muted", text: "The chart library didn't load. The data table below has the same rows." }));
+    return;
+  }
   vegaEmbed(plot, vl, { actions: false, renderer: "svg" }).catch((e) => plot.replaceChildren(el("p", { class: "step-error", text: `Chart failed: ${e.message}` })));
 }
 
@@ -496,7 +509,8 @@ function showIntro() {
       el("li", {}, badge("cube", PATH_LABEL.cube), " a governed metric answered the question"),
       el("li", {}, badge("sql", PATH_LABEL.sql), " no metric fit, so it wrote SQL against governed models"),
       el("li", {}, badge("refused", PATH_LABEL.refused), " the data can't answer it, and it says so instead of guessing")),
-    el("p", { text: "Charts are drawn only from rows the semantic layer returned. The agent picks the columns but never types the numbers." }));
+    el("p", { text: "Charts are drawn only from rows the semantic layer returned. The agent picks the columns but never types the numbers." }),
+    el("p", {}, el("button", { type: "button", class: "link", onclick: () => showTab("data") }, "Not sure what to ask? See what's in the data →")));
 }
 
 // ---------------------------------------------------------------------------
@@ -617,7 +631,12 @@ async function boot() {
     fetch("data/replays/index.json").then((r) => (r.ok ? r.json() : { chips: [] })).catch(() => ({ chips: [] })),
   ]);
   state.overview = overview;
-  mapView.init(overview, states);
+  try {
+    mapView.init(overview, states);
+  } catch (e) {
+    // The map library comes from a CDN; without it the rest of the page still works.
+    $("map").replaceChildren(el("p", { class: "step-error", text: `The map couldn't load (${e.message}). Reload to try again.` }));
+  }
   state.chips = index.chips.filter((c) => c.ok);
   $("chips").replaceChildren(...state.chips.map((c) =>
     el("button", { type: "button", class: "chip", role: "listitem", "data-id": c.id, "aria-pressed": "false", title: c.question, onclick: () => playReplay(c) }, c.label)));

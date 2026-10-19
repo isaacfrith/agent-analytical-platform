@@ -11,13 +11,20 @@
   <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0/build/vega.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0/build/vega-lite.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0/build/vega-embed.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+  <!-- Small libraries are vendored so text rendering never depends on a CDN. -->
+  <script src="vendor/marked.min.js"></script>
+  <script src="vendor/purify.min.js"></script>
 </head>
 <body>
   <header class="top">
     <div class="brand">
-      <h1>Australian Energy Analyst</h1>
+      <div class="brand-row">
+        <h1>Australian Energy Analyst</h1>
+        <nav class="tabs" role="tablist" aria-label="Views">
+          <button type="button" role="tab" class="tab" id="tab-btn-ask" aria-selected="true" aria-controls="tab-ask">Ask</button>
+          <button type="button" role="tab" class="tab" id="tab-btn-data" aria-selected="false" aria-controls="tab-data">What's in the data</button>
+        </nav>
+      </div>
       <p class="sub">An AI agent answering through a governed semantic layer. It never sees raw tables and never writes the numbers.</p>
     </div>
     <div class="ask">
@@ -30,7 +37,7 @@
     </div>
   </header>
 
-  <main class="panes">
+  <main class="panes" id="tab-ask" role="tabpanel" aria-labelledby="tab-btn-ask">
     <section class="pane timeline-pane" aria-label="Agent steps">
       <div class="pane-head">
         <h2>How it got there</h2>
@@ -65,6 +72,42 @@
     </section>
   </main>
 
+  <main class="data-tab" id="tab-data" role="tabpanel" aria-labelledby="tab-btn-data" hidden>
+    <section class="canvas-card" aria-label="The governed data model">
+      <div class="canvas-toolbar">
+        <h2>The governed data model</h2>
+        <span class="muted" id="catalog-meta"></span>
+        <div class="zoom" role="group" aria-label="Zoom">
+          <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+          <button type="button" id="zoom-fit">Fit</button>
+          <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+      <div class="canvas" id="canvas">
+        <div class="diagram" id="diagram">
+          <svg class="edges" id="edges" aria-hidden="true"></svg>
+          <div class="tier-label">Topics: click one to trace its data</div>
+          <div class="tier" data-tier="topics" id="tier-topics"></div>
+          <div class="tier-label">Governed metrics (cubes) and the pre-joined view</div>
+          <div class="tier" data-tier="cubes" id="tier-cubes"></div>
+          <div class="tier-label">Tables and how they join</div>
+          <div class="tier" data-tier="models" id="tier-models"></div>
+        </div>
+      </div>
+      <p class="canvas-hint">Drag to move · scroll or ± to zoom · hover a column for its meaning and real values</p>
+    </section>
+    <aside class="topic-panel" id="topic-panel" aria-live="polite"></aside>
+    <dialog class="rules-dialog" id="rules-dialog" aria-labelledby="rules-title">
+      <div class="dialog-head">
+        <h2 id="rules-title">How we define things</h2>
+        <button type="button" class="link" id="rules-close">Close</button>
+      </div>
+      <p class="hint">The governed business rules the agent must follow, straight from the semantic layer.</p>
+      <div class="answer-text" id="rules"></div>
+    </dialog>
+    <div class="col-tip" id="col-tip" role="tooltip" hidden></div>
+  </main>
+
   <footer class="foot">
     Data: <a href="https://openelectricity.org.au" target="_blank" rel="noopener">Open Electricity</a>,
     licensed <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>.
@@ -73,5 +116,6 @@
   </footer>
 
   <script src="app.js"></script>
+  <script src="catalog.js"></script>
 </body>
 </html>
