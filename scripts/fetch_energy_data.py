@@ -92,6 +92,8 @@ SCHEMAS: dict[str, Schema] = {
         F(8, "capacity_maximum_mw", DoubleType()),
         F(9, "capacity_storage_mwh", DoubleType()),
         F(10, "emissions_factor_tco2e_mwh", DoubleType()),
+        F(11, "latitude", DoubleType()),
+        F(12, "longitude", DoubleType()),
     ),
     "generation_daily": Schema(
         F(1, "day", TimestampType(), required=True),
@@ -197,6 +199,8 @@ def metric_name(m) -> str:
 def flatten_facilities(facilities) -> list[dict]:
     rows = []
     for f in facilities:
+        # Site-level point; a handful of sites have none (left null).
+        loc = f.get("location") or {}
         for u in f.get("units") or []:
             rows.append(
                 {
@@ -210,6 +214,8 @@ def flatten_facilities(facilities) -> list[dict]:
                     "capacity_maximum_mw": u.get("capacity_maximum"),
                     "capacity_storage_mwh": u.get("capacity_storage"),
                     "emissions_factor_tco2e_mwh": u.get("emissions_factor_co2"),
+                    "latitude": loc.get("lat"),
+                    "longitude": loc.get("lng"),
                 }
             )
     return rows

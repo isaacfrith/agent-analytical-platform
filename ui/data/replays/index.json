@@ -1,0 +1,52 @@
+{
+ "chips": [
+  {
+   "id": "renewable_share_nsw",
+   "label": "Renewable share, NSW",
+   "question": "What share of NSW generation was renewable over the last 30 days?",
+   "recorded_at": "2026-10-19T01:17:35Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "price_by_region",
+   "label": "Spot price by region",
+   "question": "What was the average spot price by region over the last 30 days?",
+   "recorded_at": "2026-10-19T01:17:35Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "price_spike_fuel_mix",
+   "label": "Fuel mix on the price spike",
+   "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
+   "recorded_at": "2026-10-19T01:21:59Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "coal_capacity",
+   "label": "Coal capacity by state",
+   "question": "Show me operating coal capacity by state.",
+   "recorded_at": "2026-10-19T01:17:35Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "largest_wind_solar",
+   "label": "Largest wind & solar farms",
+   "question": "Which are the 15 largest operating wind and solar facilities by registered capacity?",
+   "recorded_at": "2026-10-19T01:17:35Z",
+   "path": "sql",
+   "ok": true
+  },
+  {
+   "id": "refuse_efficiency",
+   "label": "Generation by efficiency",
+   "question": "Show me generation by unit efficiency.",
+   "recorded_at": "2026-10-19T01:21:59Z",
+   "path": "refused",
+   "ok": true
+  }
+ ]
+}

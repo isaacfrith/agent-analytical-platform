@@ -1,0 +1,78 @@
+{
+ "id": "refuse_efficiency",
+ "label": "Generation by efficiency",
+ "question": "Show me generation by unit efficiency.",
+ "recorded_at": "2026-10-19T01:21:59Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "Show me generation by unit efficiency.",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.307,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.307,
+   "text": "I'll help you show generation by unit efficiency. Let me start by checking the business rules and exploring the schema to understand what data is available."
+  },
+  {
+   "type": "step_start",
+   "t": 1.309,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_start",
+   "t": 1.31,
+   "step": 2,
+   "tool": "describe_schema",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.354,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 45
+  },
+  {
+   "type": "step_end",
+   "t": 1.354,
+   "step": 2,
+   "tool": "describe_schema",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 44
+  },
+  {
+   "type": "usage",
+   "t": 5.059,
+   "turns": 2,
+   "tokens": 4866
+  },
+  {
+   "type": "answer",
+   "t": 5.151,
+   "text": "I can see the schema, but I notice there is **no efficiency column** in the `facilities` or `generation_daily` models. The schema includes:\n- `capacity_registered_mw` (capacity in MW)\n- `energy_mwh` (generation output in MWh)\n- `emissions_factor_tco2e_mwh` (emissions intensity)\n\nBut there is no pre-calculated efficiency metric.\n\n**Could you clarify what you mean by \"unit efficiency\"?** For example:\n\n1. **Capacity factor** \u2014 actual output vs. registered capacity (energy_mwh / capacity_registered_mw)?\n2. **Emissions efficiency** \u2014 emissions per MWh (emissions_factor_tco2e_mwh)?\n3. **Market value efficiency** \u2014 AUD per MWh generated (market_value_aud / energy_mwh)?\n4. **Something else** \u2014 e.g., a specific efficiency metric you have in mind?\n\nOnce you clarify, I can query the data and show you generation broken down by that efficiency measure.",
+   "turns": 2,
+   "tokens": 14686,
+   "over_budget": false,
+   "path": "refused"
+  }
+ ]
+}

@@ -110,6 +110,23 @@ make energy-test   # 11 data-invariant checks against Trino (counts, 90-day
 | `energy.market_daily` | 450 | region × day (price AUD/MWh, demand MW, demand energy MWh) |
 | `energy.fueltech_groups` | 29 | static mapping: fueltech → group + governed `is_renewable` flag |
 
+## Visual demo (energy UI)
+
+A three-pane web page — agent steps | answer + chart | NEM map — in `ui/`,
+published to GitHub Pages. Demo questions replay recorded runs ($0 per
+view); free-text questions go live from this laptop, passcode-gated.
+
+```bash
+make demo-record   # re-run the six chips (~$1 Bedrock) + map snapshot → ui/data/
+make demo-serve    # view locally at http://localhost:8765
+make demo-live     # live mode: API + Cloudflare quick tunnel, prints the share link
+```
+
+Commit `ui/data/` after recording; pushing to `main` deploys the site. Live
+mode needs `DEMO_PASSCODE` in `.env` and `brew install cloudflared`. Design
+and decisions: `demos/energy-ui-plan.md`. Presenter script for the CLI:
+`demos/energy.md`.
+
 ## Scope
 
 Single-user local proof of concept: destructive data reloads, one fixed memory user, agent holds `run_sql`, secrets in `.env`. See upstream's [PRODUCTION_CONSIDERATIONS.md](https://github.com/jaehyeon-kim/agentic-analytics-system/blob/main/PRODUCTION_CONSIDERATIONS.md) for what production would take.

@@ -15,8 +15,10 @@ dependencies = [
     "requests>=2.34.2",
     "s3fs>=2026.9.0",
     "spacy>=3.8.16",
+    "starlette>=1.7.0",
     "strands-agents>=1.60.0",
     "strands-agents-tools>=0.8.9",
+    "uvicorn>=0.54.0",
     "valkey>=6.2.0",
     "wrenai[main,mcp,memory,memory-onnx,trino]>=0.15.0",
 ]

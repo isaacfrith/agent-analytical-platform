@@ -30,8 +30,10 @@ dependencies = [
     { name = "requests" },
     { name = "s3fs" },
     { name = "spacy" },
+    { name = "starlette" },
     { name = "strands-agents" },
     { name = "strands-agents-tools" },
+    { name = "uvicorn" },
     { name = "valkey" },
     { name = "wrenai", extra = ["main", "mcp", "memory", "memory-onnx", "trino"] },
 ]
@@ -56,8 +58,10 @@ requires-dist = [
     { name = "requests", specifier = ">=2.34.2" },
     { name = "s3fs", specifier = ">=2026.9.0" },
     { name = "spacy", specifier = ">=3.8.16" },
+    { name = "starlette", specifier = ">=1.7.0" },
     { name = "strands-agents", specifier = ">=1.60.0" },
     { name = "strands-agents-tools", specifier = ">=0.8.9" },
+    { name = "uvicorn", specifier = ">=0.54.0" },
     { name = "valkey", specifier = ">=6.2.0" },
     { name = "wrenai", extras = ["main", "mcp", "memory", "memory-onnx", "trino"], specifier = ">=0.15.0" },
 ]

@@ -4,7 +4,8 @@
 COMPOSE := docker compose -f docker/compose.yaml
 
 .PHONY: preflight infra-init infra-plan infra-apply infra-destroy \
-        up down logs ps bootstrap data pipeline energy-data energy-test mdl memory wren-query refresh mdl-test ask ask-mem memory-check memory-wipe test test-integration evals
+        up down logs ps bootstrap data pipeline energy-data energy-test mdl memory wren-query refresh mdl-test ask ask-mem memory-check memory-wipe test test-integration evals \
+        demo-record demo-serve demo-live
 
 ## preflight — verify AWS access as the app user (identity, bucket, Bedrock)
 preflight:
@@ -85,3 +86,14 @@ test-integration:
 ## evals — Phase 6: deterministic eval suite (sequential; ~30-45 min full run)
 evals:
 	uv run python evaluations/run_evals.py
+
+## demo-* — energy demo UI (ui/). demo-record re-runs the chips (~$1 Bedrock)
+## and snapshots the map overview into ui/data/; commit the result to publish.
+demo-record:
+	uv run python scripts/demo_record.py
+demo-serve:
+	@echo "http://localhost:8765"
+	cd ui && python3 -m http.server 8765
+## demo-live — live questions from this laptop via a Cloudflare quick tunnel
+demo-live:
+	uv run python scripts/demo_live.py

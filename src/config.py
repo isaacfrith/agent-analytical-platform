@@ -14,7 +14,7 @@ Usage:
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -95,12 +95,36 @@ class AwsConfig:
 
 
 @dataclass
+class DemoConfig:
+    """Energy demo UI live mode (src/api). Unset passcode = live mode refuses to start."""
+
+    passcode: str | None = None
+    daily_cap: int = 30
+    allowed_origins: tuple[str, ...] = ("*",)
+    site_url: str = "https://isaacfrith.github.io/agent-analytical-platform/"
+    port: int = 8787
+
+    @classmethod
+    def from_env(cls) -> DemoConfig:
+        """Load from DEMO_* environment variables."""
+        origins = os.environ.get("DEMO_ALLOWED_ORIGINS", "*")
+        return cls(
+            passcode=os.environ.get("DEMO_PASSCODE") or None,
+            daily_cap=int(os.environ.get("DEMO_DAILY_CAP", "30")),
+            allowed_origins=tuple(o.strip() for o in origins.split(",") if o.strip()),
+            site_url=os.environ.get("DEMO_SITE_URL", cls.site_url),
+            port=int(os.environ.get("DEMO_PORT", "8787")),
+        )
+
+
+@dataclass
 class Config:
     """Root configuration object: single point of access for all settings."""
 
     agent: AgentConfig
     memory: MemoryConfig
     aws: AwsConfig
+    demo: DemoConfig = field(default_factory=DemoConfig)
 
     @classmethod
     def from_env(cls) -> Config:
@@ -122,4 +146,5 @@ class Config:
             agent=AgentConfig.from_env(),
             memory=MemoryConfig.from_env(),
             aws=AwsConfig.from_env(),
+            demo=DemoConfig.from_env(),
         )

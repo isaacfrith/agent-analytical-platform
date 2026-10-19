@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NEM Energy Analyst</title>
+  <meta name="description" content="Ask questions about Australia's National Electricity Market. Watch a governed AI agent answer through a semantic layer.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0/build/vega.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0/build/vega-lite.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0/build/vega-embed.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>NEM Energy Analyst</h1>
+      <p class="sub">An AI agent answering through a governed semantic layer. It never sees raw tables and never writes the numbers.</p>
+    </div>
+    <div class="ask">
+      <div class="chips" id="chips" role="list"></div>
+      <form id="ask-form" class="ask-row">
+        <input id="question" type="text" autocomplete="off" placeholder="Live mode offline — try a demo question above" disabled>
+        <button id="ask-btn" type="submit" disabled>Ask</button>
+      </form>
+      <p class="live-status" id="live-status"></p>
+    </div>
+  </header>
+
+  <main class="panes">
+    <section class="pane timeline-pane" aria-label="Agent steps">
+      <div class="pane-head">
+        <h2>How it got there</h2>
+        <label class="toggle"><input type="checkbox" id="show-reasoning"> Show reasoning</label>
+      </div>
+      <div class="meters" id="meters"></div>
+      <ol class="timeline" id="timeline"><li class="empty">Pick a question to watch the agent work.</li></ol>
+    </section>
+
+    <section class="pane answer-pane" aria-label="Answer">
+      <div class="pane-head">
+        <h2 id="answer-question">Answer</h2>
+        <span class="path-badge" id="path-badge" hidden></span>
+      </div>
+      <p class="recorded" id="recorded"></p>
+      <div id="charts"></div>
+      <div class="answer-text" id="answer-text"></div>
+      <button class="skip" id="skip" type="button" hidden>Skip replay ▸▸</button>
+    </section>
+
+    <section class="pane map-pane" aria-label="Map of the NEM">
+      <div class="pane-head">
+        <h2 id="map-title">NEM at a glance</h2>
+        <button type="button" class="link" id="map-reset" hidden>Reset map</button>
+      </div>
+      <div id="map"></div>
+      <div class="map-controls">
+        <div class="legend" id="region-legend"></div>
+        <div class="legend fuel-legend" id="fuel-legend" aria-label="Fuel groups (click to toggle)"></div>
+        <div class="status-filter" id="status-filter" aria-label="Facility status"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Data: <a href="https://openelectricity.org.au" target="_blank" rel="noopener">Open Electricity</a>,
+    licensed <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>.
+    Boundaries: <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a>.
+    Non-commercial demo · <a href="https://github.com/isaacfrith/agent-analytical-platform" target="_blank" rel="noopener">source</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

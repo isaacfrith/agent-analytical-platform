@@ -1,7 +1,9 @@
 """Phase 4 orchestrator: Strands agent over the Wren MCP server (Bedrock).
 
-Entry point: answer_question(question, user_id, config=None, use_memory=True, domains=DOMAINS)
+Entry point: answer_question(question, user_id, config=None, use_memory=True, domains=DOMAINS, on_event=None)
 Returns AnswerResult with text, metrics, and pre-formatted budget line.
+Passing on_event (the demo UI) streams trace events and adds the show_chart
+tool; without it the agent is exactly the CLI/eval agent.
 
 One fresh agent per question — no cross-question memory unless use_memory=True.
 The agent is physically read-only: the MCP server runs without --allow-write.
@@ -14,6 +16,7 @@ with transcript evidence — never silently raise it.
 from __future__ import annotations
 
 import contextlib
+import json
 import os
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
@@ -26,6 +29,7 @@ from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
 from agent.memory import MemoryTools
+from agent.trace import ChartTools, EventSink, TraceRecorder
 from config import Config
 from memory import build_memory_store
 from repo_config import REPO_ROOT, WREN_DIR
@@ -77,6 +81,44 @@ Never invent preferences. If search returns nothing relevant, say so and proceed
 """
 
 
+_CHART_PROMPT = """
+Chart tool is enabled (a visual demo UI shows your work):
+- Charting never changes WHAT you answer or how many queries you run. If the data cannot answer the question, refuse exactly as you otherwise would and do not fetch rows just to have something to chart.
+- show_chart: when a data step returned the rows that answer the question, call show_chart ONCE before your final answer, naming columns of that step's rows (x, y, optional series). Rows come from the tool result — never type numbers into it. If the answer needs arithmetic over rows (a share, a total, a ranking), do it in SQL and chart that step; never compute figures yourself from returned rows.
+- Your final answer always comes first: skip show_chart rather than run out of turns. line for days, bar to compare regions or fuels, stacked_bar for fuel mix, table otherwise. Set map_key to the network_region or facility_code column whenever rows are per region or per facility, so the map recolours. To chart facilities on the map, include facility_code in the SELECT. Skip it when you refused or returned no rows.
+"""
+
+
+def _sql_compiler(tools: Sequence[Any]):
+    """Compiled target-dialect SQL for a data step, via the read-only MCP tools."""
+    by_name = {t.tool_name: t for t in tools}
+
+    def compile_sql(name: str, tool_input: dict) -> str | None:
+        if name == "query_cube":
+            call, args = "query_cube", {**tool_input, "sql_only": True}
+        elif "sql" in tool_input:
+            call, args = "dry_plan", {"sql": tool_input["sql"]}
+        else:
+            return None
+        if call not in by_name:
+            return None
+        result = by_name[call].mcp_client.call_tool_sync(
+            tool_use_id="trace-compile", name=call, arguments=args
+        )
+        if result.get("status") != "success":
+            return None
+        text = "\n".join(b.get("text", "") for b in result.get("content") or []).strip()
+        try:
+            payload = json.loads(text)
+        except ValueError:
+            return text or None
+        if isinstance(payload, dict):
+            return payload.get("sql") or payload.get("dialect_sql") or text
+        return text
+
+    return compile_sql
+
+
 @contextlib.contextmanager
 def _wren_mcp_tools() -> Iterator[Sequence[Any]]:
     """Spawn `wren serve mcp` over stdio and yield its tools.
@@ -109,6 +151,7 @@ def _build_agent(
     config: Config,
     use_memory: bool = False,
     domains: Sequence[str] = _DOMAINS,
+    recorder: TraceRecorder | None = None,
 ) -> Agent:
     """Assemble the Bedrock-backed agent. Call inside _wren_mcp_tools()."""
     session = boto3.Session(
@@ -125,10 +168,15 @@ def _build_agent(
     all_tools = list(tools)
     if use_memory:
         all_tools += MemoryTools(build_memory_store(config)).as_list()
+    prompt = _load_prompt(domains) + (_MEMORY_PROMPT if use_memory else "")
+    if recorder is not None:
+        all_tools += ChartTools(recorder).as_list()
+        prompt += _CHART_PROMPT
     return Agent(
         model=model,
         tools=all_tools,
-        system_prompt=_load_prompt(domains) + (_MEMORY_PROMPT if use_memory else ""),
+        system_prompt=prompt,
+        hooks=[recorder] if recorder is not None else None,
     )
 
 
@@ -168,6 +216,7 @@ def answer_question(
     config: Config | None = None,
     use_memory: bool = True,
     domains: Sequence[str] = _DOMAINS,
+    on_event: EventSink | None = None,
 ) -> AnswerResult:
     """Answer a user's question using the agent.
 
@@ -177,6 +226,7 @@ def answer_question(
         config: Configuration object (default: loaded from environment).
         use_memory: Enable user-scoped memory persistence (default: True).
         domains: Semantic domains to include (default: both ecommerce and energy).
+        on_event: Optional sink for trace events (see agent.trace); enables show_chart.
 
     Returns:
         AnswerResult with text, metrics, and pre-formatted budget line.
@@ -186,10 +236,18 @@ def answer_question(
         config = Config.from_env()
 
     result = None
+    recorder = None
     try:
         with _wren_mcp_tools() as tools:
+            if on_event is not None:
+                recorder = TraceRecorder(on_event, _sql_compiler(tools))
+                recorder.emit("question", question=question, domains=list(domains))
             agent = _build_agent(
-                list(tools), config=config, use_memory=use_memory, domains=domains
+                list(tools),
+                config=config,
+                use_memory=use_memory,
+                domains=domains,
+                recorder=recorder,
             )
             result = agent(
                 question,
@@ -202,6 +260,15 @@ def answer_question(
         turns, tokens, over, metrics = _format_metrics(
             result, config.agent.tokens_budget
         )
+        if recorder is not None:
+            recorder.emit(
+                "answer",
+                text=text,
+                turns=turns,
+                tokens=tokens,
+                over_budget=over,
+                path=recorder.path(),
+            )
         return AnswerResult(
             text=text,
             turns=turns,
@@ -209,6 +276,10 @@ def answer_question(
             over_budget=over,
             metrics_line=metrics,
         )
+    except Exception as e:
+        if recorder is not None:
+            recorder.emit("error", message=str(e))
+        raise
     finally:
         # Ensure metrics print even on exception
         if result is not None:
@@ -222,10 +293,10 @@ def wren_mcp_tools():
     return _wren_mcp_tools()
 
 
-def build_agent(tools, use_memory=False, domains=_DOMAINS, config: Config | None = None):
+def build_agent(tools, use_memory=False, domains=_DOMAINS, config: Config | None = None, recorder=None):
     if config is None:
         config = Config.from_env()
-    return _build_agent(tools, config, use_memory, domains)
+    return _build_agent(tools, config, use_memory, domains, recorder)
 
 
 def answer_text(result):

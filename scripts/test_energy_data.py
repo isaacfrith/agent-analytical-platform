@@ -17,7 +17,7 @@ import sys
 STEP_TIMEOUT_S = 300
 
 QUERIES: list[tuple[str, str, str]] = [
-    # (label, sql, expectation: "nonempty" | "zero" | "report")
+    # (label, sql, expectation: "nonempty" | "zero" | "empty" | "report")
     (
         "facilities units present",
         "SELECT COUNT(*) FROM iceberg.energy.facilities",
@@ -32,6 +32,16 @@ QUERIES: list[tuple[str, str, str]] = [
         "facilities statuses",
         "SELECT status, COUNT(*) FROM iceberg.energy.facilities  GROUP BY 1 ORDER BY 1",
         "report",
+    ),
+    (
+        "facilities mostly located",
+        "SELECT COUNT(*) FROM iceberg.energy.facilities  WHERE latitude IS NULL HAVING COUNT(*) > 0.05 * (SELECT COUNT(*) FROM iceberg.energy.facilities)",
+        "empty",
+    ),
+    (
+        "facilities inside Australia",
+        "SELECT COUNT(*) FROM iceberg.energy.facilities  WHERE latitude NOT BETWEEN -44 AND -10 OR longitude NOT BETWEEN 112 AND 154",
+        "zero",
     ),
     (
         "generation covers 90 days",
@@ -103,6 +113,9 @@ def main() -> int:
             if expect == "zero":
                 ok = rows == [["0"]]
                 detail = f"got {rows[0][0] if rows else '?'} violating row(s)"
+            elif expect == "empty":
+                ok = rows == []
+                detail = "ok" if ok else f"{rows[0][0]} unlocated unit(s), over 5%"
             elif expect == "nonempty":
                 ok = bool(rows) and rows != [["0"]]
                 detail = f"got {rows[0][0] if rows else 'no rows'}"

@@ -65,6 +65,18 @@ columns:
     not_null: false
     properties:
       description: "Tonnes CO2e per MWh. Null for non-emitting tech (wind, solar)."
+  - name: latitude
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Site latitude (WGS84). Site-level — every unit of a site shares it. Null for a few sites."
+  - name: longitude
+    type: DOUBLE
+    is_calculated: false
+    not_null: false
+    properties:
+      description: "Site longitude (WGS84). Site-level — every unit of a site shares it. Null for a few sites."
   - name: fueltech_group
     type: fueltech_groups
     relationship: facilities_fueltech_groups

@@ -1,0 +1,403 @@
+{
+ "id": "price_spike_fuel_mix",
+ "label": "Fuel mix on the price spike",
+ "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
+ "recorded_at": "2026-10-19T01:21:59Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "On the highest-price day in the last 30 days, which fuel types generated the most?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 1.555,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "reasoning",
+   "t": 1.555,
+   "text": "I'll help you find which fuel types generated the most on the highest-price day in the last 30 days. Let me start by getting the business rules and then querying the data."
+  },
+  {
+   "type": "step_start",
+   "t": 1.556,
+   "step": 1,
+   "tool": "get_instructions",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 1.566,
+   "step": 1,
+   "tool": "get_instructions",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 10
+  },
+  {
+   "type": "usage",
+   "t": 3.994,
+   "turns": 2,
+   "tokens": 4872
+  },
+  {
+   "type": "reasoning",
+   "t": 3.994,
+   "text": "Good, I have the business rules. Now let me find the highest-price day in the last 30 days and then see which fuel types generated the most on that day. I'll use the daily_price cube to find the highest-price day, then query generation data for that day."
+  },
+  {
+   "type": "step_start",
+   "t": 3.995,
+   "step": 2,
+   "tool": "query_cube",
+   "input": {
+    "cube": "daily_price",
+    "measures": [
+     "avg_price"
+    ],
+    "time_dimension": "day:day:-30",
+    "order_by": [
+     "avg_price:desc"
+    ],
+    "limit": 1
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 4.058,
+   "step": 2,
+   "tool": "query_cube",
+   "status": "error",
+   "path": "cube",
+   "duration_ms": 41,
+   "error": "Error executing tool query_cube: --time-dimension dateRange must be 'start,end' (exactly two dates)"
+  },
+  {
+   "type": "usage",
+   "t": 6.407,
+   "turns": 3,
+   "tokens": 10842
+  },
+  {
+   "type": "reasoning",
+   "t": 6.407,
+   "text": "Let me adjust the time dimension format:"
+  },
+  {
+   "type": "step_start",
+   "t": 6.407,
+   "step": 3,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nWITH highest_price_day AS (\n  SELECT day, avg_price\n  FROM daily_price\n  WHERE day >= CURRENT_DATE - INTERVAL '30' DAY\n  ORDER BY avg_price DESC\n  LIMIT 1\n)\nSELECT \n  g.fueltech,\n  SUM(g.energy_mwh) as total_generation_mwh\nFROM generation_daily g\nINNER JOIN highest_price_day h ON g.day = h.day\nGROUP BY g.fueltech\nORDER BY total_generation_mwh DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 6.506,
+   "step": 3,
+   "tool": "run_sql",
+   "status": "error",
+   "path": "sql",
+   "duration_ms": 91,
+   "error": "Error executing tool run_sql: [INVALID_SQL] TrinoUserError(type=USER_ERROR, name=TABLE_NOT_FOUND, message=\"line 2:529: Table 'iceberg.ecommerce.daily_price' does not exist\", query_id=20261016_200957_00198_77uvp) phase=SQL_EXECUTION",
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\"), highest_price_day AS (SELECT day, avg_price FROM daily_price WHERE day >= CURRENT_DATE - INTERVAL '30' DAY ORDER BY avg_price DESC LIMIT 1) SELECT g.fueltech, SUM(g.energy_mwh) AS total_generation_mwh FROM generation_daily AS g INNER JOIN highest_price_day AS h ON g.day = h.day GROUP BY g.fueltech ORDER BY total_generation_mwh DESC"
+  },
+  {
+   "type": "usage",
+   "t": 7.555,
+   "turns": 4,
+   "tokens": 17050
+  },
+  {
+   "type": "reasoning",
+   "t": 7.556,
+   "text": "Let me check the available models first:"
+  },
+  {
+   "type": "step_start",
+   "t": 7.557,
+   "step": 4,
+   "tool": "list_models",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 7.588,
+   "step": 4,
+   "tool": "list_models",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 31
+  },
+  {
+   "type": "usage",
+   "t": 8.699,
+   "turns": 5,
+   "tokens": 23407
+  },
+  {
+   "type": "reasoning",
+   "t": 8.699,
+   "text": "Now let me check the cubes available:"
+  },
+  {
+   "type": "step_start",
+   "t": 8.7,
+   "step": 5,
+   "tool": "list_cubes",
+   "input": {}
+  },
+  {
+   "type": "step_end",
+   "t": 8.715,
+   "step": 5,
+   "tool": "list_cubes",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 15
+  },
+  {
+   "type": "usage",
+   "t": 11.09,
+   "turns": 6,
+   "tokens": 30373
+  },
+  {
+   "type": "reasoning",
+   "t": 11.091,
+   "text": "Perfect! Now I can use the cubes. Let me find the highest-price day in the last 30 days using the daily_price cube, then query generation by fuel type for that day:"
+  },
+  {
+   "type": "step_start",
+   "t": 11.091,
+   "step": 6,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nWITH highest_price_day AS (\n  SELECT day, avg_price\n  FROM market_daily\n  WHERE day >= CURRENT_DATE - INTERVAL '30' DAY\n  ORDER BY avg_price DESC\n  LIMIT 1\n)\nSELECT \n  g.fueltech,\n  SUM(g.energy_mwh) as total_generation_mwh\nFROM generation_daily g\nINNER JOIN highest_price_day h ON g.day = h.day\nGROUP BY g.fueltech\nORDER BY total_generation_mwh DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 11.165,
+   "step": 6,
+   "tool": "run_sql",
+   "status": "error",
+   "path": "sql",
+   "duration_ms": 60,
+   "error": "Error executing tool run_sql: [INVALID_SQL] TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message=\"line 2:738: Column 'avg_price' cannot be resolved\", query_id=20261016_201002_00199_77uvp) phase=SQL_EXECUTION",
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\"), market_daily AS (SELECT \"wren_src_market_daily\".\"day\" AS day FROM (SELECT market_daily.\"day\" FROM (SELECT __source.\"day\" AS \"day\" FROM \"iceberg\".energy.market_daily AS __source) AS market_daily) AS \"wren_src_market_daily\"), highest_price_day AS (SELECT day, avg_price FROM market_daily WHERE day >= CURRENT_DATE - INTERVAL '30' DAY ORDER BY avg_price DESC LIMIT 1) SELECT g.fueltech, SUM(g.energy_mwh) AS total_generation_mwh FROM generation_daily AS g INNER JOIN highest_price_day AS h ON g.day = h.day GROUP BY g.fueltech ORDER BY total_generation_mwh DESC"
+  },
+  {
+   "type": "usage",
+   "t": 12.378,
+   "turns": 7,
+   "tokens": 38096
+  },
+  {
+   "type": "reasoning",
+   "t": 12.378,
+   "text": "Let me describe the market_daily model to see the correct column names:"
+  },
+  {
+   "type": "step_start",
+   "t": 12.379,
+   "step": 7,
+   "tool": "describe_model",
+   "input": {
+    "name": "market_daily"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 12.414,
+   "step": 7,
+   "tool": "describe_model",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 35
+  },
+  {
+   "type": "usage",
+   "t": 14.677,
+   "turns": 8,
+   "tokens": 45988
+  },
+  {
+   "type": "reasoning",
+   "t": 14.677,
+   "text": "Great! The column is `price_aud_mwh`. Now let me run the correct query:"
+  },
+  {
+   "type": "step_start",
+   "t": 14.678,
+   "step": 8,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nWITH highest_price_day AS (\n  SELECT day\n  FROM market_daily\n  WHERE day >= CURRENT_DATE - INTERVAL '30' DAY\n  ORDER BY price_aud_mwh DESC\n  LIMIT 1\n)\nSELECT \n  g.fueltech,\n  SUM(g.energy_mwh) as total_generation_mwh\nFROM generation_daily g\nINNER JOIN highest_price_day h ON g.day = h.day\nGROUP BY g.fueltech\nORDER BY total_generation_mwh DESC\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 14.941,
+   "step": 8,
+   "tool": "run_sql",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 256,
+   "row_count": 17,
+   "columns": [
+    "fueltech",
+    "total_generation_mwh"
+   ],
+   "truncated": false,
+   "sql": "WITH generation_daily AS (SELECT \"wren_src_generation_daily\".fueltech AS fueltech, \"wren_src_generation_daily\".energy_mwh AS energy_mwh, \"wren_src_generation_daily\".\"day\" AS day FROM (SELECT generation_daily.\"day\", generation_daily.energy_mwh, generation_daily.fueltech FROM (SELECT __source.\"day\" AS \"day\", __source.energy_mwh AS energy_mwh, __source.fueltech AS fueltech FROM \"iceberg\".energy.generation_daily AS __source) AS generation_daily) AS \"wren_src_generation_daily\"), market_daily AS (SELECT \"wren_src_market_daily\".\"day\" AS day, \"wren_src_market_daily\".price_aud_mwh AS price_aud_mwh FROM (SELECT market_daily.\"day\", market_daily.price_aud_mwh FROM (SELECT __source.\"day\" AS \"day\", __source.price_aud_mwh AS price_aud_mwh FROM \"iceberg\".energy.market_daily AS __source) AS market_daily) AS \"wren_src_market_daily\"), highest_price_day AS (SELECT day FROM market_daily WHERE day >= CURRENT_DATE - INTERVAL '30' DAY ORDER BY price_aud_mwh DESC LIMIT 1) SELECT g.fueltech, SUM(g.energy_mwh) AS total_generation_mwh FROM generation_daily AS g INNER JOIN highest_price_day AS h ON g.day = h.day GROUP BY g.fueltech ORDER BY total_generation_mwh DESC"
+  },
+  {
+   "type": "usage",
+   "t": 16.642,
+   "turns": 9,
+   "tokens": 54557
+  },
+  {
+   "type": "reasoning",
+   "t": 16.642,
+   "text": "Perfect! Now let me create a chart to visualize this data:"
+  },
+  {
+   "type": "step_start",
+   "t": 16.643,
+   "step": 9,
+   "tool": "show_chart",
+   "input": {
+    "kind": "bar",
+    "title": "Generation by Fuel Type on Highest-Price Day (MWh)",
+    "x": "fueltech",
+    "y": [
+     "total_generation_mwh"
+    ]
+   }
+  },
+  {
+   "type": "chart",
+   "t": 16.643,
+   "step": 8,
+   "spec": {
+    "kind": "bar",
+    "title": "Generation by Fuel Type on Highest-Price Day (MWh)",
+    "x": "fueltech",
+    "y": [
+     "total_generation_mwh"
+    ],
+    "series": null
+   },
+   "columns": [
+    "fueltech",
+    "total_generation_mwh"
+   ],
+   "rows": [
+    {
+     "fueltech": "battery",
+     "total_generation_mwh": -2380.1602000000003
+    },
+    {
+     "fueltech": "solar_utility",
+     "total_generation_mwh": 52933.883499999996
+    },
+    {
+     "fueltech": "gas_recip",
+     "total_generation_mwh": 361.3598
+    },
+    {
+     "fueltech": "battery_discharging",
+     "total_generation_mwh": 15833.258100000001
+    },
+    {
+     "fueltech": "wind",
+     "total_generation_mwh": 117000.2039
+    },
+    {
+     "fueltech": "gas_wcmg",
+     "total_generation_mwh": 867.9381
+    },
+    {
+     "fueltech": "pumps",
+     "total_generation_mwh": 4244.9759
+    },
+    {
+     "fueltech": "battery_charging",
+     "total_generation_mwh": 18212.590399999997
+    },
+    {
+     "fueltech": "solar_rooftop",
+     "total_generation_mwh": 106857.14819999998
+    },
+    {
+     "fueltech": "gas_steam",
+     "total_generation_mwh": 669.2501
+    },
+    {
+     "fueltech": "gas_ccgt",
+     "total_generation_mwh": 9152.9856
+    },
+    {
+     "fueltech": "coal_brown",
+     "total_generation_mwh": 82101.4998
+    },
+    {
+     "fueltech": "distillate",
+     "total_generation_mwh": 24.088
+    },
+    {
+     "fueltech": "gas_ocgt",
+     "total_generation_mwh": 12902.706
+    },
+    {
+     "fueltech": "hydro",
+     "total_generation_mwh": 25604.672899999998
+    },
+    {
+     "fueltech": "coal_black",
+     "total_generation_mwh": 210117.8086
+    },
+    {
+     "fueltech": "bioenergy_biomass",
+     "total_generation_mwh": 2114.7
+    }
+   ]
+  },
+  {
+   "type": "step_end",
+   "t": 16.643,
+   "step": 9,
+   "tool": "show_chart",
+   "status": "success",
+   "path": "chart",
+   "duration_ms": 0
+  },
+  {
+   "type": "usage",
+   "t": 20.143,
+   "turns": 10,
+   "tokens": 63942
+  },
+  {
+   "type": "answer",
+   "t": 20.233,
+   "text": "## Answer\n\nOn the highest-price day in the last 30 days, **coal_black** generated the most energy with **210,117.81 MWh**, followed by **wind** with **117,000.20 MWh** and **solar_rooftop** with **106,857.15 MWh**.\n\n**Tool used:** `run_sql`\n\n**SQL executed:**\n```sql\nWITH highest_price_day AS (\n  SELECT day\n  FROM market_daily\n  WHERE day >= CURRENT_DATE - INTERVAL '30' DAY\n  ORDER BY price_aud_mwh DESC\n  LIMIT 1\n)\nSELECT \n  g.fueltech,\n  SUM(g.energy_mwh) as total_generation_mwh\nFROM generation_daily g\nINNER JOIN highest_price_day h ON g.day = h.day\nGROUP BY g.fueltech\nORDER BY total_generation_mwh DESC\n```\n\n**Top 5 fuel types by generation on that day:**\n1. Coal (black): 210,117.81 MWh\n2. Wind: 117,000.20 MWh\n3. Solar (rooftop): 106,857.15 MWh\n4. Solar (utility): 52,933.88 MWh\n5. Hydro: 25,604.67 MWh\n\n**Caveat:** Battery entries show negative values for charging (correct NEM behaviour) and positive for discharging. Pumps also show storage activity rather than generation.",
+   "turns": 10,
+   "tokens": 73733,
+   "over_budget": false,
+   "path": "sql"
+  }
+ ]
+}
