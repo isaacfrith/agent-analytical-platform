@@ -78,7 +78,7 @@ evals: ## Full eval suite against the real agent (~30-45 min, costs Bedrock toke
 	uv run python evaluations/run_evals.py
 
 ## Demo UI
-demo-record: ## Re-record the demo questions, map and data catalog (~$1 of Bedrock)
+demo-record: ## Re-record the demo questions, map and data catalog (costs Bedrock tokens)
 	uv run python scripts/demo_record.py
 demo-serve: ## Serve the UI at http://localhost:8765
 	@echo "http://localhost:8765"
