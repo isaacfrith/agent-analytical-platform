@@ -9,19 +9,25 @@ columns:
     is_calculated: false
     not_null: true
     properties:
-      description: "NEM-local calendar day (midnight). 90-day rolling window."
+      description: "Market-local calendar day (midnight): NEM days are AEST (+10), WEM days AWST (+08). 90-day rolling window."
   - name: network_region
     type: VARCHAR
     is_calculated: false
     not_null: true
     properties:
-      description: "NEM region: NSW1|QLD1|SA1|TAS1|VIC1."
+      description: "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM) or WEM (network WEM, south-west WA)."
+  - name: network
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets — filter network = 'NEM' when the user says 'the NEM'."
   - name: price_aud_mwh
     type: DOUBLE
     is_calculated: false
     not_null: false
     properties:
-      description: "Volume-weighted average spot price that day, AUD/MWh. A rate — average it, never sum it. Can go negative."
+      description: "Volume-weighted average spot price that day, AUD/MWh. A rate — average it, never sum it. Can go negative. NEM and WEM prices come from different market designs: compare them side by side, never average across networks."
   - name: demand_mw
     type: DOUBLE
     is_calculated: false
@@ -42,4 +48,4 @@ columns:
 primary_key: day
 cached: false
 properties:
-  description: "Daily NEM market outcomes by region. Grain: one row per region x day. Join generation_daily on region + day for fuel-mix-during-price-events questions."
+  description: "Daily market outcomes by network and region (NEM + WEM). Grain: one row per region x day. Join generation_daily on region + day for fuel-mix-during-price-events questions."

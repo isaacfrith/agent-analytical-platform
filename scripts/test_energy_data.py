@@ -1,8 +1,9 @@
 """Phase 1 energy gate: data invariants against Trino (no LLM, no MDL).
 
 Proves the fetch pipeline landed queryable truth: row counts, 90-day
-coverage, key uniqueness, and referential integrity between generation
-facts and the fueltech_groups mapping. Anything red here means
+coverage per network (NEM + WEM), key uniqueness, network/region
+consistency, and referential integrity between generation facts and the
+fueltech_groups mapping. Anything red here means
 `make energy-data` produced bad data — fix the fetch, not the layer.
 
 Usage: uv run python scripts/test_energy_data.py  (or `make energy-test`)
@@ -17,7 +18,7 @@ import sys
 STEP_TIMEOUT_S = 300
 
 QUERIES: list[tuple[str, str, str]] = [
-    # (label, sql, expectation: "nonempty" | "zero" | "empty" | "report")
+    # (label, sql, expectation: "nonempty" | "zero" | "empty" | "report" | "=<value>")
     (
         "facilities units present",
         "SELECT COUNT(*) FROM iceberg.energy.facilities",
@@ -44,14 +45,24 @@ QUERIES: list[tuple[str, str, str]] = [
         "zero",
     ),
     (
-        "generation covers 90 days",
-        "SELECT COUNT(DISTINCT day) FROM iceberg.energy.generation_daily",
-        "nonempty",
+        "generation covers both networks",
+        "SELECT COUNT(DISTINCT network) FROM iceberg.energy.generation_daily",
+        "=2",
     ),
     (
-        "generation covers 5 regions",
+        "generation covers 90 days per network",
+        "SELECT COUNT(*) FROM (SELECT network FROM iceberg.energy.generation_daily GROUP BY 1 HAVING COUNT(DISTINCT day) <> 90)",
+        "zero",
+    ),
+    (
+        "generation covers 6 regions",
         "SELECT COUNT(DISTINCT network_region)  FROM iceberg.energy.generation_daily",
-        "nonempty",
+        "=6",
+    ),
+    (
+        "network matches region",
+        "SELECT (SELECT COUNT(*) FROM iceberg.energy.generation_daily WHERE (network = 'WEM') <> (network_region = 'WEM')) + (SELECT COUNT(*) FROM iceberg.energy.market_daily WHERE (network = 'WEM') <> (network_region = 'WEM')) + (SELECT COUNT(*) FROM iceberg.energy.facilities WHERE (network = 'WEM') <> (network_region = 'WEM'))",
+        "zero",
     ),
     (
         "generation keys unique",
@@ -69,9 +80,9 @@ QUERIES: list[tuple[str, str, str]] = [
         "report",
     ),
     (
-        "market covers 90x5 cells",
+        "market covers 90x6 cells",
         "SELECT COUNT(*) FROM iceberg.energy.market_daily",
-        "nonempty",
+        "=540",
     ),
     (
         "market facts present",
@@ -113,6 +124,10 @@ def main() -> int:
             if expect == "zero":
                 ok = rows == [["0"]]
                 detail = f"got {rows[0][0] if rows else '?'} violating row(s)"
+            elif expect.startswith("="):
+                got = rows[0][0] if rows else "no rows"
+                ok = got == expect[1:]
+                detail = f"got {got}, want {expect[1:]}"
             elif expect == "empty":
                 ok = rows == []
                 detail = "ok" if ok else f"{rows[0][0]} unlocated unit(s), over 5%"

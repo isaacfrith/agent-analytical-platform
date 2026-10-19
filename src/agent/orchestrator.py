@@ -28,6 +28,7 @@ from strands import Agent
 from strands.models import BedrockModel, CacheConfig
 from strands.tools.mcp import MCPClient
 
+from agent.cube_query import CubeQueryTool
 from agent.memory import MemoryTools
 from agent.trace import ChartTools, EventSink, TraceRecorder
 from config import Config
@@ -84,19 +85,19 @@ Never invent preferences. If search returns nothing relevant, say so and proceed
 _CHART_PROMPT = """
 Chart tool is enabled (a visual demo UI shows your work):
 - Charting never changes WHAT you answer or how many queries you run. If the data cannot answer the question, refuse exactly as you otherwise would and do not fetch rows just to have something to chart.
-- show_chart: when a data step returned the rows that answer the question, call show_chart ONCE before your final answer, naming columns of that step's rows (x, y, optional series). Rows come from the tool result — never type numbers into it. If the answer needs arithmetic over rows (a share, a total, a ranking), do it in SQL and chart that step; never compute figures yourself from returned rows.
-- Your final answer always comes first: skip show_chart rather than run out of turns. line for days, bar to compare regions or fuels, stacked_bar for fuel mix, table otherwise. Set map_key to the network_region or facility_code column whenever rows are per region or per facility, so the map recolours. To chart facilities on the map, include facility_code in the SELECT. Skip it when you refused or returned no rows.
+- show_chart is REQUIRED whenever a data step returned the rows that answer the question: call it exactly once, before your final answer, naming columns of that step's rows (x, y, optional series). Rows come from the tool result — never type numbers into it. If the answer needs arithmetic over rows (a share, a total, a ranking), do it in the query and chart that step; never compute figures yourself from returned rows. The only times to skip it: you refused, or no query returned rows. line for days, bar to compare regions or fuels, stacked_bar for fuel mix, table otherwise. Set map_key to the network_region or facility_code column whenever rows are per region or per facility, so the map recolours. To chart facilities on the map, include facility_code in the SELECT. Skip it when you refused or returned no rows.
 """
 
 
 def _sql_compiler(tools: Sequence[Any]):
     """Compiled target-dialect SQL for a data step, via the read-only MCP tools."""
     by_name = {t.tool_name: t for t in tools}
+    cubes = CubeQueryTool(tools)
 
     def compile_sql(name: str, tool_input: dict) -> str | None:
         if name == "query_cube":
-            call, args = "query_cube", {**tool_input, "sql_only": True}
-        elif "sql" in tool_input:
+            return cubes.sql(**tool_input)
+        if "sql" in tool_input:
             call, args = "dry_plan", {"sql": tool_input["sql"]}
         else:
             return None
@@ -165,7 +166,9 @@ def _build_agent(
         cache_config=CacheConfig(strategy="auto"),
         boto_session=session,
     )
-    all_tools = list(tools)
+    # Wren's query_cube emits untyped time literals Trino rejects; ours types them.
+    all_tools = [t for t in tools if t.tool_name != "query_cube"]
+    all_tools += CubeQueryTool(tools).as_list()
     if use_memory:
         all_tools += MemoryTools(build_memory_store(config)).as_list()
     prompt = _load_prompt(domains) + (_MEMORY_PROMPT if use_memory else "")

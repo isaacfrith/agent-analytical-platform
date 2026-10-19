@@ -21,7 +21,13 @@ columns:
     is_calculated: false
     not_null: true
     properties:
-      description: "NEM region: NSW1|QLD1|SA1|TAS1|VIC1 (state-scale zones)."
+      description: "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM, state-scale zones) or WEM (network WEM, south-west WA)."
+  - name: network
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets — filter network = 'NEM' when the user says 'the NEM'."
   - name: unit_code
     type: VARCHAR
     is_calculated: false
@@ -85,4 +91,4 @@ columns:
 primary_key: unit_code
 cached: false
 properties:
-  description: "NEM generation registry at unit grain. Capacity questions SUM capacity_registered_mw; output questions belong to generation_daily — this table holds no output."
+  description: "Generation registry (NEM + WEM) at unit grain. Capacity questions SUM capacity_registered_mw; output questions belong to generation_daily — this table holds no output."

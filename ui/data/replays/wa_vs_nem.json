@@ -1,0 +1,31 @@
+{
+ "id": "wa_vs_nem",
+ "label": "WA vs the east coast",
+ "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
+ "recorded_at": "2026-10-19T05:12:51Z",
+ "data_window": {
+  "first_day": "2026-07-21 00:00:00.000000",
+  "last_day": "2026-10-18 00:00:00.000000"
+ },
+ "events": [
+  {
+   "type": "question",
+   "t": 0.0,
+   "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",
+   "domains": [
+    "energy"
+   ]
+  },
+  {
+   "type": "usage",
+   "t": 12.922,
+   "turns": 1,
+   "tokens": 0
+  },
+  {
+   "type": "error",
+   "t": 13.01,
+   "message": "An error occurred (ServiceUnavailableException) when calling the ConverseStream operation (reached max retries: 4): Bedrock is unable to process your request."
+  }
+ ]
+}

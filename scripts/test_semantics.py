@@ -144,7 +144,7 @@ CUBE_PROBES: list[tuple[str, list[str]]] = [
             "--cube",
             "renewable_share",
             "--measures",
-            "renewable_energy,total_energy",
+            "renewable_energy,total_energy,renewable_share_pct",
             "-l",
             "5",
         ],

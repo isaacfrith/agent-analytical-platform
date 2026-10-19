@@ -1,9 +1,13 @@
 """Phase 1 energy pipeline: Open Electricity API → landing Parquet → Iceberg.
 
-Fetches 90 days of daily NEM data (live, ending yesterday) plus the full
-facility registry, and loads four tables into the `energy` namespace:
-facilities (unit grain), generation_daily (region × fueltech × day),
-market_daily (region × day), and the static fueltech_groups mapping.
+Fetches 90 days of daily data (live, ending yesterday) plus the full
+facility registry for both networks Open Electricity covers — the NEM (east
+coast, five regions) and the WEM (south-west WA, one region) — and loads
+four tables into the `energy` namespace: facilities (unit grain),
+generation_daily (region × fueltech × day), market_daily (region × day), and
+the static fueltech_groups mapping. Every fact row carries `network`; the two
+markets are not interconnected. Days are each network's local calendar day
+(NEM +10:00, WEM +08:00), as the API reports them.
 
 Single script instead of the generate/load split: the source is one API,
 not a generator, so fetch and load share the window and schemas. Split it
@@ -38,7 +42,7 @@ from pyiceberg.types import (
 from repo_config import pass_line, require_env
 
 WINDOW_DAYS = 90
-NETWORK = "NEM"
+NETWORKS = ("NEM", "WEM")
 
 # Governed grouping, owned here and mirrored into energy.md in Phase 2.
 # Mirrors Open Electricity's fueltech groups; is_renewable is OUR definition
@@ -94,6 +98,7 @@ SCHEMAS: dict[str, Schema] = {
         F(10, "emissions_factor_tco2e_mwh", DoubleType()),
         F(11, "latitude", DoubleType()),
         F(12, "longitude", DoubleType()),
+        F(13, "network", StringType(), required=True),
     ),
     "generation_daily": Schema(
         F(1, "day", TimestampType(), required=True),
@@ -102,6 +107,7 @@ SCHEMAS: dict[str, Schema] = {
         F(4, "energy_mwh", DoubleType()),
         F(5, "emissions_tco2e", DoubleType()),
         F(6, "market_value_aud", DoubleType()),
+        F(7, "network", StringType(), required=True),
     ),
     "market_daily": Schema(
         F(1, "day", TimestampType(), required=True),
@@ -109,6 +115,7 @@ SCHEMAS: dict[str, Schema] = {
         F(3, "price_aud_mwh", DoubleType()),
         F(4, "demand_mw", DoubleType()),
         F(5, "demand_energy_mwh", DoubleType()),
+        F(6, "network", StringType(), required=True),
     ),
     "fueltech_groups": Schema(
         F(1, "fueltech", StringType(), required=True),
@@ -136,8 +143,10 @@ def day_key(dt: datetime) -> datetime:
     return datetime(d.year, d.month, d.day)
 
 
-def fetch_all():
-    """Three API calls: registry, generation facts, market facts.
+def fetch_all() -> dict[str, tuple]:
+    """Per network, three API calls: registry, generation facts, market facts.
+
+    Returns {network: (facilities, gen, market)}.
 
     Facilities go over raw HTTP: the 0.12.0 client rejects the
     'commissioning' status the server actually sends (stale enum), so
@@ -146,48 +155,55 @@ def fetch_all():
     """
     import logging
 
-    import requests
-
     logging.disable(logging.CRITICAL)
-    from openelectricity import DataMetric, MarketMetric, OEClient
+    from openelectricity import OEClient
 
     end = datetime.now(UTC).date() - timedelta(days=1)
     start = end - timedelta(days=WINDOW_DAYS - 1)
     start_dt = datetime(start.year, start.month, start.day)
     end_dt = datetime(end.year, end.month, end.day) + timedelta(days=1)
-    print(f"window: {start} .. {end} ({NETWORK}, daily)")
+    print(f"window: {start} .. {end} ({', '.join(NETWORKS)}, daily)")
+
+    with OEClient() as client:
+        return {
+            network: fetch_network(client, network, start_dt, end_dt)
+            for network in NETWORKS
+        }
+
+
+def fetch_network(client, network: str, start_dt: datetime, end_dt: datetime) -> tuple:
+    import requests
+    from openelectricity import DataMetric, MarketMetric
 
     resp = requests.get(
         "https://api.openelectricity.org.au/v4/facilities/",
-        params={"network_id": NETWORK},
+        params={"network_id": network},
         headers={"Authorization": f"Bearer {os.environ['OPENELECTRICITY_API_KEY']}"},
         timeout=120,
     )
     resp.raise_for_status()
     facilities = resp.json()["data"]
-
-    with OEClient() as client:
-        gen = client.get_network_data(
-            network_code=NETWORK,
-            metrics=[DataMetric.ENERGY, DataMetric.EMISSIONS, DataMetric.MARKET_VALUE],
-            interval="1d",
-            date_start=start_dt,
-            date_end=end_dt,
-            primary_grouping="network_region",
-            secondary_grouping="fueltech",
-        )
-        market = client.get_market(
-            network_code=NETWORK,
-            metrics=[
-                MarketMetric.PRICE,
-                MarketMetric.DEMAND,
-                MarketMetric.DEMAND_ENERGY,
-            ],
-            interval="1d",
-            date_start=start_dt,
-            date_end=end_dt,
-            primary_grouping="network_region",
-        )
+    gen = client.get_network_data(
+        network_code=network,
+        metrics=[DataMetric.ENERGY, DataMetric.EMISSIONS, DataMetric.MARKET_VALUE],
+        interval="1d",
+        date_start=start_dt,
+        date_end=end_dt,
+        primary_grouping="network_region",
+        secondary_grouping="fueltech",
+    )
+    market = client.get_market(
+        network_code=network,
+        metrics=[
+            MarketMetric.PRICE,
+            MarketMetric.DEMAND,
+            MarketMetric.DEMAND_ENERGY,
+        ],
+        interval="1d",
+        date_start=start_dt,
+        date_end=end_dt,
+        primary_grouping="network_region",
+    )
     return facilities, gen, market
 
 
@@ -292,17 +308,24 @@ def main() -> int:
     bucket = os.environ["AWS_S3_BUCKET"]
     s3 = pa_fs.S3FileSystem(region=os.environ["AWS_REGION"])
 
-    facilities, gen, market = fetch_all()
+    fetched = fetch_all()
+
+    def tagged(flatten, index: int) -> list[dict]:
+        return [
+            {**row, "network": network}
+            for network, parts in fetched.items()
+            for row in flatten(parts[index])
+        ]
 
     tables = {
         "energy_facilities": to_arrow(
-            flatten_facilities(facilities), SCHEMAS["facilities"]
+            tagged(flatten_facilities, 0), SCHEMAS["facilities"]
         ),
         "energy_generation_daily": to_arrow(
-            flatten_generation(gen), SCHEMAS["generation_daily"]
+            tagged(flatten_generation, 1), SCHEMAS["generation_daily"]
         ),
         "energy_market_daily": to_arrow(
-            flatten_market(market), SCHEMAS["market_daily"]
+            tagged(flatten_market, 2), SCHEMAS["market_daily"]
         ),
         "energy_fueltech_groups": to_arrow(
             [

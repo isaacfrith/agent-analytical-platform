@@ -7,7 +7,13 @@ measures:
   - name: total_energy
     expression: SUM(energy_mwh)
     type: DOUBLE
+  - name: renewable_share_pct
+    expression: 100.0 * SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / NULLIF(SUM(energy_mwh), 0)
+    type: DOUBLE
 dimensions:
+  - name: network
+    expression: network
+    type: VARCHAR
   - name: network_region
     expression: network_region
     type: VARCHAR
@@ -16,4 +22,4 @@ time_dimensions:
     expression: day
     type: TIMESTAMP
 properties:
-  description: "Renewable vs total daily generation by region. Share = renewable_energy / total_energy. Renewable follows the governed is_renewable flag (wind/solar/hydro/bioenergy; batteries excluded)."
+  description: "Renewable vs total daily generation by region. renewable_share_pct is the governed share (percent, ratio of sums over whatever window and grouping you query) — use it, never divide yourself. Renewable follows the governed is_renewable flag (wind/solar/hydro/bioenergy; batteries excluded)."

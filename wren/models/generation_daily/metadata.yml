@@ -9,13 +9,19 @@ columns:
     is_calculated: false
     not_null: true
     properties:
-      description: "NEM-local calendar day (midnight). 90-day rolling window."
+      description: "Market-local calendar day (midnight): NEM days are AEST (+10), WEM days AWST (+08). 90-day rolling window."
   - name: network_region
     type: VARCHAR
     is_calculated: false
     not_null: true
     properties:
-      description: "NEM region: NSW1|QLD1|SA1|TAS1|VIC1."
+      description: "Market region: NSW1|QLD1|SA1|TAS1|VIC1 (network NEM) or WEM (network WEM, south-west WA)."
+  - name: network
+    type: VARCHAR
+    is_calculated: false
+    not_null: true
+    properties:
+      description: "Market: NEM (east-coast grid, five regions) | WEM (south-west WA, one region). Separate, unconnected markets — filter network = 'NEM' when the user says 'the NEM'."
   - name: fueltech
     type: VARCHAR
     is_calculated: false
@@ -48,4 +54,4 @@ columns:
 primary_key: day
 cached: false
 properties:
-  description: "Daily NEM generation by region and fuel tech. Grain: one row per region x fueltech x day. For market context join market_daily on region + day."
+  description: "Daily generation by network, region and fuel tech (NEM + WEM). Grain: one row per region x fueltech x day. For market context join market_daily on region + day."

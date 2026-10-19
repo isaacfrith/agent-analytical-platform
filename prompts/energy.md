@@ -1,6 +1,6 @@
-# Domain: energy (Australian NEM, via Open Electricity)
+# Domain: energy (Australian NEM + WA's WEM, via Open Electricity)
 
-NEM generation and market outcomes (Iceberg `energy` namespace via Trino). Prices and market value in AUD. Daily grain, NEM-local calendar days, 90-day rolling window ending yesterday.
+Generation and market outcomes for two separate, unconnected markets (Iceberg `energy` namespace via Trino): the NEM (east coast; regions NSW1|QLD1|SA1|TAS1|VIC1) and the WEM (south-west WA; one region, WEM). Every fact row has `network` (NEM|WEM). "The NEM" means filter `network = 'NEM'` — WEM rows never belong in NEM totals or averages; "Australia"/"national" means both, reported per network. Northern Territory is not covered — say so if asked. Prices and market value in AUD. Daily grain, market-local calendar days (NEM +10, WEM +08), 90-day rolling window ending yesterday.
 
 Governed cubes: daily_generation, daily_price, renewable_share.
 

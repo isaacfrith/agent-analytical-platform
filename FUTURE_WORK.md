@@ -34,7 +34,8 @@ A green suite teaches nothing. Next cases:
 
 - Multi-hop joins ("top customers by net revenue" across orders, payments,
   returns).
-- Time-windowed cubes (pin the Trino TYPE_MISMATCH fallback under test).
+- Time-windowed cubes: fixed by src/agent/cube_query.py (typed literals);
+  pinned by energy_cube_time_window. Retire the shim when Wren types them.
 - Contradictory memories (user redefines twice — which value wins?).
 - Cost assertions (scan caps, turn budgets as graded constraints).
 

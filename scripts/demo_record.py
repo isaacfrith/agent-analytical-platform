@@ -6,7 +6,7 @@ overview (facility dots, 30-day renewable share by region) with plain SQL
 through the semantic layer, with no LLM. Everything lands in ui/data/, which is
 committed, so GitHub Pages serves it and re-recordings show up as diffs.
 
-Costs Bedrock tokens: about 6 questions at 25-50k tokens each (~$1).
+Costs Bedrock tokens: about 7 questions at 25-50k tokens each (~$1).
 
 Usage: uv run python scripts/demo_record.py [--only chip_id,...] [--overview-only]
        (or `make demo-record`)
@@ -35,6 +35,7 @@ CHIPS: list[tuple[str, str, str]] = [
     ("price_by_region", "Spot price by region", "What was the average spot price by region over the last 30 days?"),
     ("price_spike_fuel_mix", "Fuel mix on the price spike", "On the highest-price day in the last 30 days, which fuel types generated the most?"),
     ("coal_capacity", "Coal capacity by state", "Show me operating coal capacity by state."),
+    ("wa_vs_nem", "WA vs the east coast", "How does WA's renewable share compare with each NEM region over the last 30 days?"),
     ("largest_wind_solar", "Largest wind & solar farms", "Which are the 15 largest operating wind and solar facilities by registered capacity?"),
     ("refuse_efficiency", "Generation by efficiency", "Show me generation by unit efficiency."),
 ]

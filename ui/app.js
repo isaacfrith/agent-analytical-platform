@@ -1,4 +1,4 @@
-// NEM Energy Analyst — one page, two event sources.
+// Australian Energy Analyst — one page, two event sources.
 // Replay: a recorded event stream from data/replays/<id>.json, played back on its clock.
 // Live:   the same events streamed from the backend (?live=<url>), passcode-gated.
 // Every renderer consumes the same event shapes (see src/agent/trace.py).
@@ -8,7 +8,7 @@ const TOKENS_BUDGET = 150000;
 const MAX_GAP_MS = 700; // replays compress long model pauses
 
 // Fuel colours: validated all-pairs on the light surface (dataviz validator).
-// Coal is a deliberate neutral; WA/NT sit outside the NEM.
+// Coal is a deliberate neutral. NT has no public market data, so it stays grey.
 const FUEL = {
   coal: { label: "Coal", color: "#52514e" },
   gas: { label: "Gas & oil", color: "#e34948" },
@@ -22,8 +22,9 @@ const FUEL = {
 const FUEL_ORDER = Object.keys(FUEL);
 const STATUSES = ["operating", "commissioning", "committed", "retired"];
 const SEQ_RAMP = ["#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"];
-const NEM_BOUNDS = [[129, -43.8], [154, -10]];
-const REGION_NAMES = { NSW1: "New South Wales", QLD1: "Queensland", VIC1: "Victoria", SA1: "South Australia", TAS1: "Tasmania" };
+const AUS_BOUNDS = [[112.5, -43.8], [154, -10]];
+const REGION_NAMES = { NSW1: "New South Wales", QLD1: "Queensland", VIC1: "Victoria", SA1: "South Australia", TAS1: "Tasmania", WEM: "Western Australia" };
+const REGION_NOTES = { WEM: "WEM: south-west WA only, a separate market from the NEM" };
 
 // Map a raw fueltech or a governed fueltech_group to a display group.
 function fuelGroup(value) {
@@ -315,7 +316,7 @@ const mapView = {
     this.map = new maplibregl.Map({
       container: "map",
       style: { version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#eef3f8" } }] },
-      bounds: NEM_BOUNDS,
+      bounds: AUS_BOUNDS,
       fitBoundsOptions: { padding: 16 },
       attributionControl: false,
       dragRotate: false,
@@ -324,7 +325,7 @@ const mapView = {
     this.ready = new Promise((resolve) => this.map.on("load", () => { this.map.resize(); this.addLayers(); resolve(); }));
     new ResizeObserver(() => {
       this.map.resize();
-      if (this.overviewShown) this.map.fitBounds(NEM_BOUNDS, { padding: 16, duration: 0 });
+      if (this.overviewShown) this.map.fitBounds(AUS_BOUNDS, { padding: 16, duration: 0 });
     }).observe($("map"));
     this.renderControls();
   },
@@ -365,8 +366,8 @@ const mapView = {
       const metric = this.regionMetric;
       const v = p.region && metric ? metric.values[p.region] : null;
       regionPopup.setLngLat(e.lngLat).setHTML(
-        p.region ? `<strong>${escapeHtml(REGION_NAMES[p.region] || p.region)}</strong> (${p.region})${v != null ? `<br>${escapeHtml(metric.title)}: ${fmt(v)}${escapeHtml(metric.unit || "")}` : ""}`
-                 : `<strong>${escapeHtml(p.name)}</strong><br>Not part of the NEM`
+        p.region ? `<strong>${escapeHtml(REGION_NAMES[p.region] || p.region)}</strong> (${p.region})${REGION_NOTES[p.region] ? `<br><em>${escapeHtml(REGION_NOTES[p.region])}</em>` : ""}${v != null ? `<br>${escapeHtml(metric.title)}: ${fmt(v)}${escapeHtml(metric.unit || "")}` : ""}`
+                 : `<strong>${escapeHtml(p.name)}</strong><br>Not covered: no public market data`
       ).addTo(m);
     });
     m.on("mouseleave", "states-fill", () => regionPopup.remove());
@@ -418,19 +419,19 @@ const mapView = {
       el("span", { text: `${fmt(lo)}${metric.unit || ""}` }),
       el("span", { class: "ramp", style: `background:linear-gradient(90deg,${SEQ_RAMP.join(",")})` }),
       el("span", { text: `${fmt(hi)}${metric.unit || ""}` }),
-      el("span", { style: "color:#898781", text: "· grey: no value or outside the NEM" }));
+      el("span", { style: "color:#898781", text: "· grey: no value · NT not covered" }));
   },
 
   async reset() {
     await this.ready;
     this.highlight = null;
     this.overviewShown = true;
-    $("map-title").textContent = "NEM at a glance";
+    $("map-title").textContent = "Australia at a glance";
     $("map-reset").hidden = true;
     const values = Object.fromEntries(this.overview.regions.map((r) => [r.network_region, r.renewable_pct]));
     this.shadeRegions({ title: "Renewable share, last 30 days", values, unit: "%" });
     this.refreshFacilities();
-    this.map.fitBounds(NEM_BOUNDS, { padding: 16, duration: 600 });
+    this.map.fitBounds(AUS_BOUNDS, { padding: 16, duration: 600 });
   },
 
   async showAnswer(ev) {
@@ -489,7 +490,7 @@ function escapeHtml(s) {
 function showIntro() {
   const badge = (kind, text) => el("span", { class: `badge b-${kind}`, text });
   $("answer-text").replaceChildren(
-    el("p", { text: "Ask a question about Australia's National Electricity Market. The agent can't see raw tables. It works through a governed semantic layer (WrenAI) that defines what \"renewable\", \"price\" and \"capacity\" mean, and it compiles the SQL." }),
+    el("p", { text: "Ask a question about Australia's two main electricity markets: the east-coast NEM and Western Australia's WEM. The agent can't see raw tables. It works through a governed semantic layer (WrenAI) that defines what \"renewable\", \"price\" and \"capacity\" mean, and it compiles the SQL." }),
     el("p", { text: "Pick a demo question above to replay a real run. On the left, watch each step it took:" }),
     el("ul", {},
       el("li", {}, badge("cube", PATH_LABEL.cube), " a governed metric answered the question"),
@@ -542,7 +543,7 @@ async function initLive() {
     const health = await fetch(`${state.live}/api/health`).then((r) => r.json());
     $("question").disabled = false;
     $("ask-btn").disabled = false;
-    $("question").placeholder = "Ask anything about the NEM…";
+    $("question").placeholder = "Ask anything about the NEM or WA…";
     status.textContent = `Live mode on · ${health.remaining} of ${health.daily_cap} live questions left today`;
   } catch {
     status.textContent = "Live mode offline. Try a demo question above.";

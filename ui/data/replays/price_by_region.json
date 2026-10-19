@@ -2,7 +2,7 @@
  "id": "price_by_region",
  "label": "Spot price by region",
  "question": "What was the average spot price by region over the last 30 days?",
- "recorded_at": "2026-10-19T01:17:35Z",
+ "recorded_at": "2026-10-19T05:12:51Z",
  "data_window": {
   "first_day": "2026-07-21 00:00:00.000000",
   "last_day": "2026-10-18 00:00:00.000000"
@@ -18,255 +18,57 @@
   },
   {
    "type": "usage",
-   "t": 1.517,
+   "t": 1.335,
    "turns": 1,
    "tokens": 0
   },
   {
    "type": "reasoning",
-   "t": 1.518,
+   "t": 1.335,
    "text": "I'll help you find the average spot price by region over the last 30 days. Let me start by checking the business rules and then query the data."
   },
   {
    "type": "step_start",
-   "t": 1.519,
+   "t": 1.336,
    "step": 1,
    "tool": "get_instructions",
    "input": {}
   },
   {
    "type": "step_start",
-   "t": 1.519,
+   "t": 1.337,
    "step": 2,
-   "tool": "describe_cube",
-   "input": {
-    "name": "daily_price"
-   }
+   "tool": "list_cubes",
+   "input": {}
   },
   {
    "type": "step_end",
-   "t": 1.539,
+   "t": 1.354,
    "step": 1,
    "tool": "get_instructions",
    "status": "success",
    "path": "context",
-   "duration_ms": 20
+   "duration_ms": 18
   },
   {
    "type": "step_end",
-   "t": 1.54,
+   "t": 1.354,
    "step": 2,
-   "tool": "describe_cube",
+   "tool": "list_cubes",
    "status": "success",
    "path": "context",
-   "duration_ms": 20
+   "duration_ms": 18
   },
   {
    "type": "usage",
-   "t": 3.091,
+   "t": 24.674,
    "turns": 2,
-   "tokens": 4834
+   "tokens": 5103
   },
   {
-   "type": "reasoning",
-   "t": 3.092,
-   "text": "Perfect! I can use the `daily_price` cube to get the average spot price by region. Let me query the last 30 days of data."
-  },
-  {
-   "type": "step_start",
-   "t": 3.093,
-   "step": 3,
-   "tool": "query_cube",
-   "input": {
-    "cube": "daily_price",
-    "measures": [
-     "avg_price"
-    ],
-    "dimensions": [
-     "network_region"
-    ],
-    "time_dimension": "day:day[-30d,]"
-   }
-  },
-  {
-   "type": "step_end",
-   "t": 3.157,
-   "step": 3,
-   "tool": "query_cube",
-   "status": "error",
-   "path": "cube",
-   "duration_ms": 42,
-   "error": "Error executing tool query_cube: Invalid CubeQuery JSON: unknown variant `day[-30d,]`, expected one of `year`, `quarter`, `month`, `week`, `day`, `hour`, `minute` at line 1 column 152"
-  },
-  {
-   "type": "usage",
-   "t": 4.761,
-   "turns": 3,
-   "tokens": 11047
-  },
-  {
-   "type": "reasoning",
-   "t": 4.761,
-   "text": "Let me correct the time dimension format:"
-  },
-  {
-   "type": "step_start",
-   "t": 4.762,
-   "step": 4,
-   "tool": "query_cube",
-   "input": {
-    "cube": "daily_price",
-    "dimensions": [
-     "network_region"
-    ],
-    "measures": [
-     "avg_price"
-    ],
-    "time_dimension": "day:day",
-    "filters": [
-     "day:gte:30d_ago"
-    ]
-   }
-  },
-  {
-   "type": "step_end",
-   "t": 4.902,
-   "step": 4,
-   "tool": "query_cube",
-   "status": "error",
-   "path": "cube",
-   "duration_ms": 123,
-   "error": "Error executing tool query_cube: [INVALID_SQL] TrinoUserError(type=USER_ERROR, name=TYPE_MISMATCH, message=\"line 1:621: Cannot apply operator: timestamp(6) <= varchar(7)\", query_id=20261016_200641_00178_77uvp) phase=SQL_EXECUTION",
-   "sql": "SELECT DATE_TRUNC('day', day) AS day__day, network_region AS network_region, AVG(price_aud_mwh) AS avg_price FROM market_daily WHERE day >= '30d_ago' GROUP BY 1, 2 ORDER BY 1"
-  },
-  {
-   "type": "usage",
-   "t": 6.677,
-   "turns": 4,
-   "tokens": 17490
-  },
-  {
-   "type": "reasoning",
-   "t": 6.677,
-   "text": "I'm hitting a type mismatch with the cube's time filter. Let me fall back to a direct SQL query instead:"
-  },
-  {
-   "type": "step_start",
-   "t": 6.677,
-   "step": 5,
-   "tool": "run_sql",
-   "input": {
-    "sql": "\nSELECT \n  network_region,\n  AVG(price_aud_mwh) as avg_price_aud_mwh\nFROM market_daily\nWHERE day >= CURRENT_DATE - INTERVAL '30' DAY\nGROUP BY network_region\nORDER BY network_region\n"
-   }
-  },
-  {
-   "type": "step_end",
-   "t": 6.856,
-   "step": 5,
-   "tool": "run_sql",
-   "status": "success",
-   "path": "sql",
-   "duration_ms": 173,
-   "row_count": 5,
-   "columns": [
-    "network_region",
-    "avg_price_aud_mwh"
-   ],
-   "truncated": false,
-   "sql": "WITH market_daily AS (SELECT \"wren_src_market_daily\".network_region AS network_region, \"wren_src_market_daily\".price_aud_mwh AS price_aud_mwh, \"wren_src_market_daily\".\"day\" AS day FROM (SELECT market_daily.\"day\", market_daily.network_region, market_daily.price_aud_mwh FROM (SELECT __source.\"day\" AS \"day\", __source.network_region AS network_region, __source.price_aud_mwh AS price_aud_mwh FROM \"iceberg\".energy.market_daily AS __source) AS market_daily) AS \"wren_src_market_daily\") SELECT network_region, AVG(price_aud_mwh) AS avg_price_aud_mwh FROM market_daily WHERE day >= CURRENT_DATE - INTERVAL '30' DAY GROUP BY network_region ORDER BY network_region"
-  },
-  {
-   "type": "usage",
-   "t": 8.685,
-   "turns": 5,
-   "tokens": 24179
-  },
-  {
-   "type": "reasoning",
-   "t": 8.686,
-   "text": "Now let me visualize this data:"
-  },
-  {
-   "type": "step_start",
-   "t": 8.687,
-   "step": 6,
-   "tool": "show_chart",
-   "input": {
-    "kind": "bar",
-    "title": "Average Spot Price by Region (Last 30 Days, AUD/MWh)",
-    "x": "network_region",
-    "y": [
-     "avg_price_aud_mwh"
-    ]
-   }
-  },
-  {
-   "type": "chart",
-   "t": 8.687,
-   "step": 5,
-   "spec": {
-    "kind": "bar",
-    "title": "Average Spot Price by Region (Last 30 Days, AUD/MWh)",
-    "x": "network_region",
-    "y": [
-     "avg_price_aud_mwh"
-    ],
-    "series": null,
-    "map": {
-     "key": "network_region",
-     "metric": "avg_price_aud_mwh"
-    }
-   },
-   "columns": [
-    "network_region",
-    "avg_price_aud_mwh"
-   ],
-   "rows": [
-    {
-     "network_region": "VIC1",
-     "avg_price_aud_mwh": 39.98278596666667
-    },
-    {
-     "network_region": "SA1",
-     "avg_price_aud_mwh": 41.646055566666654
-    },
-    {
-     "network_region": "TAS1",
-     "avg_price_aud_mwh": 42.562901633333325
-    },
-    {
-     "network_region": "QLD1",
-     "avg_price_aud_mwh": 82.76234133333332
-    },
-    {
-     "network_region": "NSW1",
-     "avg_price_aud_mwh": 118.75241546666666
-    }
-   ]
-  },
-  {
-   "type": "step_end",
-   "t": 8.687,
-   "step": 6,
-   "tool": "show_chart",
-   "status": "success",
-   "path": "chart",
-   "duration_ms": 0
-  },
-  {
-   "type": "usage",
-   "t": 11.506,
-   "turns": 6,
-   "tokens": 31279
-  },
-  {
-   "type": "answer",
-   "t": 11.619,
-   "text": "## Average Spot Price by Region (Last 30 Days)\n\n| Region | Avg Price (AUD/MWh) |\n|--------|---------------------|\n| NSW1   | $118.75             |\n| QLD1   | $82.76              |\n| TAS1   | $42.56              |\n| SA1    | $41.65              |\n| VIC1   | $39.98              |\n\n**Tool used:** `run_sql` (fell back from cube due to timestamp type mismatch)\n\n**SQL executed:**\n```sql\nSELECT \n  network_region,\n  AVG(price_aud_mwh) as avg_price_aud_mwh\nFROM market_daily\nWHERE day >= CURRENT_DATE - INTERVAL '30' DAY\nGROUP BY network_region\nORDER BY network_region\n```\n\n**Key findings:**\n- **NSW1** has the highest average spot price at **$118.75/MWh** over the last 30 days\n- **VIC1** has the lowest at **$39.98/MWh**\n- There's a significant price gradient across regions, with NSW1 roughly 3\u00d7 higher than VIC1\n- Prices are a rate (AUD/MWh), so these are averages, never summed",
-   "turns": 6,
-   "tokens": 38730,
-   "over_budget": false,
-   "path": "sql"
+   "type": "error",
+   "t": 24.747,
+   "message": "An error occurred (ServiceUnavailableException) when calling the ConverseStream operation (reached max retries: 4): Bedrock is unable to process your request."
   }
  ]
 }

@@ -8,6 +8,9 @@ measures:
     expression: SUM(demand_energy_mwh)
     type: DOUBLE
 dimensions:
+  - name: network
+    expression: network
+    type: VARCHAR
   - name: network_region
     expression: network_region
     type: VARCHAR
@@ -16,4 +19,4 @@ time_dimensions:
     expression: day
     type: TIMESTAMP
 properties:
-  description: "Daily NEM spot price (AUD/MWh, averaged — never summed) and additive demand energy by region. Join generation for fuel-mix-during-price-events questions."
+  description: "Daily spot price (NEM regions + WEM) (AUD/MWh, averaged — never summed) and additive demand energy by region. Join generation for fuel-mix-during-price-events questions."

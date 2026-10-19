@@ -19,5 +19,6 @@ datasource: agent-analytics-trino
 ---
 
 Seed example: two-part price-then-mix questions go straight to one run_sql
-with a CTE — do not chain multiple query_cube calls (cube time filters hit
-the known Trino TYPE_MISMATCH and filter syntax wastes turns).
+with a CTE — do not chain multiple query_cube calls: the second step
+depends on the first step's answer, which one SQL statement expresses
+directly.

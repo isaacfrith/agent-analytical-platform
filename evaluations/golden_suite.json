@@ -293,6 +293,86 @@
                     "domain": "energy"
                 }
             ]
+        },
+        {
+            "category": "semantic_model",
+            "id": "energy_wa_vs_nsw",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "type": "judge",
+                            "rubric": "The user asked to compare renewable share in WA and NSW over the last 30 days. WA's data is the WEM (network WEM, region WEM), a separate market from the NEM; NSW is NEM region NSW1. PASS if the answer reports a renewable share (percent) for WA/WEM and for NSW/NSW1 as two separate figures from executed queries. FAIL if either figure is missing, if the two are merged into one number, or if the answer claims WA data is unavailable."
+                        }
+                    ],
+                    "question": "Compare the renewable share of WA and NSW over the last 30 days.",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
+        },
+        {
+            "category": "semantic_model",
+            "id": "energy_nem_excludes_wem",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "type": "judge",
+                            "rubric": "The user asked for total generation in the NEM over the last 30 days. The NEM is the five east-coast regions (NSW1, QLD1, SA1, TAS1, VIC1); WA's WEM is a separate market and must NOT be included. PASS if the answer gives an NEM generation total in MWh scoped to the NEM. FAIL if the answer includes WEM/WA in the NEM total, lists WEM among NEM regions, or gives no total."
+                        }
+                    ],
+                    "question": "What was total NEM generation over the last 30 days?",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
+        },
+        {
+            "category": "negative_test",
+            "id": "energy_refuse_nt",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "type": "tool_absent",
+                            "tool": "run_sql"
+                        },
+                        {
+                            "type": "matches_regex",
+                            "pattern": "(?i)not (covered|included|available|part of)|no data|doesn't (cover|include)|does not (cover|include)"
+                        }
+                    ],
+                    "question": "What was the renewable share in the Northern Territory over the last 30 days?",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
+        },
+        {
+            "category": "cube_routing",
+            "id": "energy_cube_time_window",
+            "steps": [
+                {
+                    "asserts": [
+                        {
+                            "tool": "query_cube",
+                            "type": "tool_used"
+                        },
+                        {
+                            "tool": "run_sql",
+                            "type": "tool_absent"
+                        },
+                        {
+                            "type": "judge",
+                            "rubric": "The user asked for the average spot price by region over the last 30 days. PASS if the answer reports an average price in AUD/MWh for each NEM region (NSW1, QLD1, SA1, TAS1, VIC1), optionally with WEM shown separately, and says the figures came from the daily_price cube. FAIL if any NEM region is missing, prices are summed rather than averaged, or the answer says the cube query failed."
+                        }
+                    ],
+                    "question": "What was the average spot price by region over the last 30 days?",
+                    "use_memory": false,
+                    "domain": "energy"
+                }
+            ]
         }
     ]
 }

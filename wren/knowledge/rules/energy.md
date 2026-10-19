@@ -1,13 +1,22 @@
-# Energy business rules (NEM, via Open Electricity)
+# Energy business rules (NEM + WEM, via Open Electricity)
 
-## Regions
-- Five NEM regions: NSW1 | QLD1 | SA1 | TAS1 | VIC1 (state-scale zones).
-  Always qualify which region a number belongs to.
+## Networks and regions
+- Two separate markets, NOT interconnected — `network` says which:
+  - NEM: five regions NSW1 | QLD1 | SA1 | TAS1 | VIC1 (state-scale zones).
+  - WEM: one region, WEM — the South West Interconnected System of WA
+    (Perth and the south-west only; not the Pilbara or remote WA).
+- "The NEM" means `network = 'NEM'` — always filter it; never let WEM rows
+  into NEM totals or averages. "Australia", "national", "all markets" means
+  both, reported per network. Northern Territory is not covered.
+- Always qualify which region (and, when both appear, which network) a
+  number belongs to.
 
 ## Units
 - Energy MWh (additive — sum it). Power MW and demand MW are daily-average
   rates — average, never sum. Prices AUD/MWh (a rate — average only, can go
-  negative). Emissions tCO2e (additive). Market value AUD (additive).
+  negative). NEM and WEM prices come from different market designs: show
+  them side by side, never average across the two networks. Emissions
+  tCO2e (additive). Market value AUD (additive).
 
 ## Renewable definition (governed)
 - Renewable = `is_renewable` in fueltech_groups (wind/solar/hydro/bioenergy).
@@ -24,7 +33,8 @@
   capacity_registered_mw; output questions belong to generation_daily.
 
 ## Grain and window
-- Daily grain, NEM-local calendar days, 90-day rolling window ending
+- Daily grain, market-local calendar days (NEM AEST +10, WEM AWST +08 —
+  the same date covers different hours), 90-day rolling window ending
   yesterday. `facilities` is unit grain (site columns carried).
 - No facility-level output table exists yet: capacity-vs-output questions
   need two queries (capacity from facilities, output from generation_daily).

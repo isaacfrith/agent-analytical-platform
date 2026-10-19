@@ -92,22 +92,26 @@ Every `ask` prints the answer on stdout and the agent's trace on stderr: `Tool #
 
 ## Energy domain (showcase)
 
-Live NEM data from the [Open Electricity API](https://openelectricity.org.au)
-(free key in `.env` as `OPENELECTRICITY_API_KEY`; data licenced CC BY-NC 4.0)
-sits beside ecommerce in a separate `energy` namespace — same warehouse,
-nothing existing moves.
+Live data for both markets the [Open Electricity API](https://openelectricity.org.au)
+covers — the east-coast NEM (five regions) and WA's WEM (south-west WA, one
+region; a separate, unconnected market). Every fact row carries `network`
+(NEM|WEM). The Northern Territory has no public market data and is not covered.
+It needs a free key in `.env` (`OPENELECTRICITY_API_KEY`; data licenced
+CC BY-NC 4.0) and sits beside ecommerce in a separate `energy` namespace —
+same warehouse, nothing existing moves.
 
 ```bash
 make energy-data   # fetch 90 daily days → landing Parquet → energy.* tables
-make energy-test   # 11 data-invariant checks against Trino (counts, 90-day
-                   # coverage, key uniqueness, fueltech mapping, recency)
+make energy-test   # 15 data-invariant checks against Trino (counts, 90-day
+                   # coverage per network, key uniqueness, network/region
+                   # consistency, fueltech mapping, locations, recency)
 ```
 
 | Table | Rows | Grain |
 | --- | --- | --- |
-| `energy.facilities` | ~1,000 | unit (site columns carried; statuses include operating, committed, commissioning, retired) |
-| `energy.generation_daily` | ~4,770 | region × fueltech × day (energy MWh, emissions tCO2e, market value AUD; battery negatives = charging) |
-| `energy.market_daily` | 450 | region × day (price AUD/MWh, demand MW, demand energy MWh) |
+| `energy.facilities` | ~1,140 | unit (site columns + latitude/longitude carried; statuses include operating, committed, commissioning, retired) |
+| `energy.generation_daily` | ~5,940 | region × fueltech × day (energy MWh, emissions tCO2e, market value AUD; battery negatives = charging) |
+| `energy.market_daily` | 540 | region × day, 6 regions (price AUD/MWh, demand MW, demand energy MWh) |
 | `energy.fueltech_groups` | 29 | static mapping: fueltech → group + governed `is_renewable` flag |
 
 ## Visual demo (energy UI)

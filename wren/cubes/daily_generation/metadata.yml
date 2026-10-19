@@ -11,6 +11,9 @@ measures:
     expression: SUM(market_value_aud)
     type: DOUBLE
 dimensions:
+  - name: network
+    expression: network
+    type: VARCHAR
   - name: network_region
     expression: network_region
     type: VARCHAR
@@ -22,4 +25,4 @@ time_dimensions:
     expression: day
     type: TIMESTAMP
 properties:
-  description: "Daily NEM generation output, emissions, and market value by region and fuel tech. Gross energy, MWh — battery rows can be negative (charging). Pair with renewable_share for the clean share."
+  description: "Daily generation output (NEM regions + WEM), emissions, and market value by region and fuel tech. Gross energy, MWh — battery rows can be negative (charging). Pair with renewable_share for the clean share."

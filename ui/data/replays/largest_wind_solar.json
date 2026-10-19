@@ -2,7 +2,7 @@
  "id": "largest_wind_solar",
  "label": "Largest wind & solar farms",
  "question": "Which are the 15 largest operating wind and solar facilities by registered capacity?",
- "recorded_at": "2026-10-19T01:17:35Z",
+ "recorded_at": "2026-10-19T05:08:19Z",
  "data_window": {
   "first_day": "2026-07-21 00:00:00.000000",
   "last_day": "2026-10-18 00:00:00.000000"
@@ -18,25 +18,25 @@
   },
   {
    "type": "usage",
-   "t": 1.621,
+   "t": 1.518,
    "turns": 1,
    "tokens": 0
   },
   {
    "type": "reasoning",
-   "t": 1.621,
+   "t": 1.518,
    "text": "I'll help you find the 15 largest operating wind and solar facilities by registered capacity. Let me start by checking the business rules and then querying the data."
   },
   {
    "type": "step_start",
-   "t": 1.623,
+   "t": 1.519,
    "step": 1,
    "tool": "get_instructions",
    "input": {}
   },
   {
    "type": "step_start",
-   "t": 1.623,
+   "t": 1.52,
    "step": 2,
    "tool": "describe_model",
    "input": {
@@ -45,46 +45,100 @@
   },
   {
    "type": "step_end",
-   "t": 1.659,
+   "t": 1.552,
    "step": 1,
    "tool": "get_instructions",
    "status": "success",
    "path": "context",
-   "duration_ms": 36
+   "duration_ms": 32
   },
   {
    "type": "step_end",
-   "t": 1.659,
+   "t": 1.552,
    "step": 2,
    "tool": "describe_model",
    "status": "success",
    "path": "context",
-   "duration_ms": 36
+   "duration_ms": 32
   },
   {
    "type": "usage",
-   "t": 3.321,
+   "t": 2.799,
    "turns": 2,
-   "tokens": 4833
+   "tokens": 5120
   },
   {
    "type": "reasoning",
-   "t": 3.321,
-   "text": "Now let me query for the 15 largest operating wind and solar facilities by registered capacity:"
+   "t": 2.799,
+   "text": "Now let me check the fueltech_groups model to understand how to filter for wind and solar:"
   },
   {
    "type": "step_start",
-   "t": 3.322,
+   "t": 2.8,
    "step": 3,
-   "tool": "run_sql",
+   "tool": "describe_model",
    "input": {
-    "sql": "\nSELECT\n  facility_code,\n  facility_name,\n  network_region,\n  fueltech,\n  capacity_registered_mw,\n  status\nFROM facilities\nWHERE status = 'operating'\n  AND fueltech IN ('wind', 'solar_utility')\nORDER BY capacity_registered_mw DESC\nLIMIT 15\n"
+    "name": "fueltech_groups"
    }
   },
   {
    "type": "step_end",
-   "t": 3.567,
+   "t": 2.832,
    "step": 3,
+   "tool": "describe_model",
+   "status": "success",
+   "path": "context",
+   "duration_ms": 31
+  },
+  {
+   "type": "usage",
+   "t": 4.869,
+   "turns": 3,
+   "tokens": 12390
+  },
+  {
+   "type": "reasoning",
+   "t": 4.869,
+   "text": "Perfect. Now I'll query for the 15 largest operating wind and solar facilities by registered capacity:"
+  },
+  {
+   "type": "step_start",
+   "t": 4.87,
+   "step": 4,
+   "tool": "dry_run",
+   "input": {
+    "sql": "\nSELECT \n  f.facility_code,\n  f.facility_name,\n  f.network_region,\n  f.network,\n  fg.fueltech_group,\n  f.capacity_registered_mw\nFROM facilities f\nJOIN fueltech_groups fg ON f.fueltech = fg.fueltech\nWHERE f.status = 'operating'\n  AND fg.fueltech_group IN ('wind', 'solar')\nORDER BY f.capacity_registered_mw DESC\nLIMIT 15\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 4.999,
+   "step": 4,
+   "tool": "dry_run",
+   "status": "success",
+   "path": "sql",
+   "duration_ms": 120,
+   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".facility_code AS facility_code, \"wren_src_facilities\".facility_name AS facility_name, \"wren_src_facilities\".network_region AS network_region, \"wren_src_facilities\".\"network\" AS network, \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.facility_code, facilities.facility_name, facilities.fueltech, facilities.\"network\", facilities.network_region, facilities.\"status\" FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.facility_code AS facility_code, __source.facility_name AS facility_name, __source.fueltech AS fueltech, __source.\"network\" AS \"network\", __source.network_region AS network_region, __source.\"status\" AS \"status\" FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group, \"wren_src_fueltech_groups\".fueltech AS fueltech FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT f.facility_code, f.facility_name, f.network_region, f.network, fg.fueltech_group, f.capacity_registered_mw FROM facilities AS f JOIN fueltech_groups AS fg ON f.fueltech = fg.fueltech WHERE f.status = 'operating' AND fg.fueltech_group IN ('wind', 'solar') ORDER BY f.capacity_registered_mw DESC LIMIT 15"
+  },
+  {
+   "type": "usage",
+   "t": 6.231,
+   "turns": 4,
+   "tokens": 20260
+  },
+  {
+   "type": "step_start",
+   "t": 6.233,
+   "step": 5,
+   "tool": "run_sql",
+   "input": {
+    "sql": "\nSELECT \n  f.facility_code,\n  f.facility_name,\n  f.network_region,\n  f.network,\n  fg.fueltech_group,\n  f.capacity_registered_mw\nFROM facilities f\nJOIN fueltech_groups fg ON f.fueltech = fg.fueltech\nWHERE f.status = 'operating'\n  AND fg.fueltech_group IN ('wind', 'solar')\nORDER BY f.capacity_registered_mw DESC\nLIMIT 15\n"
+   }
+  },
+  {
+   "type": "step_end",
+   "t": 6.479,
+   "step": 5,
    "tool": "run_sql",
    "status": "success",
    "path": "sql",
@@ -94,28 +148,23 @@
     "facility_code",
     "facility_name",
     "network_region",
-    "fueltech",
-    "capacity_registered_mw",
-    "status"
+    "network",
+    "fueltech_group",
+    "capacity_registered_mw"
    ],
    "truncated": false,
-   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".facility_code AS facility_code, \"wren_src_facilities\".facility_name AS facility_name, \"wren_src_facilities\".network_region AS network_region, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.facility_code, facilities.facility_name, facilities.fueltech, facilities.network_region, facilities.\"status\" FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.facility_code AS facility_code, __source.facility_name AS facility_name, __source.fueltech AS fueltech, __source.network_region AS network_region, __source.\"status\" AS \"status\" FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\") SELECT facility_code, facility_name, network_region, fueltech, capacity_registered_mw, status FROM facilities WHERE status = 'operating' AND fueltech IN ('wind', 'solar_utility') ORDER BY capacity_registered_mw DESC LIMIT 15"
+   "sql": "WITH facilities AS (SELECT \"wren_src_facilities\".facility_code AS facility_code, \"wren_src_facilities\".facility_name AS facility_name, \"wren_src_facilities\".network_region AS network_region, \"wren_src_facilities\".\"network\" AS network, \"wren_src_facilities\".capacity_registered_mw AS capacity_registered_mw, \"wren_src_facilities\".fueltech AS fueltech, \"wren_src_facilities\".\"status\" AS status FROM (SELECT facilities.capacity_registered_mw, facilities.facility_code, facilities.facility_name, facilities.fueltech, facilities.\"network\", facilities.network_region, facilities.\"status\" FROM (SELECT __source.capacity_registered_mw AS capacity_registered_mw, __source.facility_code AS facility_code, __source.facility_name AS facility_name, __source.fueltech AS fueltech, __source.\"network\" AS \"network\", __source.network_region AS network_region, __source.\"status\" AS \"status\" FROM \"iceberg\".energy.facilities AS __source) AS facilities) AS \"wren_src_facilities\"), fueltech_groups AS (SELECT \"wren_src_fueltech_groups\".fueltech_group AS fueltech_group, \"wren_src_fueltech_groups\".fueltech AS fueltech FROM (SELECT fueltech_groups.fueltech, fueltech_groups.fueltech_group FROM (SELECT __source.fueltech AS fueltech, __source.fueltech_group AS fueltech_group FROM \"iceberg\".energy.fueltech_groups AS __source) AS fueltech_groups) AS \"wren_src_fueltech_groups\") SELECT f.facility_code, f.facility_name, f.network_region, f.network, fg.fueltech_group, f.capacity_registered_mw FROM facilities AS f JOIN fueltech_groups AS fg ON f.fueltech = fg.fueltech WHERE f.status = 'operating' AND fg.fueltech_group IN ('wind', 'solar') ORDER BY f.capacity_registered_mw DESC LIMIT 15"
   },
   {
    "type": "usage",
-   "t": 5.28,
-   "turns": 3,
-   "tokens": 11588
-  },
-  {
-   "type": "reasoning",
-   "t": 5.28,
-   "text": "Now let me visualize this data:"
+   "t": 7.965,
+   "turns": 5,
+   "tokens": 28324
   },
   {
    "type": "step_start",
-   "t": 5.282,
-   "step": 4,
+   "t": 7.966,
+   "step": 6,
    "tool": "show_chart",
    "input": {
     "kind": "bar",
@@ -124,13 +173,13 @@
     "y": [
      "capacity_registered_mw"
     ],
-    "series": "fueltech"
+    "series": "fueltech_group"
    }
   },
   {
    "type": "chart",
-   "t": 5.282,
-   "step": 3,
+   "t": 7.967,
+   "step": 5,
    "spec": {
     "kind": "bar",
     "title": "15 Largest Operating Wind and Solar Facilities by Registered Capacity (MW)",
@@ -138,7 +187,7 @@
     "y": [
      "capacity_registered_mw"
     ],
-    "series": "fueltech",
+    "series": "fueltech_group",
     "map": {
      "key": "facility_code",
      "metric": "capacity_registered_mw"
@@ -148,154 +197,154 @@
     "facility_code",
     "facility_name",
     "network_region",
-    "fueltech",
-    "capacity_registered_mw",
-    "status"
+    "network",
+    "fueltech_group",
+    "capacity_registered_mw"
    ],
    "rows": [
     {
      "facility_code": "ALDGASF",
      "facility_name": "Aldoga",
      "network_region": "QLD1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 535.21,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 535.21
     },
     {
      "facility_code": "STOCKYD",
      "facility_name": "Stockyard Hill",
      "network_region": "VIC1",
-     "fueltech": "wind",
-     "capacity_registered_mw": 531.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "wind",
+     "capacity_registered_mw": 531.0
     },
     {
      "facility_code": "WDGPH",
      "facility_name": "Western Downs",
      "network_region": "QLD1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 501.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 501.0
     },
     {
      "facility_code": "CULCSF",
      "facility_name": "Culcairn",
      "network_region": "NSW1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 466.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 466.0
     },
     {
      "facility_code": "COOPGWF",
      "facility_name": "Coopers Gap",
      "network_region": "QLD1",
-     "fueltech": "wind",
-     "capacity_registered_mw": 452.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "wind",
+     "capacity_registered_mw": 452.0
     },
     {
      "facility_code": "WELNSF",
      "facility_name": "Wellington North",
      "network_region": "NSW1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 436.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 436.0
     },
     {
      "facility_code": "MACARTH",
      "facility_name": "Macarthur",
      "network_region": "VIC1",
-     "fueltech": "wind",
-     "capacity_registered_mw": 420.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "wind",
+     "capacity_registered_mw": 420.0
     },
     {
      "facility_code": "RYEPARK",
      "facility_name": "Rye Park",
      "network_region": "NSW1",
-     "fueltech": "wind",
-     "capacity_registered_mw": 396.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "wind",
+     "capacity_registered_mw": 396.0
     },
     {
      "facility_code": "BRDD",
      "facility_name": "Broadsound",
      "network_region": "QLD1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 368.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 368.0
     },
     {
      "facility_code": "GOESF1",
      "facility_name": "Goorambat East",
      "network_region": "VIC1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 348.6,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 348.6
     },
     {
      "facility_code": "CLRKCWF",
      "facility_name": "Clarke Creek",
      "network_region": "QLD1",
-     "fueltech": "wind",
-     "capacity_registered_mw": 345.5,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "wind",
+     "capacity_registered_mw": 345.5
     },
     {
      "facility_code": "DARLSF",
      "facility_name": "Darlington Point",
      "network_region": "NSW1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 324.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 324.0
     },
     {
      "facility_code": "WOLARSF",
      "facility_name": "Wollar",
      "network_region": "NSW1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 324.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 324.0
     },
     {
      "facility_code": "MOORAWF1",
      "facility_name": "Moorabool",
      "network_region": "VIC1",
-     "fueltech": "wind",
-     "capacity_registered_mw": 312.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "wind",
+     "capacity_registered_mw": 312.0
     },
     {
      "facility_code": "LIMOSF1",
      "facility_name": "Limondale",
      "network_region": "NSW1",
-     "fueltech": "solar_utility",
-     "capacity_registered_mw": 275.0,
-     "status": "operating"
+     "network": "NEM",
+     "fueltech_group": "solar",
+     "capacity_registered_mw": 275.0
     }
    ]
   },
   {
    "type": "step_end",
-   "t": 5.282,
-   "step": 4,
+   "t": 7.967,
+   "step": 6,
    "tool": "show_chart",
    "status": "success",
    "path": "chart",
-   "duration_ms": 0
+   "duration_ms": 1
   },
   {
    "type": "usage",
-   "t": 10.62,
-   "turns": 4,
-   "tokens": 19762
+   "t": 13.591,
+   "turns": 6,
+   "tokens": 37814
   },
   {
    "type": "answer",
-   "t": 10.712,
-   "text": "## Answer\n\nThe **15 largest operating wind and solar facilities by registered capacity** are:\n\n| Rank | Facility Name | Facility Code | Region | Technology | Capacity (MW) |\n|------|---------------|---------------|--------|-----------|---------------|\n| 1 | Aldoga | ALDGASF | QLD1 | Solar | 535.21 |\n| 2 | Stockyard Hill | STOCKYD | VIC1 | Wind | 531.0 |\n| 3 | Western Downs | WDGPH | QLD1 | Solar | 501.0 |\n| 4 | Culcairn | CULCSF | NSW1 | Solar | 466.0 |\n| 5 | Coopers Gap | COOPGWF | QLD1 | Wind | 452.0 |\n| 6 | Wellington North | WELNSF | NSW1 | Solar | 436.0 |\n| 7 | Macarthur | MACARTH | VIC1 | Wind | 420.0 |\n| 8 | Rye Park | RYEPARK | NSW1 | Wind | 396.0 |\n| 9 | Broadsound | BRDD | QLD1 | Solar | 368.0 |\n| 10 | Goorambat East | GOESF1 | VIC1 | Solar | 348.6 |\n| 11 | Clarke Creek | CLRKCWF | QLD1 | Wind | 345.5 |\n| 12 | Darlington Point | DARLSF | NSW1 | Solar | 324.0 |\n| 13 | Wollar | WOLARSF | NSW1 | Solar | 324.0 |\n| 14 | Moorabool | MOORAWF1 | VIC1 | Wind | 312.0 |\n| 15 | Limondale | LIMOSF1 | NSW1 | Solar | 275.0 |\n\n**Tool used:** `run_sql` with a direct query to the `facilities` model filtering for `status = 'operating'` and `fueltech IN ('wind', 'solar_utility')`, ordered by `capacity_registered_mw` descending.\n\n**Key observations:**\n- Solar dominates the top 15 by count (9 solar vs 6 wind facilities)\n- Aldoga (QLD) is the largest at 535.21 MW, followed closely by Stockyard Hill wind farm (VIC) at 531 MW\n- Queensland hosts 6 of the top 15 facilities, NSW has 5, and Victoria has 4\n- The smallest in the top 15 is Limondale (NSW) at 275 MW",
-   "turns": 4,
-   "tokens": 28647,
+   "t": 13.702,
+   "text": "## Answer\n\nThe **15 largest operating wind and solar facilities by registered capacity** are:\n\n| Rank | Facility Name | Facility Code | Type | Region | Network | Capacity (MW) |\n|------|---------------|---------------|------|--------|---------|---------------|\n| 1 | Aldoga | ALDGASF | Solar | QLD1 | NEM | 535.21 |\n| 2 | Stockyard Hill | STOCKYD | Wind | VIC1 | NEM | 531.0 |\n| 3 | Western Downs | WDGPH | Solar | QLD1 | NEM | 501.0 |\n| 4 | Culcairn | CULCSF | Solar | NSW1 | NEM | 466.0 |\n| 5 | Coopers Gap | COOPGWF | Wind | QLD1 | NEM | 452.0 |\n| 6 | Wellington North | WELNSF | Solar | NSW1 | NEM | 436.0 |\n| 7 | Macarthur | MACARTH | Wind | VIC1 | NEM | 420.0 |\n| 8 | Rye Park | RYEPARK | Wind | NSW1 | NEM | 396.0 |\n| 9 | Broadsound | BRDD | Solar | QLD1 | NEM | 368.0 |\n| 10 | Goorambat East | GOESF1 | Solar | VIC1 | NEM | 348.6 |\n| 11 | Clarke Creek | CLRKCWF | Wind | QLD1 | NEM | 345.5 |\n| 12 | Darlington Point | DARLSF | Solar | NSW1 | NEM | 324.0 |\n| 13 | Wollar | WOLARSF | Solar | NSW1 | NEM | 324.0 |\n| 14 | Moorabool | MOORAWF1 | Wind | VIC1 | NEM | 312.0 |\n| 15 | Limondale | LIMOSF1 | Solar | NSW1 | NEM | 275.0 |\n\n**Tool used:** `run_sql` with a query joining `facilities` and `fueltech_groups` tables, filtering for `status = 'operating'` and `fueltech_group IN ('wind', 'solar')`, ordered by `capacity_registered_mw` descending.\n\n**Key observations:**\n- All 15 facilities are in the NEM (east-coast grid); none are in the WEM.\n- Solar dominates the top positions (9 of 15), with the largest being Aldoga at 535.21 MW.\n- Wind facilities are also well-represented (6 of 15), with Stockyard Hill at 531.0 MW being the second-largest overall.\n- Queensland and New South Wales host the majority of these large facilities.",
+   "turns": 6,
+   "tokens": 48067,
    "over_budget": false,
    "path": "sql"
   }
