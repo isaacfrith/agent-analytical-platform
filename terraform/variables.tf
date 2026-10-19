@@ -34,9 +34,9 @@ variable "bedrock_model_id" {
 }
 
 variable "live_instance_type" {
-  description = "Size of the on-demand server. ARM (Graviton); the Docker stack is capped at ~4 GB, so 8 GB leaves room for the agent."
+  description = "Size of the on-demand server. x86_64, because WrenAI's engine (wren-core-py) publishes Linux builds for x86_64 only. The Docker stack is capped at ~4 GB, so 8 GB leaves room for the agent."
   type        = string
-  default     = "t4g.large"
+  default     = "t3a.large"
 }
 
 variable "live_param_prefix" {

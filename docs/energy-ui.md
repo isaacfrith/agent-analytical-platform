@@ -125,7 +125,7 @@ cards from the same topic, unseen first.
 
 **Hosting.** Website stays on GitHub Pages. Live questions run the same stack
 (Trino, Iceberg, Lakekeeper, Postgres, Valkey, WrenAI, agent) on one
-fixed-size ARM EC2 instance in ap-southeast-2, with its own warehouse prefix
+fixed-size EC2 instance (x86_64, see below) in ap-southeast-2, with its own warehouse prefix
 so it never touches the laptop's tables. Asleep → "Start it (about 2
 minutes)": bot check, then a Lambda starts the instance; waking doesn't use a
 visitor's questions; at most 6 wakes a day. On wake: pull `main`, start the
@@ -162,3 +162,9 @@ Hosted server: `terraform/live.tf`, `live_control.tf` (+ `lambda/live_control.py
 `scripts/hosted/` (start.sh, live_watchdog.py); Docker overrides in `docker/compose.hosted.yaml`; Lakekeeper
 uses `aws-system-identity` with an external ID (no stored keys). Deployment
 runbook: README, "Live questions: hosted and local".
+
+Deploy note (2026-10-20): the server is x86_64 (`t3a.large`), not ARM:
+`wren-core-py` publishes Linux wheels for x86_64 only, and building it from
+Rust source on the server failed (no compiler) and would be slow. Python is
+pinned to 3.12 (`.python-version`); uv otherwise picked 3.15, which
+`onnxruntime` doesn't support yet.

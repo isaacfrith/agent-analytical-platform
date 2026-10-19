@@ -1,4 +1,4 @@
-# The on-demand live-questions server: one fixed-size ARM instance running the
+# The on-demand live-questions server: one fixed-size x86_64 instance running the
 # same stack as the laptop (Docker: Postgres, Lakekeeper, Trino, Valkey; plus
 # WrenAI and the agent), started by the wake Lambda and stopped by its own
 # watchdog. Security posture:
@@ -177,12 +177,20 @@ resource "aws_security_group" "live_server" {
 
 # --- The instance ----------------------------------------------------------------
 
-data "aws_ssm_parameter" "al2023_arm" {
-  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64"
+# x86_64: WrenAI's engine (wren-core-py) ships Linux wheels for x86_64 only;
+# on ARM it would have to be compiled from Rust source on every server.
+data "aws_ssm_parameter" "al2023" {
+  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+}
+
+# Changing architecture needs a new server (the AMI changes, and AMI updates
+# are otherwise ignored); bumping this replaces the instance.
+resource "terraform_data" "live_platform" {
+  input = "al2023-x86_64"
 }
 
 resource "aws_instance" "live" {
-  ami                                  = data.aws_ssm_parameter.al2023_arm.value
+  ami                                  = data.aws_ssm_parameter.al2023.value
   instance_type                        = var.live_instance_type
   subnet_id                            = sort(data.aws_subnets.default.ids)[0]
   vpc_security_group_ids               = [aws_security_group.live_server.id]
@@ -216,7 +224,8 @@ resource "aws_instance" "live" {
   tags = merge(local.common_tags, { Name = local.live_name })
 
   lifecycle {
-    ignore_changes = [ami] # don't replace the server whenever Amazon publishes a new AMI
+    ignore_changes       = [ami] # don't replace the server whenever Amazon publishes a new AMI
+    replace_triggered_by = [terraform_data.live_platform]
   }
 
   depends_on = [aws_ssm_parameter.live_state, aws_ssm_parameter.live_secret]

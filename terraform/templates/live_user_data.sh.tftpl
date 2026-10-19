@@ -13,10 +13,10 @@ usermod -aG docker ec2-user
 
 mkdir -p /usr/local/lib/docker/cli-plugins
 curl -fsSL -o /usr/local/lib/docker/cli-plugins/docker-compose \
-  https://github.com/docker/compose/releases/latest/download/docker-compose-linux-aarch64
+  https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
 chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 curl -fsSL -o /usr/local/bin/cloudflared \
-  https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64
+  https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
 chmod +x /usr/local/bin/cloudflared
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
 
