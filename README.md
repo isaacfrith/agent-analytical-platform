@@ -81,15 +81,7 @@ make refresh rule="Refunds by status always use return_status from returned_orde
 
 ## How it works
 
-```mermaid
-flowchart LR
-  Q([Question]) --> A["Agent<br/>Strands · Claude on Bedrock"]
-  A <-->|"MCP tools<br/>(read-only)"| W["WrenAI semantic layer<br/>models · cubes · rules"]
-  W -->|compiled SQL| T["Trino"]
-  T --> I[("Apache Iceberg on S3<br/>Lakekeeper catalog")]
-  A <-.->|"optional:<br/>saved definitions"| M[("Mem0 over Valkey")]
-  W -.->|"example queries (RAG)"| L[("LanceDB")]
-```
+![Architecture: the agent, the WrenAI semantic layer, the lakehouse and memory](docs/architecture_diagram.png)
 
 | Part | Technology | Role |
 | --- | --- | --- |
@@ -100,6 +92,10 @@ flowchart LR
 | Infrastructure | Docker Compose (local); Terraform (AWS) | S3 and IAM; the on-demand live server, wake function and budget |
 
 The agent's instructions are plain text in [`prompts/`](prompts): use cubes first, check SQL before running it, refuse rather than guess, and say which definition it used when a word is ambiguous.
+
+Each question follows the same path: check context, translate through WrenAI, then validate and run on Trino.
+
+![Query flow: how a question becomes governed, executed SQL](docs/query_flow_diagram.png)
 
 ## Using the demo
 
@@ -187,7 +183,7 @@ flowchart LR
 
 - A visitor clicks **Start live questions**. After a bot check, a Lambda function starts the server. On every start, the server pulls the latest `main`, starts the stack, and opens an outbound Cloudflare tunnel.
 - The server **stops itself** after 20 minutes without a question, and runs at most 3 hours a day. Its data lives under `hosted/` in the bucket and refreshes itself when it's over 3 days old.
-- **Limits**, enforced on the server: 2 questions per visitor per day, 20 a day in total, one at a time, 6 wakes a day, 3 hours of running a day. You get 30 a day of your own with the [owner pass](#your-own-allowance-the-owner-pass).
+- **Limits**, enforced on the server: 2 questions per visitor per day, 20 a day in total, one at a time, 6 wakes a day, 3 hours of running a day.
 - **Cost backstop:** an AWS budget ($20 a month by default) emails you at 50% and 80%, and at 100% stops the server and blocks the wake function. **Typical cost:** a few dollars a month (the server only runs when used, plus about $3 a month of disk).
 - **Security:** no inbound ports and no SSH (Session Manager for emergencies); no stored AWS keys (an IAM role limited to the `hosted/` prefix, the one Bedrock model and its own settings); secrets in SSM Parameter Store, never in the repo or Terraform state; the agent is read-only.
 
@@ -207,19 +203,6 @@ Do the [setup](#run-it-yourself) first. Then:
 6. **Point the site at the server:** `make live-config`, then commit `ui/live-config.json` and push.
 
 Open your site and click **Start live questions**. The first start installs everything and loads the data (about 15 minutes); after that, starts take about 2 minutes.
-
-### Your own allowance: the owner pass
-
-The owner pass gives you **30 live questions a day of your own** on the public site, without using up visitors' 20. Everything else still applies to you: the bot check, one at a time, the wake and running limits, and the budget.
-
-1. **Create the pass** (Terraform prints these as `live_owner_pass`). The first command stores a random pass; the second prints your private link:
-   ```bash
-   aws ssm put-parameter --region ap-southeast-2 --overwrite --type SecureString --name /agent-analytics/live/owner-pass --value "$(openssl rand -hex 24)"
-   echo "https://<you>.github.io/agent-analytical-platform/?owner=$(aws ssm get-parameter --region ap-southeast-2 --with-decryption --name /agent-analytics/live/owner-pass --query Parameter.Value --output text)"
-   ```
-2. **Open the link once** in each browser you'll use. The page keeps the pass in that browser and removes it from the address bar; the box shows **Owner · N of 30 left today**. **Forget owner pass** removes it.
-
-The server reads the pass when it starts, so a new or changed pass works from its next start. Keep the link private.
 
 ### Run it
 
@@ -313,7 +296,7 @@ wren/             the WrenAI semantic layer: models, views, cubes, joins, rules,
 prompts/          the agent's instructions: shared rules plus one file per dataset
 src/
   agent/          the agent: orchestrator, cube tool, trace events for the UI, memory tools
-  api/            live questions (bot check, limits, owner pass, streaming)
+  api/            live questions (bot check, limits, streaming)
   demo/           builds the data catalog from the semantic layer
   memory/         saved user definitions (Mem0 over Valkey)
 scripts/          entry points: ask, load data, checks, record and serve the demo
