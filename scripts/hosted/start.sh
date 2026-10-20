@@ -38,12 +38,14 @@ if [[ "$oe_key" == set-me || "$ts_secret" == set-me ]]; then
   stage "missing secrets"
   exit 0
 fi
+owner_pass=$(secret owner-pass 2>/dev/null || echo set-me)  # optional: off until you set it
 umask 077
 {
   cat /etc/live/config.env
   echo "OPENELECTRICITY_API_KEY=$oe_key"
   echo "DEMO_TURNSTILE_SECRET=$ts_secret"
   echo "DEMO_TURNSTILE_SITE_KEY=$(secret turnstile-site-key)"
+  [[ "$owner_pass" == set-me ]] || echo "DEMO_OWNER_PASS=$owner_pass"
 } > .env
 set -a; source .env; set +a
 

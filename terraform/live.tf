@@ -41,7 +41,7 @@ resource "aws_ssm_parameter" "live_state" {
 }
 
 resource "aws_ssm_parameter" "live_secret" {
-  for_each = toset(["turnstile-secret", "openelectricity-key"])
+  for_each = toset(["turnstile-secret", "openelectricity-key", "owner-pass"])
 
   name  = "${var.live_param_prefix}/${each.key}"
   type  = "SecureString"

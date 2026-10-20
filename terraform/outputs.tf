@@ -51,3 +51,11 @@ output "live_kill_switch" {
   description = "Turn live questions off (or back on with 'on')."
   value       = "aws ssm put-parameter --region ${var.aws_region} --overwrite --type String --name ${var.live_param_prefix}/switch --value off"
 }
+
+output "live_owner_pass" {
+  description = "Set (or rotate) your owner pass: 30 questions a day of your own. Then open the site once with ?owner=<the pass>; a running server picks a new pass up at its next start."
+  value       = <<-EOT
+    aws ssm put-parameter --region ${var.aws_region} --overwrite --type SecureString --name ${var.live_param_prefix}/owner-pass --value "$(openssl rand -hex 24)"
+    echo "${var.site_origin}/agent-analytical-platform/?owner=$(aws ssm get-parameter --region ${var.aws_region} --with-decryption --name ${var.live_param_prefix}/owner-pass --query Parameter.Value --output text)"
+  EOT
+}

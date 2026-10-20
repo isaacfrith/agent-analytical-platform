@@ -10,6 +10,11 @@ and only counts once it actually runs:
   5. this visitor has questions left today (2 by default);
   6. there are questions left today in total (20 by default).
 
+The owner pass changes step 5-6 only: a question sent with the right pass
+counts against the owner's own allowance (30 a day by default) instead,
+leaving visitors' 20 untouched. A wrong pass is refused, never downgraded to
+a visitor question. The switch, bot check and one-at-a-time still apply.
+
 Visitors are counted by IP: Cloudflare's CF-Connecting-IP when the request
 came through the tunnel (the server only listens on localhost, so the tunnel
 is the only way in), stored as a salted hash in Valkey for two days.
@@ -18,14 +23,17 @@ The agent is the energy-only, memory-off agent with the trace recorder on:
 the same events the replay files hold, so the page renders both the same way.
 
 Endpoints:
-  GET  /api/health  status, limits left for this visitor and in total, bot-check site key
-  POST /api/ask     {question, turnstile_token} -> text/event-stream of `data: <event json>`
+  GET  /api/health  status, limits left for this visitor and in total, bot-check site key;
+                    with an X-Owner-Pass header, also whether it's valid and the owner's left
+  POST /api/ask     {question, turnstile_token, owner_pass?} -> text/event-stream of
+                    `data: <event json>`
 """
 
 from __future__ import annotations
 
 import asyncio
 import hashlib
+import hmac
 import json
 import os
 import threading
@@ -48,6 +56,8 @@ from config import Config
 MAX_QUESTION_CHARS = 500
 TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 SWITCH_CACHE_S = 30
+MIN_OWNER_PASS_CHARS = 16  # a shorter (or placeholder) pass leaves the owner pass off
+OWNER_PASS_HEADER = "X-Owner-Pass"
 _KEY_TTL_S = int(timedelta(days=2).total_seconds())
 
 # (question, on_event) -> None; raises on failure. Swapped out in tests.
@@ -63,19 +73,21 @@ class Counter(Protocol):
 
 
 class UsageLimits:
-    """Questions per UTC day: per visitor and in total, counted in Valkey."""
+    """Questions per UTC day: per visitor, in total, and the owner's own, counted in Valkey."""
 
     def __init__(
         self,
         store: Counter,
         daily_cap: int,
         per_visitor_cap: int,
+        owner_cap: int = 0,
         salt: str = "",
         now: Callable[[], datetime] = lambda: datetime.now(UTC),
     ):
         self.store = store
         self.daily_cap = daily_cap
         self.per_visitor_cap = per_visitor_cap
+        self.owner_cap = owner_cap
         self.salt = salt
         self.now = now
 
@@ -89,6 +101,14 @@ class UsageLimits:
     def _total_key(self) -> str:
         return f"demo:asks:{self._day()}"
 
+    def _owner_key(self) -> str:
+        return f"demo:owner:{self._day()}"
+
+    def _count(self, *keys: str) -> None:
+        for key in keys:
+            if self.store.incr(key) == 1:
+                self.store.expire(key, _KEY_TTL_S)
+
     def _used(self, key: str) -> int:
         return int(self.store.get(key) or 0)
 
@@ -99,16 +119,32 @@ class UsageLimits:
         own = max(0, self.per_visitor_cap - self._used(self._visitor_key(ip)))
         return min(own, self.remaining_total())
 
+    def remaining_owner(self) -> int:
+        return max(0, self.owner_cap - self._used(self._owner_key()))
+
     def take(self, ip: str) -> str | None:
         """Count one question for this visitor; or say why not ("visitor_limit"/"daily_limit")."""
         if self._used(self._visitor_key(ip)) >= self.per_visitor_cap:
             return "visitor_limit"
         if self._used(self._total_key()) >= self.daily_cap:
             return "daily_limit"
-        for key in (self._visitor_key(ip), self._total_key()):
-            if self.store.incr(key) == 1:
-                self.store.expire(key, _KEY_TTL_S)
+        self._count(self._visitor_key(ip), self._total_key())
         return None
+
+    def take_owner(self) -> str | None:
+        """Count one owner-pass question; or "owner_limit". Visitors' allowance is untouched."""
+        if self._used(self._owner_key()) >= self.owner_cap:
+            return "owner_limit"
+        self._count(self._owner_key())
+        return None
+
+
+def owner_check(owner_pass: str | None) -> Callable[[str], bool] | None:
+    """A constant-time check of the owner pass; None (owner pass off) if unset or too short."""
+    if not owner_pass or len(owner_pass) < MIN_OWNER_PASS_CHARS:
+        return None
+    expected = owner_pass.encode()
+    return lambda given: hmac.compare_digest(given.encode(), expected)
 
 
 def turnstile_check(secret: str, transport: httpx.AsyncBaseTransport | None = None) -> BotCheck:
@@ -189,15 +225,27 @@ def create_app(
     bot_check: BotCheck | None,
     is_enabled: Callable[[], bool],
     on_question: Callable[[], None] | None = None,
+    is_owner: Callable[[str], bool] | None = None,
 ) -> Starlette:
     """bot_check=None is local test mode only; production passes turnstile_check(secret).
 
     on_question runs when a question starts (the hosted server's idle watchdog uses it).
+    is_owner checks an owner pass (owner_check); None means the owner pass is off.
     """
     busy = threading.Lock()
 
+    def owner_status(given: str) -> bool | None:
+        """None: no pass sent; True/False: a pass was sent and it is right/wrong."""
+        if not given:
+            return None
+        return is_owner is not None and is_owner(given)
+
     async def health(request: Request) -> JSONResponse:
         ip = visitor_ip(request)
+        owner = owner_status(request.headers.get(OWNER_PASS_HEADER, ""))
+        extra = {} if owner is None else {"owner": owner}
+        if owner:
+            extra |= {"owner_cap": limits.owner_cap, "owner_remaining": limits.remaining_owner()}
         return JSONResponse(
             {
                 "ok": True,
@@ -209,6 +257,7 @@ def create_app(
                 "visitor_remaining": limits.remaining_for(ip),
                 "bot_check": bot_check is not None,
                 "turnstile_site_key": config.demo.turnstile_site_key if bot_check else None,
+                **extra,
             }
         )
 
@@ -227,6 +276,13 @@ def create_app(
                 "bad_request", f"Keep questions under {MAX_QUESTION_CHARS} characters.", 400
             )
         ip = visitor_ip(request)
+        owner = owner_status(str(body.get("owner_pass") or ""))
+        if owner is False:
+            return _refuse(
+                "owner_pass",
+                'That owner pass isn\'t valid. Use "Forget owner pass" and retry.',
+                403,
+            )
         if bot_check is not None and not await bot_check(
             str(body.get("turnstile_token") or ""), ip
         ):
@@ -237,9 +293,15 @@ def create_app(
             return _refuse(
                 "busy", "Someone else's question is running. Try again in a minute.", 429
             )
-        refused = limits.take(ip)
+        refused = limits.take_owner() if owner else limits.take(ip)
         if refused:
             busy.release()
+            if refused == "owner_limit":
+                return _refuse(
+                    refused,
+                    f"You've used today's {limits.owner_cap} owner questions. Back tomorrow (UTC).",
+                    429,
+                )
             if refused == "visitor_limit":
                 return _refuse(
                     refused,
@@ -296,7 +358,7 @@ def create_app(
                 CORSMiddleware,
                 allow_origins=list(config.demo.allowed_origins),
                 allow_methods=["GET", "POST"],
-                allow_headers=["Content-Type"],
+                allow_headers=["Content-Type", OWNER_PASS_HEADER],
             )
         ],
     )
@@ -309,6 +371,7 @@ def _limits(config: Config) -> UsageLimits:
         Valkey.from_url(config.memory.valkey_url),
         config.demo.daily_cap,
         config.demo.per_visitor_cap,
+        config.demo.owner_cap,
         salt=config.demo.turnstile_secret or "local",
     )
 
@@ -328,6 +391,7 @@ def build_app() -> Starlette:
         turnstile_check(config.demo.turnstile_secret),
         live_switch(config),
         on_question=_activity_marker(),
+        is_owner=owner_check(config.demo.owner_pass),
     )
 
 
@@ -342,4 +406,11 @@ def _activity_marker() -> Callable[[], None] | None:
 def build_local_app() -> Starlette:
     """Laptop testing (demo_live.py --local): no bot check, same limits."""
     config = Config.from_env()
-    return create_app(config, _limits(config), energy_runner(config), None, live_switch(config))
+    return create_app(
+        config,
+        _limits(config),
+        energy_runner(config),
+        None,
+        live_switch(config),
+        is_owner=owner_check(config.demo.owner_pass),
+    )

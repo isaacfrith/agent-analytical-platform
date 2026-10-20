@@ -105,6 +105,8 @@ class DemoConfig:
     per_visitor_cap: int = 2  # live questions per visitor per UTC day
     turnstile_site_key: str | None = None  # public; the page renders the bot check with it
     turnstile_secret: str | None = None  # private; verifies each question's bot-check token
+    owner_cap: int = 30  # owner-pass questions per UTC day, separate from daily_cap
+    owner_pass: str | None = None  # private; unlocks owner_cap (off when unset or too short)
     enabled: bool = True  # the kill switch; DEMO_SWITCH_PARAM (SSM) overrides it when set
     switch_param: str | None = None  # SSM parameter name holding "on"/"off"
     allowed_origins: tuple[str, ...] = (
@@ -122,6 +124,8 @@ class DemoConfig:
             per_visitor_cap=int(os.environ.get("DEMO_PER_VISITOR_CAP", "2")),
             turnstile_site_key=os.environ.get("DEMO_TURNSTILE_SITE_KEY") or None,
             turnstile_secret=os.environ.get("DEMO_TURNSTILE_SECRET") or None,
+            owner_cap=int(os.environ.get("DEMO_OWNER_CAP", "30")),
+            owner_pass=os.environ.get("DEMO_OWNER_PASS") or None,
             enabled=os.environ.get("DEMO_ENABLED", "true").lower() not in ("0", "false", "off"),
             switch_param=os.environ.get("DEMO_SWITCH_PARAM") or None,
             allowed_origins=tuple(o.strip() for o in origins.split(",") if o.strip())

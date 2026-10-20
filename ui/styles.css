@@ -364,3 +364,9 @@ body.on-data { height: 100vh; overflow: hidden; }
 }
 .composer .wake-btn:hover { background: #cde2fb; }
 .composer .wake-btn:disabled { opacity: .6; cursor: default; }
+.owner-line { grid-column: 1 / -1; margin: 0; font-size: 12px; color: var(--ink-2); }
+.owner-line #owner-text { font-weight: 600; }
+.composer .link-btn {
+  border: 0; padding: 0; background: none; color: #2a78d6; font: inherit; font-weight: 400;
+  text-decoration: underline; cursor: pointer;
+}

@@ -1,4 +1,4 @@
-"""Live questions: kill switch, bot check, per-visitor and daily limits, and the SSE stream."""
+"""Live questions: kill switch, bot check, visitor/daily/owner limits, and the SSE stream."""
 
 from __future__ import annotations
 
@@ -10,10 +10,11 @@ import httpx
 import pytest
 from starlette.testclient import TestClient
 
-from api.server import UsageLimits, build_app, create_app, turnstile_check
+from api.server import UsageLimits, build_app, create_app, owner_check, turnstile_check
 from config import AgentConfig, AwsConfig, Config, DemoConfig, MemoryConfig
 
 SITE = "https://isaacfrith.github.io"
+PASS = "owner-pass-0123456789"
 
 
 class FakeCounter:
@@ -49,7 +50,9 @@ def fake_run(question, on_event):
 class Harness:
     """An app with fake storage, a scriptable bot check and a switch."""
 
-    def __init__(self, daily_cap=20, per_visitor_cap=2, run=fake_run, bot_ok=True):
+    def __init__(
+        self, daily_cap=20, per_visitor_cap=2, owner_cap=30, run=fake_run, bot_ok=True, owner=PASS
+    ):
         self.counter = FakeCounter()
         self.questions_started = 0
         self.bot_ok = bot_ok
@@ -60,23 +63,34 @@ class Harness:
             self.bot_calls.append((token, ip))
             return self.bot_ok
 
-        limits = UsageLimits(self.counter, daily_cap, per_visitor_cap)
+        limits = UsageLimits(self.counter, daily_cap, per_visitor_cap, owner_cap)
 
         def started():
             self.questions_started += 1
 
-        app = create_app(make_config(), limits, run, bot_check, lambda: self.on, started)
+        app = create_app(
+            make_config(), limits, run, bot_check, lambda: self.on, started, owner_check(owner)
+        )
         self.client = TestClient(app)
 
-    def ask(self, question="price?", ip="1.1.1.1", token="tok"):
+    def ask(self, question="price?", ip="1.1.1.1", token="tok", owner_pass=None):
+        body = {"question": question, "turnstile_token": token}
+        if owner_pass is not None:
+            body["owner_pass"] = owner_pass
         return self.client.post(
             "/api/ask",
-            json={"question": question, "turnstile_token": token},
+            json=body,
             headers={"CF-Connecting-IP": ip},
         )
 
-    def used(self) -> int:
-        return sum(v for k, v in self.counter.values.items() if k.startswith("demo:asks:"))
+    def used(self, prefix="demo:asks:") -> int:
+        return sum(v for k, v in self.counter.values.items() if k.startswith(prefix))
+
+    def health(self, ip="1.1.1.1", owner_pass=None) -> dict:
+        headers = {"CF-Connecting-IP": ip}
+        if owner_pass is not None:
+            headers["X-Owner-Pass"] = owner_pass
+        return self.client.get("/api/health", headers=headers).json()
 
 
 def events(resp) -> list[dict]:
@@ -225,3 +239,85 @@ def test_activity_is_marked_only_for_questions_that_run():
     h.ask()  # refused by the limit
     h.ask(question=" ")  # refused by validation
     assert h.questions_started == 1
+
+
+def test_owner_pass_has_its_own_allowance_and_leaves_visitors_alone():
+    h = Harness(per_visitor_cap=1, owner_cap=3)
+    for _ in range(3):
+        assert h.ask(owner_pass=PASS).status_code == 200  # past the per-visitor 1
+    resp = h.ask(owner_pass=PASS)
+    assert resp.status_code == 429 and resp.json()["code"] == "owner_limit"
+    assert h.used("demo:owner:") == 3
+    assert h.used() == 0  # visitors' daily pool untouched
+    assert h.ask().status_code == 200  # the same browser without the pass is still a visitor
+
+
+def test_owner_questions_still_need_the_bot_check_and_switch():
+    h = Harness(bot_ok=False)
+    resp = h.ask(owner_pass=PASS)
+    assert resp.status_code == 403 and resp.json()["code"] == "bot_check"
+    h.on = False
+    assert h.ask(owner_pass=PASS).json()["code"] == "off"
+    assert h.used("demo:owner:") == 0
+
+
+def test_owner_questions_still_run_one_at_a_time():
+    import threading
+
+    release = threading.Event()
+
+    def slow(question, on_event):
+        release.wait(5)
+        fake_run(question, on_event)
+
+    h = Harness(run=slow)
+    first = threading.Thread(target=h.ask)
+    first.start()
+    try:
+        for _ in range(50):
+            if h.health()["busy"]:
+                break
+            threading.Event().wait(0.02)
+        resp = h.ask(owner_pass=PASS)
+        assert resp.status_code == 429 and resp.json()["code"] == "busy"
+    finally:
+        release.set()
+        first.join()
+
+
+def test_wrong_owner_pass_is_refused_not_downgraded():
+    h = Harness()
+    resp = h.ask(owner_pass="wrong-pass-0123456789")
+    assert resp.status_code == 403 and resp.json()["code"] == "owner_pass"
+    assert h.used() == 0 and h.used("demo:owner:") == 0 and h.bot_calls == []
+
+
+def test_health_reports_the_owner_allowance_only_for_the_right_pass():
+    h = Harness(owner_cap=30)
+    h.ask(owner_pass=PASS)
+    assert "owner" not in h.health()
+    assert h.health(owner_pass="nope")["owner"] is False
+    good = h.health(owner_pass=PASS)
+    assert (good["owner"], good["owner_cap"], good["owner_remaining"]) == (True, 30, 29)
+    assert good["visitor_remaining"] == 2
+
+
+def test_owner_pass_is_off_when_unset_or_too_short():
+    assert owner_check(None) is None
+    assert owner_check("set-me") is None
+    assert owner_check("short-pass") is None
+    h = Harness(owner=None)
+    resp = h.ask(owner_pass=PASS)
+    assert resp.status_code == 403 and resp.json()["code"] == "owner_pass"
+
+
+def test_cors_allows_the_owner_pass_header_from_the_site():
+    resp = Harness().client.options(
+        "/api/health",
+        headers={
+            "Origin": SITE,
+            "Access-Control-Request-Method": "GET",
+            "Access-Control-Request-Headers": "x-owner-pass",
+        },
+    )
+    assert resp.status_code == 200

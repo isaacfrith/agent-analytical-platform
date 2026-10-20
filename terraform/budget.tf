@@ -3,8 +3,8 @@
 # 100% of actual spend AWS automatically:
 #   1. stops the live server, and
 #   2. attaches a deny policy to the wake Lambda's role, so nothing restarts it.
-# The daily limits (2 questions per visitor, 20 a day, 3 hours of running, 6
-# wakes) act immediately; billing data lags by hours, so this is the safety net.
+# The daily limits (2 questions per visitor, 20 a day, 30 with the owner pass,
+# 3 hours of running, 6 wakes) act immediately; billing data lags by hours, so this is the safety net.
 # After it fires, reverse the actions in the AWS Budgets console once you've
 # looked at the spend.
 

@@ -172,7 +172,7 @@ The website is static (GitHub Pages) and can't run the agent, so live questions 
 - The server **stops itself** after 20 minutes without a question, and runs at most 3 hours a day.
 - Its data lives under `hosted/` in the bucket, apart from your laptop's, and refreshes itself when it's more than 3 days old.
 
-**Limits** (all enforced server-side): 2 live questions per visitor per day, 20 a day in total, one at a time, 6 wakes a day, 3 hours of running a day. **Backstop:** an AWS budget of $20 a month for the whole account emails you at 50% and 80%, and at 100% stops the server and blocks the wake function. **Typical cost:** a few dollars a month (the server runs only when used, plus about $3 a month of disk).
+**Limits** (all enforced server-side): 2 live questions per visitor per day, 20 a day in total, 30 a day of your own with the [owner pass](#your-own-allowance-the-owner-pass), one at a time, 6 wakes a day, 3 hours of running a day. **Backstop:** an AWS budget of $20 a month for the whole account emails you at 50% and 80%, and at 100% stops the server and blocks the wake function. **Typical cost:** a few dollars a month (the server runs only when used, plus about $3 a month of disk).
 
 **Security:** no inbound ports and no SSH (Session Manager for emergencies); no stored AWS keys (an IAM role limited to the `hosted/` prefix, the one Bedrock model and its own settings); secrets in SSM Parameter Store, never in the repo or Terraform state; the agent is read-only.
 
@@ -187,6 +187,19 @@ You need admin AWS credentials for Terraform (the app user can't create these re
    aws ssm put-parameter --region ap-southeast-2 --overwrite --type SecureString --name /agent-analytics/live/openelectricity-key --value 'YOUR_OPENELECTRICITY_KEY'
    ```
 3. **Point the site at it:** `make live-config`, then commit `ui/live-config.json` and push. The first boot installs everything and loads the data (about 15 minutes); after that, starts take about 2 minutes.
+
+### Your own allowance: the owner pass
+
+The owner pass gives you **30 live questions a day of your own**, on the public site, without using up visitors' 20. Everything else still applies to you: the bot check, one question at a time, 6 wakes and 3 hours of running a day, and the budget.
+
+1. **Create the pass** (Terraform prints these commands as `live_owner_pass`). The first command stores a random pass; the second prints your private link:
+   ```bash
+   aws ssm put-parameter --region ap-southeast-2 --overwrite --type SecureString --name /agent-analytics/live/owner-pass --value "$(openssl rand -hex 24)"
+   echo "https://isaacfrith.github.io/agent-analytical-platform/?owner=$(aws ssm get-parameter --region ap-southeast-2 --with-decryption --name /agent-analytics/live/owner-pass --query Parameter.Value --output text)"
+   ```
+2. **Open the link once** in each browser you'll use. The page keeps the pass in that browser and removes it from the address bar straight away; the box then shows **Owner · N of 30 left today**. **Forget owner pass** removes it from that browser.
+
+The server reads the pass when it starts, so if it's running, a new pass works from its next start. To change the pass, run step 1 again: from the server's next start, browsers holding the old pass are refused and need the new link. Keep the link private: it's the only thing that unlocks your allowance. Locally, set `DEMO_OWNER_PASS` (16+ characters) in `.env`.
 
 ### Run it
 
@@ -207,7 +220,7 @@ make demo-live     # terminal 1: the live API; it prints a link
 make demo-serve    # terminal 2: the website
 ```
 
-Open the link `make demo-live` prints (`http://localhost:8765/?live=…`). Every question costs tokens on your AWS account (a few cents each on Haiku 4.5). Settings live in `.env` (see `.env.example`): `DEMO_DAILY_CAP`, `DEMO_PER_VISITOR_CAP`, and `DEMO_ENABLED=false` to switch live questions off.
+Open the link `make demo-live` prints (`http://localhost:8765/?live=…`). Every question costs tokens on your AWS account (a few cents each on Haiku 4.5). Settings live in `.env` (see `.env.example`): `DEMO_DAILY_CAP`, `DEMO_PER_VISITOR_CAP`, `DEMO_OWNER_PASS` and `DEMO_OWNER_CAP`, and `DEMO_ENABLED=false` to switch live questions off.
 
 There's also a presenter script for demoing from the terminal: [`demos/energy.md`](demos/energy.md).
 

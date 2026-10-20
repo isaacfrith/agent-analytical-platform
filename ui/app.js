@@ -178,6 +178,43 @@ async function playReplay(q) {
 
 const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
+// The owner pass: opened once as ?owner=<pass>, kept in this browser only, and
+// taken out of the address bar straight away. The server checks it; here it
+// only picks which allowance the badge shows.
+const OWNER_KEY = "owner-pass";
+
+function takeOwnerPassFromUrl() {
+  const url = new URL(location.href);
+  const pass = url.searchParams.get("owner");
+  if (pass === null) return;
+  url.searchParams.delete("owner");
+  history.replaceState(null, "", url.pathname + url.search + url.hash);
+  try { localStorage.setItem(OWNER_KEY, pass); } catch { /* storage blocked: visitor mode */ }
+}
+
+function ownerPass() {
+  try { return localStorage.getItem(OWNER_KEY) || ""; } catch { return ""; }
+}
+
+function forgetOwnerPass() {
+  try { localStorage.removeItem(OWNER_KEY); } catch { /* nothing stored */ }
+  showOwner(null);
+  if (state.live) refreshLive();
+}
+
+// health.owner: undefined (no pass), true (valid) or false (wrong pass).
+function showOwner(health) {
+  const owner = health?.owner;
+  $("owner-line").hidden = owner === undefined || owner === null;
+  if (owner === true) $("owner-text").textContent = `Owner · ${health.owner_remaining} of ${health.owner_cap} left today`;
+  if (owner === false) $("owner-text").textContent = "This owner pass isn't valid.";
+}
+
+function ownerHeaders() {
+  const pass = ownerPass();
+  return pass ? { "X-Owner-Pass": pass } : {};
+}
+
 // Two ways to find the live API:
 //   ?live=<url>                     a server you run yourself (make demo-live)
 //   live-config.json control_url    the hosted server, woken on demand through
@@ -276,7 +313,7 @@ async function wakeServer() {
 async function refreshLive(fromCheck = false) {
   let health;
   try {
-    health = await fetch(`${state.live}/api/health`).then((r) => r.json());
+    health = await fetch(`${state.live}/api/health`, { headers: ownerHeaders() }).then((r) => r.json());
   } catch {
     state.live = state.control ? null : state.live;
     if (state.control && !fromCheck) {
@@ -287,12 +324,16 @@ async function refreshLive(fromCheck = false) {
     return;
   }
   state.health = health;
+  showOwner(health);
+  const remaining = health.owner === true ? health.owner_remaining : health.visitor_remaining;
   if (!health.enabled) {
     setLive(false, "Live questions are switched off right now. Pick a suggestion.");
-  } else if (health.visitor_remaining <= 0) {
+  } else if (health.owner === false) {
+    setLive(false, "Forget the owner pass below to ask as a visitor.");
+  } else if (remaining <= 0) {
     setLive(false, "You've used today's live questions. Suggestions are always free.", "You've used today's live questions — come back tomorrow");
   } else {
-    const left = `${health.visitor_remaining} left today`;
+    const left = `${remaining} left today`;
     setLive(true, `Live: your question runs the real agent now (${left}). Suggestions are free.`, `Ask your own question (${left})`);
     if (health.bot_check && health.turnstile_site_key) loadBotCheck(health.turnstile_site_key);
   }
@@ -349,7 +390,7 @@ async function askLive(question) {
     const resp = await fetch(`${state.live}/api/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, turnstile_token }),
+      body: JSON.stringify({ question, turnstile_token, owner_pass: ownerPass() || undefined }),
     });
     if (!resp.ok) {
       // A refusal from the limits, not a failed run: say so calmly and go back to suggestions.
@@ -388,6 +429,7 @@ async function boot() {
   $("skip").addEventListener("click", () => { state.skip = true; });
   $("map-reset").addEventListener("click", () => mapView.reset());
   $("wake-btn").addEventListener("click", wakeServer);
+  $("owner-forget").addEventListener("click", forgetOwnerPass);
   $("ask-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const q = $("question").value.trim();
@@ -418,4 +460,5 @@ async function boot() {
   if (deep) playReplay(deep);
 }
 
+takeOwnerPassFromUrl(); // before anything else, so the pass is in the address bar as briefly as possible
 boot();
