@@ -1,5 +1,5 @@
 {
- "recorded_at": "2026-10-19T21:39:56Z",
+ "recorded_at": "2026-10-20T03:22:15Z",
  "limits": [
   "Daily figures only, no hourly or 5-minute data.",
   "The last 90 days only, ending yesterday.",
@@ -210,7 +210,7 @@
     {
      "question": "What share of NSW generation was renewable over the last 30 days?",
      "replay": "renewable_share_nsw",
-     "sql": "SELECT day, SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / SUM(energy_mwh) * 100 AS renewable_pct\nFROM generation_with_group\nWHERE network_region = 'NSW1' AND day >= CURRENT_DATE - INTERVAL '30' DAY\nGROUP BY 1\nORDER BY 1"
+     "sql": "SELECT 100.0 * SUM(CASE WHEN is_renewable THEN energy_mwh ELSE 0 END) / NULLIF(SUM(energy_mwh), 0) AS renewable_pct\nFROM generation_with_group\nWHERE network_region = 'NSW1' AND day >= CURRENT_DATE - INTERVAL '30' DAY"
     },
     {
      "question": "How does WA's renewable share compare with each NEM region over the last 30 days?",

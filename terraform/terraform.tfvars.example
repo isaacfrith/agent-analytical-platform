@@ -20,7 +20,14 @@ bucket_name = "agent-analytics-dev-<your-suffix>"
 # Required: where AWS Budgets emails spend alerts.
 budget_email = "you@example.com"
 
+# Your fork: the GitHub Pages origin (no path), the repo the server clones, and
+# your Cloudflare Turnstile site key (public; the secret goes in SSM, not here).
+# The defaults point at the original repo, so a fork must set all three.
+# site_origin        = "https://<you>.github.io"
+# repo_url           = "https://github.com/<you>/agent-analytical-platform.git"
+# turnstile_site_key = "0x..."
+
 # Optional (defaults shown in variables.tf):
 # budget_limit_usd   = 20
-# live_instance_type = "t4g.large"
+# live_instance_type = "t3a.large"   # x86_64 only: WrenAI's engine has no ARM Linux wheel
 # bedrock_model_id   = "au.anthropic.claude-haiku-4-5-20251001-v1:0"
